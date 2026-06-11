@@ -1,5 +1,7 @@
-﻿using CommerceFlow.WebApi;
+﻿using CommerceFlow.Application;
+using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Wolverine;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -11,10 +13,16 @@ public static class DependencyInjection
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
+        
+        builder.Host.UseWolverine(opts =>
+        {
+            opts.UseRuntimeCompilation();
+            opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
+        });
     }
     public static void UseWebApi(this WebApplication app)
     {
-        app.MapEndpoints();       
+        app.MapEndpoints();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

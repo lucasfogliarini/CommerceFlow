@@ -26,4 +26,4 @@ internal sealed class CreateOrderEndpoint : IEndpoint
     }
 }
 
-internal sealed record CreateOrderRequest(Guid CustomerId, List<OrderItem> Items);
+internal sealed record CreateOrderRequest(Guid CustomerId, List<CreateOrderItem> Items);
