@@ -7,6 +7,7 @@ public static class DependencyInjection
 {
     public static void AddWebApi(this WebApplicationBuilder builder)
     {
+        builder.AddInfrastructure();
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
