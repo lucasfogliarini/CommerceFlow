@@ -2,7 +2,6 @@ namespace CommerceFlow;
 
 public class Payment : AggregateRoot
 {
-    public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
     public decimal Amount { get; private set; }
     public PaymentStatus Status { get; private set; }

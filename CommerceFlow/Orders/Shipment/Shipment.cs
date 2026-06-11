@@ -3,15 +3,11 @@ public record Shipment
 {
     public ShipmentStatus Status { get; private set; }
     public string? TrackingCode { get; private set; }
-    public void Start()
-    {
-        Status = ShipmentStatus.Pending;
-    }
 
     public void Dispatch(string trackingCode)
     {
         TrackingCode = trackingCode;
-        Status = ShipmentStatus.Shipped;
+        Status = ShipmentStatus.Dispatched;
     }
 
     public void Complete()
@@ -23,7 +19,7 @@ public record Shipment
     {
         var shipment = new Shipment
         {
-            Status = ShipmentStatus.Created
+            Status = ShipmentStatus.Started
         };
         return shipment;
     }

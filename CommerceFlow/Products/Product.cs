@@ -1,8 +1,7 @@
 namespace CommerceFlow;
 
-public class Product
+public class Product : Entity
 {
-    public Guid Id { get; private set; }
     public string Name { get; private set; } = default!;
     public decimal UnitPrice { get; private set; }
 

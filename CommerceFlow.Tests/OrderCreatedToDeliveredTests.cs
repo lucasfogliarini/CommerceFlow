@@ -102,7 +102,7 @@ namespace CommerceFlow.Tests
 
             // Assert
             Assert.NotNull(order.Shipment);
-            Assert.Equal(ShipmentStatus.Pending, order.Shipment!.Status);
+            Assert.Equal(ShipmentStatus.Started, order.Shipment!.Status);
             Assert.Contains(order.DomainEvents, e => e is ShipmentStarted);
         }
 
@@ -121,7 +121,7 @@ namespace CommerceFlow.Tests
 
             // Assert
             Assert.NotNull(order.Shipment);
-            Assert.Equal(ShipmentStatus.Shipped, order.Shipment!.Status);
+            Assert.Equal(ShipmentStatus.Dispatched, order.Shipment!.Status);
             Assert.Equal(trackingCode, order.Shipment!.TrackingCode);
             Assert.Contains(order.DomainEvents, e => e is OrderShipped);
         }

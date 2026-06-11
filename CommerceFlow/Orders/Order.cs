@@ -59,13 +59,12 @@ public class Order : AggregateRoot
             throw new InvalidOperationException("Order must be confirmed to start shipment.");
 
         Shipment = Shipment.Create();
-        Shipment.Start();
         AddDomainEvent(new ShipmentStarted(Id));
     }
 
     public void DispatchShipment(string trackingCode)
     {
-        if (Shipment is null)
+        if (Shipment is null || Shipment.Status != ShipmentStatus.Started)
             throw new InvalidOperationException("Shipment has not been started.");
 
         Shipment.Dispatch(trackingCode);
@@ -74,8 +73,8 @@ public class Order : AggregateRoot
 
     public void CompleteShipment()
     {
-        if (Shipment is null)
-            throw new InvalidOperationException("Shipment has not been started.");
+        if (Shipment is null || Shipment.Status != ShipmentStatus.Dispatched)
+            throw new InvalidOperationException("Shipment has not been dispatched.");
 
         Shipment.Complete();
         Status = OrderStatus.Delivered;
