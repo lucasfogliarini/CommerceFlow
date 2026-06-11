@@ -1,5 +1,5 @@
 using CommerceFlow;
-public class Shipment : AggregateRoot
+public class Shipment
 {
     public Guid OrderId { get; private set; }
     public ShipmentStatus Status { get; private set; }
@@ -8,20 +8,17 @@ public class Shipment : AggregateRoot
     public void Start()
     {
         Status = ShipmentStatus.Pending;
-        AddDomainEvent(new ShipmentStarted(OrderId));
     }
 
     public void Dispatch(string trackingCode)
     {
         TrackingCode = trackingCode;
         Status = ShipmentStatus.Shipped;
-        AddDomainEvent(new OrderShipped(OrderId, trackingCode));
     }
 
     public void Complete()
     {
         Status = ShipmentStatus.Delivered;
-        AddDomainEvent(new OrderDelivered(OrderId));
     }
 
     public static Shipment Create(Guid orderId)

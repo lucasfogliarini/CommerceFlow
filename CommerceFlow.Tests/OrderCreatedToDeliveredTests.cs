@@ -94,14 +94,16 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
-            var shipment = Shipment.Create(order.Id);
+            order.WaitForPayment();
+            order.Confirm();
 
             // Act
-            shipment.Start();
+            order.StartShipment();
 
             // Assert
-            Assert.Equal(ShipmentStatus.Pending, shipment.Status);
-            Assert.Contains(shipment.DomainEvents, e => e is ShipmentStarted);
+            Assert.NotNull(order.Shipment);
+            Assert.Equal(ShipmentStatus.Pending, order.Shipment!.Status);
+            Assert.Contains(order.DomainEvents, e => e is ShipmentStarted);
         }
 
         [Fact(DisplayName = "7. Despachar Entrega")]
@@ -109,16 +111,19 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
-            var shipment = Shipment.Create(order.Id);
+            order.WaitForPayment();
+            order.Confirm();
+            order.StartShipment();
             var trackingCode = "TRACK123";
 
             // Act
-            shipment.Dispatch(trackingCode);
+            order.DispatchShipment(trackingCode);
 
             // Assert
-            Assert.Equal(ShipmentStatus.Shipped, shipment.Status);
-            Assert.Equal(trackingCode, shipment.TrackingCode);
-            Assert.Contains(shipment.DomainEvents, e => e is OrderShipped);
+            Assert.NotNull(order.Shipment);
+            Assert.Equal(ShipmentStatus.Shipped, order.Shipment!.Status);
+            Assert.Equal(trackingCode, order.Shipment!.TrackingCode);
+            Assert.Contains(order.DomainEvents, e => e is OrderShipped);
         }
 
         [Fact(DisplayName = "8. Entrega Concluída")]
@@ -126,15 +131,19 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
-            var shipment = Shipment.Create(order.Id);
-            shipment.Dispatch("TRACK123");
+            order.WaitForPayment();
+            order.Confirm();
+            order.StartShipment();
+            order.DispatchShipment("TRACK123");
 
             // Act
-            shipment.Complete();
+            order.CompleteShipment();
 
             // Assert
-            Assert.Equal(ShipmentStatus.Delivered, shipment.Status);
-            Assert.Contains(shipment.DomainEvents, e => e is OrderDelivered);
+            Assert.NotNull(order.Shipment);
+            Assert.Equal(ShipmentStatus.Delivered, order.Shipment!.Status);
+            Assert.Equal(OrderStatus.Delivered, order.Status);
+            Assert.Contains(order.DomainEvents, e => e is OrderDelivered);
         }
     }
 }

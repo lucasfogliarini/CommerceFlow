@@ -3,6 +3,7 @@ namespace CommerceFlow;
 public class Order : AggregateRoot
 {
     private readonly List<OrderItem> _items = [];
+    private Shipment? _shipment;
 
     public Guid Id { get; private set; }
     public string Number { get; private set; } = default!;
@@ -10,6 +11,7 @@ public class Order : AggregateRoot
     public OrderStatus Status { get; private set; }
     public IReadOnlyCollection<OrderItem> Items => _items;
     public decimal TotalAmount => _items.Sum(x => x.TotalAmount);
+    public Shipment? Shipment => _shipment;
 
     private Order() { }
 
@@ -51,6 +53,35 @@ public class Order : AggregateRoot
 
         Status = OrderStatus.Confirmed;
         AddDomainEvent(new OrderConfirmed(Id));
+    }
+
+    public void StartShipment()
+    {
+        if (Status != OrderStatus.Confirmed)
+            throw new InvalidOperationException("Order must be confirmed to start shipment.");
+
+        _shipment = Shipment.Create(Id);
+        _shipment.Start();
+        AddDomainEvent(new ShipmentStarted(Id));
+    }
+
+    public void DispatchShipment(string trackingCode)
+    {
+        if (_shipment is null)
+            throw new InvalidOperationException("Shipment has not been started.");
+
+        _shipment.Dispatch(trackingCode);
+        AddDomainEvent(new OrderShipped(Id, trackingCode));
+    }
+
+    public void CompleteShipment()
+    {
+        if (_shipment is null)
+            throw new InvalidOperationException("Shipment has not been started.");
+
+        _shipment.Complete();
+        Status = OrderStatus.Delivered;
+        AddDomainEvent(new OrderDelivered(Id));
     }
 
     public void Cancel(string reason)
