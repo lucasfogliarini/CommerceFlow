@@ -57,6 +57,17 @@ public class Order : AggregateRoot
         Status = OrderStatus.PaymentApproved;
         AddDomainEvent(new PaymentApproved(Id, paymentReference));
     }
+    public void RejectPayment(string reason)
+    {
+        if (Status != OrderStatus.WaitingForPayment)
+            throw new InvalidOperationException("Order must be waiting for payment.");
+
+        Payment.Reject(reason);
+
+        AddDomainEvent(new PaymentRejected(Id, reason));
+
+        Cancel(reason);
+    }
 
     public void StartShipment()
     {

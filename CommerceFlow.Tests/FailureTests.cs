@@ -1,0 +1,53 @@
+using System;
+using System.Linq;
+using Xunit;
+
+namespace CommerceFlow.Tests
+{
+    public class FailureTests
+    {
+
+        private Order CreateOrderHelper(Guid? customerId = null, int quantity = 1, Guid? productId = null)
+        {
+            customerId ??= Guid.NewGuid();
+            productId ??= Guid.NewGuid();
+            var product = Product.Create(productId.Value, "Produto Teste", 5.00m);
+            var item = new OrderItem(product, quantity);
+            var order = Order.Create(customerId.Value, [item]);
+            return order;
+        }
+
+        [Fact(DisplayName = "Reservar Estoque deve retornar erro quando não houver estoque disponível")]
+        public void WhenOrderIsCreated_ThenReserveInventory()
+        {
+            // Arrange
+            var order = CreateOrderHelper();
+            var productId = order.Items.First().Product.Id;
+            var inventory = Inventory.Create(productId, 2);
+
+            // Act
+            inventory.Reserve(order.Id, 3);
+
+            // Assert
+            Assert.Equal(2, inventory.AvailableQuantity);
+            Assert.Equal(0, inventory.ReservedQuantity);
+            Assert.Contains(inventory.DomainEvents, e => e is InventoryUnavailable);
+        }
+
+        [Fact(DisplayName = "Rejeitar Pagamento deve cancelar o pedido e disparar eventos")]
+        public void WhenPaymentIsRejected_OrderIsCancelled()
+        {
+            // Arrange
+            var order = CreateOrderHelper();
+            order.WaitForPayment();
+
+            // Act
+            order.RejectPayment("Card declined");
+
+            // Assert
+            Assert.Equal(OrderStatus.Cancelled, order.Status);
+            Assert.Contains(order.DomainEvents, e => e is PaymentRejected);
+            Assert.Contains(order.DomainEvents, e => e is OrderCancelled);
+        }
+    }
+}
