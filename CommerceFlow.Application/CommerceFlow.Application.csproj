@@ -14,4 +14,8 @@
     <ProjectReference Include="..\CommerceFlow\CommerceFlow.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handlers\" />
+  </ItemGroup>
+
 </Project>

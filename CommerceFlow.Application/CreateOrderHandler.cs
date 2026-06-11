@@ -1,4 +1,4 @@
-namespace CommerceFlow.Application.Orders;
+namespace CommerceFlow.Application;
 
 public class CreateOrderHandler(IOrderRepository orders)
 {
