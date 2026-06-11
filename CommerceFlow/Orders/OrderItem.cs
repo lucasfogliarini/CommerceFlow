@@ -2,21 +2,17 @@ namespace CommerceFlow;
 
 public class OrderItem
 {
-    public Guid ProductId { get; private set; }
-    public string ProductName { get; private set; } = default!;
+    public Product Product { get; private set; } = default!;
     public int Quantity { get; private set; }
-    public decimal UnitPrice { get; private set; }
 
-    public decimal TotalAmount => Quantity * UnitPrice;
+    public decimal TotalAmount => Quantity * Product.UnitPrice;
 
-    public OrderItem(Guid productId, string productName, int quantity, decimal unitPrice)
+    public OrderItem(Product product, int quantity)
     {
+        if (product is null) throw new ArgumentNullException(nameof(product));
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
-        if (unitPrice <= 0) throw new ArgumentOutOfRangeException(nameof(unitPrice), "Unit price must be greater than zero.");
 
-        ProductId = productId;
-        ProductName = productName;
+        Product = product;
         Quantity = quantity;
-        UnitPrice = unitPrice;
     }
 }

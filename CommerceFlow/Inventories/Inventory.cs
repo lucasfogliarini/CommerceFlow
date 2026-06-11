@@ -27,4 +27,15 @@ public class Inventory : AggregateRoot
 
         AddDomainEvent(new InventoryReleased(orderId, ProductId, quantity));
     }
+
+    public static Inventory Create(Guid productId, int availableQuantity)
+    {
+        var inventory = new Inventory
+        {
+            ProductId = productId,
+            AvailableQuantity = availableQuantity,
+            ReservedQuantity = 0
+        };
+        return inventory;
+    }
 }

@@ -18,4 +18,15 @@ public class Payment : AggregateRoot
         Status = PaymentStatus.Rejected;
         AddDomainEvent(new PaymentRejected(OrderId, reason));
     }
+
+    public static Payment Create(Guid orderId, Guid paymentId)
+    {
+        var payment = new Payment
+        {
+            OrderId = orderId,
+            Id = paymentId,
+            Status = PaymentStatus.Processing
+        };
+        return payment;
+    }
 }

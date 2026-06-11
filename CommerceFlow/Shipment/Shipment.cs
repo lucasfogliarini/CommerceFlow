@@ -7,7 +7,7 @@ public class Shipment : AggregateRoot
 
     public void Start()
     {
-        Status = ShipmentStatus.Picking;
+        Status = ShipmentStatus.Pending;
         AddDomainEvent(new ShipmentStarted(OrderId));
     }
 
@@ -22,5 +22,15 @@ public class Shipment : AggregateRoot
     {
         Status = ShipmentStatus.Delivered;
         AddDomainEvent(new OrderDelivered(OrderId));
+    }
+
+    public static Shipment Create(Guid orderId)
+    {
+        var shipment = new Shipment
+        {
+            OrderId = orderId,
+            Status = ShipmentStatus.Pending
+        };
+        return shipment;
     }
 }

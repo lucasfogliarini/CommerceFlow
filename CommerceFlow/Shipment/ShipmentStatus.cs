@@ -3,7 +3,7 @@ namespace CommerceFlow;
 public enum ShipmentStatus
 {
     Created,
-    Picking,
+    Pending,
     Shipped,
     Delivered
 }
