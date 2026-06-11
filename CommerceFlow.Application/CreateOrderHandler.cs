@@ -2,7 +2,7 @@ namespace CommerceFlow.Application;
 
 public class CreateOrderHandler(IOrderRepository orderRepository)
 {
-    public async Task HandleAsync(CreateOrder createOrder, CancellationToken cancellationToken = default)
+    public async Task<Guid> HandleAsync(CreateOrder createOrder, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(createOrder);
 
@@ -11,6 +11,8 @@ public class CreateOrderHandler(IOrderRepository orderRepository)
         await orderRepository.AddAsync(order, cancellationToken);
 
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
+
+        return order.Id;
     }
 }
 

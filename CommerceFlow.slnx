@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="CommerceFlow.Application/CommerceFlow.Application.csproj" />
   <Project Path="CommerceFlow.Tests/CommerceFlow.Tests.csproj" />
+  <Project Path="CommerceFlow.WebApi/CommerceFlow.WebApi.csproj" Id="370642a7-6f8b-497d-9868-e64bce5da79c" />
   <Project Path="CommerceFlow/CommerceFlow.csproj" />
 </Solution>
