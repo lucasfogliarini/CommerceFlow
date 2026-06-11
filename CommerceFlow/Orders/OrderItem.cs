@@ -9,7 +9,7 @@ public class OrderItem
 
     public OrderItem(Product product, int quantity)
     {
-        if (product is null) throw new ArgumentNullException(nameof(product));
+        ArgumentNullException.ThrowIfNull(product);
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
 
         Product = product;
