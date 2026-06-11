@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Xunit;
-using CommerceFlow;
 
 namespace CommerceFlow.Tests
 {
@@ -64,38 +63,24 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
-            var payment = Payment.Create(order.Id, Guid.NewGuid());
-
-            // Act
-            payment.Approve();
-
-            // Assert
-            Assert.Equal(PaymentStatus.Approved, payment.Status);
-            Assert.Contains(payment.DomainEvents, e => e is PaymentApproved);
-        }
-
-        [Fact(DisplayName = "5. Confirmar Pedido")]
-        public void WhenPaymentIsApproved_ThenOrderIsConfirmed()
-        {
-            // Arrange
-            var order = CreateOrderHelper();
             order.WaitForPayment();
 
             // Act
-            order.Confirm();
+            order.ApprovePayment("PAYMENT123");
 
             // Assert
-            Assert.Equal(OrderStatus.Confirmed, order.Status);
-            Assert.Contains(order.DomainEvents, e => e is OrderConfirmed);
+            Assert.Equal(OrderStatus.PaymentApproved, order.Status);
+            Assert.Equal(PaymentStatus.Approved, order.Payment.Status);
+            Assert.Contains(order.DomainEvents, e => e is PaymentApproved);
         }
 
-        [Fact(DisplayName = "6. Iniciar Entrega")]
+        [Fact(DisplayName = "5. Iniciar Entrega")]
         public void WhenOrderIsConfirmed_ThenStartShipment()
         {
             // Arrange
             var order = CreateOrderHelper();
             order.WaitForPayment();
-            order.Confirm();
+            order.ApprovePayment("PAYMENT123");
 
             // Act
             order.StartShipment();
@@ -106,13 +91,13 @@ namespace CommerceFlow.Tests
             Assert.Contains(order.DomainEvents, e => e is ShipmentStarted);
         }
 
-        [Fact(DisplayName = "7. Despachar Entrega")]
+        [Fact(DisplayName = "6. Despachar Entrega")]
         public void DispatchShipment()
         {
             // Arrange
             var order = CreateOrderHelper();
             order.WaitForPayment();
-            order.Confirm();
+            order.ApprovePayment("PAYMENT123");
             order.StartShipment();
             var trackingCode = "TRACK123";
 
@@ -126,13 +111,13 @@ namespace CommerceFlow.Tests
             Assert.Contains(order.DomainEvents, e => e is OrderShipped);
         }
 
-        [Fact(DisplayName = "8. Entrega Concluída")]
+        [Fact(DisplayName = "7. Entrega Concluída")]
         public void CompleteShipment()
         {
             // Arrange
             var order = CreateOrderHelper();
             order.WaitForPayment();
-            order.Confirm();
+            order.ApprovePayment("PAYMENT123");
             order.StartShipment();
             order.DispatchShipment("TRACK123");
 

@@ -7,11 +7,10 @@
 | 1     | CriarPedido                           | Criar Pedido                     | PedidoCriado                                |
 | 2     | PedidoCriado                          | Reservar Estoque                 | EstoqueReservado                             |
 | 3     | EstoqueReservado                      | Aguardar Pagamento               | PedidoAguardandoPagamento                    |
-| 4     | AprovarPagamento         | Aprovar Pagamento | PagamentoAprovado                             |
-| 5     | PagamentoAprovado                     | Confirmar Pedido                 | PedidoConfirmado                             |
-| 6     | PedidoConfirmado                      | Iniciar Entrega                  | EntregaIniciada                              |
-| 7     | EntregaIniciada                       | Despachar Entrega                | EntregaDespachada                             |
-| 8     | EntregaDespachada                     | Concluir Entrega                 | EntregaConcluida                              |
+| 4     | AprovarPagamento						| Aprovar Pagamento				   | PagamentoAprovado                             |
+| 5     | PagamentoAprovado                      | Iniciar Entrega                  | EntregaIniciada                              |
+| 6     | EntregaIniciada                       | Despachar Entrega                | EntregaDespachada                             |
+| 7     | EntregaDespachada                     | Concluir Entrega                 | EntregaConcluida                              |
 
 
 ## Cenários Gherkin
@@ -56,27 +55,17 @@ Quando o comando "ApprovePayment" é executado
 Então o pagamento deve ficar no status "Approved" e emitir "PaymentApproved"
 ```
 
-### Confirmar Pedido (Cenário 5)
+### Iniciar Entrega (Cenário 5)
 
 ```gherkin
-Dado que o pagamento do pedido foi aprovado
-
-Quando o processo "ConfirmarPedido" é executado
-
-Então o "Pedido" deve ser confirmado e emitir "OrderConfirmed"
-```
-
-### Iniciar Entrega (Cenário 6)
-
-```gherkin
-Dado que o "Pedido" foi confirmado
+Dado que o "Pedido" foi aprovado para pagamento
 
 Quando o processo "IniciarEntrega" é executado para o pedido
 
 Então a "Entrega" deve ser iniciada (status Pending) e emitir "ShipmentStarted"
 ```
 
-### Despachar Entrega (Cenário 7)
+### Despachar Entrega (Cenário 6)
 
 ```gherkin
 Dado que a "Entrega" está no status Pending
@@ -86,7 +75,7 @@ Quando o processo "DespacharEntrega" é executado com um código de rastreamento
 Então a "Entrega" deve ficar no status Shipped, registrar o código de rastreamento e emitir "OrderShipped"
 ```
 
-### Concluir Entrega (Cenário 8)
+### Concluir Entrega (Cenário 7)
 
 ```gherkin
 Dado que a "Entrega" foi despachada (status Shipped)

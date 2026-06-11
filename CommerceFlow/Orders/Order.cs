@@ -10,6 +10,8 @@ public class Order : AggregateRoot
     public IReadOnlyCollection<OrderItem> Items => _items;
     public decimal TotalAmount => _items.Sum(x => x.TotalAmount);
     public Shipment? Shipment { get; private set; }
+    public Payment Payment { get; private set; }
+    
 
     private Order() { }
 
@@ -40,22 +42,25 @@ public class Order : AggregateRoot
         if (Status != OrderStatus.Created)
             throw new InvalidOperationException("Order must be in Created status to wait for payment.");
 
+        Payment = Payment.Create(TotalAmount);
         Status = OrderStatus.WaitingForPayment;
         AddDomainEvent(new OrderWaitingForPayment(Id));
     }
 
-    public void Confirm()
+    public void ApprovePayment(string paymentReference)
     {
         if (Status != OrderStatus.WaitingForPayment)
             throw new InvalidOperationException("Order must be waiting for payment.");
 
-        Status = OrderStatus.Confirmed;
-        AddDomainEvent(new OrderConfirmed(Id));
+        Payment.Approve(paymentReference);
+
+        Status = OrderStatus.PaymentApproved;
+        AddDomainEvent(new PaymentApproved(Id, paymentReference));
     }
 
     public void StartShipment()
     {
-        if (Status != OrderStatus.Confirmed)
+        if (Status != OrderStatus.PaymentApproved)
             throw new InvalidOperationException("Order must be confirmed to start shipment.");
 
         Shipment = Shipment.Create();
