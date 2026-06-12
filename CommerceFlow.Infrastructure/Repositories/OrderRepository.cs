@@ -11,7 +11,10 @@ public class OrderRepository(CommerceFlowDbContext dbContext) : Repository(dbCon
 
     public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return Set<Order>().FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+        return Set<Order>()
+            .Include(o=>o.Items)
+            .ThenInclude(i=>i.Product)
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
     public void Update(Order order)
