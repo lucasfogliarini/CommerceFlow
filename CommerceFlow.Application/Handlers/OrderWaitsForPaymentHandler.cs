@@ -11,7 +11,7 @@ public class OrderWaitsForPaymentHandler(IOrderRepository orderRepository) : IDo
 
         order.WaitForPayment();
 
-        await orderRepository.UpdateAsync(order, cancellationToken);
+        orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }

@@ -18,5 +18,5 @@ public class Product : Entity
         UnitPrice = unitPrice;
     }
 
-    public static Product Create(Guid id, string name, decimal unitPrice) => new Product(id, name, unitPrice);
+    public static Product Create(Guid id, string name, decimal unitPrice) => new(id, name, unitPrice);
 }

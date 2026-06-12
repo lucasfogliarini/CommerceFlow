@@ -11,7 +11,7 @@ public class CompleteShipmentHandler(IOrderRepository orderRepository)
 
         order.CompleteShipment();
 
-        await orderRepository.UpdateAsync(order, cancellationToken);
+        orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }

@@ -13,7 +13,6 @@ public static class DependencyInjection
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
-        
         builder.Host.UseWolverine(opts =>
         {
             opts.UseRuntimeCompilation();

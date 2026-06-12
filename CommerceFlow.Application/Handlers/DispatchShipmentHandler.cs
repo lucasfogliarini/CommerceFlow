@@ -11,7 +11,7 @@ public class DispatchShipmentHandler(IOrderRepository orderRepository)
 
         order.DispatchShipment(dispatchShipment.TrackingCode);
 
-        await orderRepository.UpdateAsync(order, cancellationToken);
+        orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }

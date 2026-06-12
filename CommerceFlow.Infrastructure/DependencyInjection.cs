@@ -1,0 +1,188 @@
+﻿using CommerceFlow;
+using CommerceFlow.Infrastructure;
+using CommerceFlow.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Threading.RateLimiting;
+using Wolverine;
+
+namespace Microsoft.Extensions.DependencyInjection;
+public static class DependencyInjection
+{
+    public static void AddInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.AddDbContext();        
+        builder.Services.AddRepositories();
+        builder.AddOpenTelemetryExporter();
+        builder.AddRateLimiter();
+        builder.AddLivenessHealthCheck();
+    }
+    public static void Migrate(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<CommerceFlowDbContext>();
+
+        db.Database.Migrate();
+    }
+    public static void MapHealthChecks(this WebApplication app)
+    {
+        var serviceInfo = ServiceInfo.Get();
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
+        {
+            Predicate = healthCheck => healthCheck.Tags.Contains("live")
+        });
+        app.MapHealthChecks("/health/ready", new HealthCheckOptions
+        {
+            Predicate = _ => true,
+            ResponseWriter = async (context, report) =>
+            {
+                context.Response.ContentType = "application/json";
+
+                var result = JsonSerializer.Serialize(new
+                {
+                    serviceInfo.Name,
+                    serviceInfo.Version,
+                    app.Environment.EnvironmentName,
+                    status = report.Status.ToString(),
+                    checks = report.Entries.Select(entry => new
+                    {
+                        name = entry.Key,
+                        status = entry.Value.Status.ToString(),
+                        description = entry.Value.Description,
+                    })
+                });
+
+                await context.Response.WriteAsync(result);
+            }
+        });
+    }
+    private static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IProductRepository, ProductRepository>();
+        services.AddTransient<IInventoryRepository, InventoryRepository>();
+    }
+    public static async Task SeedAsync(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<CommerceFlowDbContext>();
+
+        // avoid seeding if already populated
+        if (await db.Set<Product>().AnyAsync()) return;
+
+        var p1 = Product.Create(new Guid("00000000-0000-0000-0000-000000000001"), "Keyboard", 50.0m);
+        var p2 = Product.Create(new Guid("00000000-0000-0000-0000-000000000002"), "Mouse", 25.0m);
+        var p3 = Product.Create(new Guid("00000000-0000-0000-0000-000000000003"), "Monitor", 300.0m);
+
+        await db.AddAsync(p1);
+        await db.AddAsync(p2);
+        await db.AddAsync(p3);
+
+        var i1 = Inventory.Create(p1.Id, 10);
+        var i2 = Inventory.Create(p2.Id, 20);
+        var i3 = Inventory.Create(p3.Id, 5);
+
+        await db.AddAsync(i1);
+        await db.AddAsync(i2);
+        await db.AddAsync(i3);
+
+        await db.CommitAsync();
+    }
+    private static void AddDbContext(this IHostApplicationBuilder builder, string connectionStringKey = "CommerceFlow")
+    {
+        var connectionString = builder.Configuration.GetConnectionString(connectionStringKey);
+
+        void BuilderOptions(DbContextOptionsBuilder options)
+        {
+            //if (connectionString is not null)
+            //    options.UseSqlServer(connectionString);
+            //else
+            //    options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
+
+            options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
+
+            // Use the following options only during development or troubleshooting
+            options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
+        }
+
+        builder.Services.AddDbContext<CommerceFlowDbContext>(BuilderOptions);
+        builder.Services.AddHealthChecks()
+            .AddCheck<DbContextHealthCheck<CommerceFlowDbContext>>(nameof(CommerceFlowDbContext));
+    }
+    private static void AddOpenTelemetryExporter(this IHostApplicationBuilder builder)
+    {
+        var serviceInfo = ServiceInfo.Get();
+
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(rb => rb.AddService(serviceInfo.Name, null, serviceInfo.Version))
+            .WithTracing(tracerBuilder =>
+            {
+                tracerBuilder
+                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter();
+            })
+            .WithMetrics(meterBuilder =>
+            {
+                meterBuilder
+                    .AddRuntimeInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter();
+            })
+            .WithLogging(loggingBuilder =>
+            {
+                loggingBuilder
+                    .AddOtlpExporter();
+            });
+
+        builder.Logging.AddOpenTelemetry(options =>
+        {
+            options.IncludeFormattedMessage = true;
+            options.IncludeScopes = true;
+            options.ParseStateValues = true;
+        });
+    }
+    private static void AddRateLimiter(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.AddPolicy("per-user", context =>
+            {
+                var key = context.User.FindFirstValue("sid") ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+                return RateLimitPartition.GetTokenBucketLimiter(
+                    partitionKey: key,
+                    _ => new TokenBucketRateLimiterOptions
+                    {
+                        TokenLimit = 100,
+                        TokensPerPeriod = 50,
+                        ReplenishmentPeriod = TimeSpan.FromSeconds(30)
+                    });
+            });
+            options.OnRejected = async (context, token) =>
+            {
+                context.HttpContext.Response.StatusCode = 429;
+                await context.HttpContext.Response.WriteAsync("Limite atingido, tente novamente em breve.", token);
+            };
+        });
+    }
+    private static void AddLivenessHealthCheck(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+    }
+}

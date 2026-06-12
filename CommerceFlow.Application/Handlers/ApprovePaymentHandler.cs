@@ -11,7 +11,8 @@ public class ApprovePaymentHandler(IOrderRepository orderRepository)
 
         order.ApprovePayment(approvePayment.PaymentReference);
 
-        await orderRepository.UpdateAsync(order, cancellationToken);
+        
+        orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }

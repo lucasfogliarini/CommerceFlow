@@ -1,11 +1,12 @@
 namespace CommerceFlow;
 
-public class OrderItem
+public class OrderItem : Entity
 {
     public Product Product { get; private set; } = default!;
     public int Quantity { get; private set; }
-
     public decimal TotalAmount => Quantity * Product.UnitPrice;
+
+    private OrderItem() { }
 
     public OrderItem(Product product, int quantity)
     {

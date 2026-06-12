@@ -21,7 +21,7 @@ public class ReserveInventoryHandler(IInventoryRepository inventoryRepository, I
             else
             {
                 inventory.Reserve(order.Id, item.Quantity);
-                await inventoryRepository.UpdateAsync(inventory, cancellationToken);
+                inventoryRepository.Update(inventory);
             }
         }
 

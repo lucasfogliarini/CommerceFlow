@@ -11,7 +11,7 @@ public class StartShipmentHandler(IOrderRepository orderRepository) : IDomainEve
 
         order.StartShipment();
 
-        await orderRepository.UpdateAsync(order, cancellationToken);
+        orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }
