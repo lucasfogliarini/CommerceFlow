@@ -14,11 +14,12 @@ public class CommerceFlowKafkaServer(IDistributedApplicationBuilder builder) : C
     public Service<KafkaUIContainerResource>? KafkaUI { get { return GetService<Service<KafkaUIContainerResource>>(); } }
     private void AddKafkaServer()
     {
-        var resource = builder.AddKafka(nameof(KafkaServer))
+        var resource = builder.AddKafka(nameof(KafkaServer), 9092)
                                .WithKafkaUI((r) =>
                                 {
                                     AddService(nameof(KafkaUI), r);
-                                });
+                                })
+                               .WithLifetime(ContainerLifetime.Persistent);
         AddService(nameof(KafkaServer), resource);
     }
 }

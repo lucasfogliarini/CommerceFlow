@@ -1,8 +1,10 @@
-﻿using CommerceFlow.Application;
+﻿using CommerceFlow;
+using CommerceFlow.Application;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Wolverine;
+using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +18,15 @@ public static class DependencyInjection
         builder.Services.AddOpenApi();
         builder.Host.UseWolverine(opts =>
         {
+            var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
+            opts.UseKafka(kafkaEndpoint);
+
+            opts.PublishMessage<OrderCreated>()
+                .ToKafkaTopic("orders-created");
+
+            opts.ListenToKafkaTopic("orders-created")
+                .ProcessInline();
+            
             opts.UseRuntimeCompilation();
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
