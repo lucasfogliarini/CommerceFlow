@@ -1,10 +1,15 @@
-﻿using CommerceFlow;
+﻿using Avro;
+using CommerceFlow;
 using CommerceFlow.Application;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.WebApi;
+using Confluent.Kafka;
+using ImTools;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Wolverine;
 using Wolverine.Kafka;
+using Wolverine.Transports.SharedMemory;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -21,17 +26,29 @@ public static class DependencyInjection
             var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
             opts.UseKafka(kafkaEndpoint);
 
-            opts.PublishMessage<OrderCreated>()
-                .ToKafkaTopic("orders-created");
+            ConfigurePubSub<OrderCreated>(opts, "order-created");
+            ConfigurePubSub<OrderInventoryReserved>(opts, "order-inventory-reserved");
+            opts.PublishMessage<OrderWaitingForPayment>().ToKafkaTopic("order-waiting-for-payment");            
+            ConfigurePubSub<PaymentApproved>(opts, "order-payment-approved");
+            opts.PublishMessage<OrderShipped>().ToKafkaTopic("order-shipped");
+            opts.PublishMessage<OrderDelivered>().ToKafkaTopic("order-delivered");
+            opts.PublishMessage<OrderCancelled>().ToKafkaTopic("order-cancelled");
 
-            opts.ListenToKafkaTopic("orders-created")
-                .ProcessInline();
-            
             opts.UseRuntimeCompilation();
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
     }
+
+    public static void ConfigurePubSub<TMessage>(WolverineOptions options, string topic)
+    {
+        options.PublishMessage<TMessage>()
+                .ToKafkaTopic(topic);
+
+        options.ListenToKafkaTopic(topic)
+            .DefaultIncomingMessage<TMessage>();
+    }
+
     public static void UseWebApi(this WebApplication app)
     {
         app.MapEndpoints();

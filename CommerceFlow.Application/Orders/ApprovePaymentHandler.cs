@@ -10,7 +10,6 @@ public class ApprovePaymentHandler(IOrderRepository orderRepository)
         if (order is null) return;
 
         order.ApprovePayment(approvePayment.PaymentReference);
-
         
         orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
