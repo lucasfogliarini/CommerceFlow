@@ -6,6 +6,7 @@ public enum OrderStatus
     InventoryReserved,
     WaitingForPayment,
     PaymentApproved,
+    Dispatched,    
+    Delivered,
     Cancelled,
-    Delivered
 }

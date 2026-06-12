@@ -92,6 +92,8 @@ public class Order : AggregateRoot
         if (Shipment is null || Shipment.Status != ShipmentStatus.Started)
             throw new InvalidOperationException("Shipment has not been started.");
 
+        Status = OrderStatus.Dispatched;
+
         Shipment.Dispatch(trackingCode);
         AddDomainEvent(new OrderShipped(Id, trackingCode));
     }
