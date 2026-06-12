@@ -11,7 +11,7 @@ namespace CommerceFlow.Tests
         {
             customerId ??= Guid.NewGuid();
             productId ??= Guid.NewGuid();
-            var product = Product.Create(productId.Value, "Produto Teste", 5.00m);
+            var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
             var item = new OrderItem(product, quantity);
             var order = Order.Create(customerId.Value, [item]);
             return order;
@@ -35,15 +35,15 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             var productId = order.Items.First().Product.Id;
-            var inventory = Inventory.Create(productId, 5);
+            var product = Product.Create(productId, "Product1", 5m, 5);
 
             // Act
-            inventory.Reserve(order.Id, 2);
+            product.Reserve(order.Id, 2);
 
             // Assert
-            Assert.Equal(3, inventory.AvailableQuantity);
-            Assert.Equal(2, inventory.ReservedQuantity);
-            Assert.Contains(inventory.DomainEvents, e => e is InventoryReserved);
+            Assert.Equal(3, product.AvailableQuantity);
+            Assert.Equal(2, product.ReservedQuantity);
+            Assert.Contains(product.DomainEvents, e => e is InventoryReserved);
         }
 
         [Fact(DisplayName = "3. Aguardar Pagamento")]

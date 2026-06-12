@@ -73,7 +73,6 @@ public static class DependencyInjection
     {
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IProductRepository, ProductRepository>();
-        services.AddTransient<IInventoryRepository, InventoryRepository>();
     }
     public static async Task SeedAsync(this WebApplication app)
     {
@@ -85,21 +84,13 @@ public static class DependencyInjection
         // avoid seeding if already populated
         if (await db.Set<Product>().AnyAsync()) return;
 
-        var p1 = Product.Create(new Guid("00000000-0000-0000-0000-000000000001"), "Keyboard", 50.0m);
-        var p2 = Product.Create(new Guid("00000000-0000-0000-0000-000000000002"), "Mouse", 25.0m);
-        var p3 = Product.Create(new Guid("00000000-0000-0000-0000-000000000003"), "Monitor", 300.0m);
+        var p1 = Product.Create(new Guid("00000000-0000-0000-0000-000000000001"), "Keyboard", 50.0m, 10);
+        var p2 = Product.Create(new Guid("00000000-0000-0000-0000-000000000002"), "Mouse", 25.0m, 20);
+        var p3 = Product.Create(new Guid("00000000-0000-0000-0000-0₀₀₀₀₀₀₀₀₀₀₀₃"), "Monitor", 3m, 5);
 
         await db.AddAsync(p1);
         await db.AddAsync(p2);
         await db.AddAsync(p3);
-
-        var i1 = Inventory.Create(p1.Id, 10);
-        var i2 = Inventory.Create(p2.Id, 20);
-        var i3 = Inventory.Create(p3.Id, 5);
-
-        await db.AddAsync(i1);
-        await db.AddAsync(i2);
-        await db.AddAsync(i3);
 
         await db.CommitAsync();
     }

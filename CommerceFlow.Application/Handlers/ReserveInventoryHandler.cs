@@ -1,6 +1,6 @@
 namespace CommerceFlow.Application;
 
-public class ReserveInventoryHandler(IInventoryRepository inventoryRepository, IOrderRepository orderRepository) : IDomainEventHandler<OrderCreated>
+public class ReserveInventoryHandler(IProductRepository productRepository, IOrderRepository orderRepository) : IDomainEventHandler<OrderCreated>
 {
     public async Task HandleAsync(OrderCreated orderCreated, CancellationToken cancellationToken)
     {
@@ -11,20 +11,11 @@ public class ReserveInventoryHandler(IInventoryRepository inventoryRepository, I
 
         foreach (var item in order.Items)
         {
-            var inventory = await inventoryRepository.GetByProductIdAsync(item.Product.Id, cancellationToken);
-            if (inventory is null)
-            {
-                inventory = Inventory.Create(item.Product.Id, 0);
-                inventory.Reserve(order.Id, item.Quantity);
-                await inventoryRepository.AddAsync(inventory, cancellationToken);
-            }
-            else
-            {
-                inventory.Reserve(order.Id, item.Quantity);
-                inventoryRepository.Update(inventory);
-            }
+            var product = await productRepository.GetByIdAsync(item.Product.Id, cancellationToken);
+            product.Reserve(order.Id, item.Quantity);
+            productRepository.Update(product);
         }
 
-        await inventoryRepository.CommitScope.CommitAsync(cancellationToken);
+        await productRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }

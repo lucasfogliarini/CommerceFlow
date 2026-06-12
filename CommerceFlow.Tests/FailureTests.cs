@@ -11,7 +11,7 @@ namespace CommerceFlow.Tests
         {
             customerId ??= Guid.NewGuid();
             productId ??= Guid.NewGuid();
-            var product = Product.Create(productId.Value, "Produto Teste", 5.00m);
+            var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
             var item = new OrderItem(product, quantity);
             var order = Order.Create(customerId.Value, [item]);
             return order;
@@ -23,15 +23,15 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             var productId = order.Items.First().Product.Id;
-            var inventory = Inventory.Create(productId, 2);
+            var product = Product.Create(productId, "Product1", 5m, 2);
 
             // Act
-            inventory.Reserve(order.Id, 3);
+            product.Reserve(order.Id, 3);
 
             // Assert
-            Assert.Equal(2, inventory.AvailableQuantity);
-            Assert.Equal(0, inventory.ReservedQuantity);
-            Assert.Contains(inventory.DomainEvents, e => e is InventoryUnavailable);
+            Assert.Equal(2, product.AvailableQuantity);
+            Assert.Equal(0, product.ReservedQuantity);
+            Assert.Contains(product.DomainEvents, e => e is InventoryUnavailable);
         }
 
         [Fact(DisplayName = "Rejeitar Pagamento deve cancelar o pedido e disparar eventos")]
