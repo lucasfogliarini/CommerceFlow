@@ -25,18 +25,19 @@ public class Product : AggregateRoot
 
     public static Product Create(Guid id, string name, decimal unitPrice, int availableQuantity) => new(id, name, unitPrice, availableQuantity);
 
-    public void Reserve(Guid orderId, int quantity)
+    public bool Reserve(Guid orderId, int quantity)
     {
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
 
         if (AvailableQuantity < quantity)
         {
             AddDomainEvent(new InventoryUnavailable(orderId, Id));
-            return;
+            return false;
         }
 
         AvailableQuantity -= quantity;
         ReservedQuantity += quantity;
+        return true;
 
         AddDomainEvent(new InventoryReserved(orderId, Id, quantity));
     }

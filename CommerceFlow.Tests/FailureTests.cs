@@ -39,6 +39,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
 
             // Act

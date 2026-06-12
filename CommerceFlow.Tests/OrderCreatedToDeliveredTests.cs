@@ -34,16 +34,14 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
-            var productId = order.Items.First().Product.Id;
-            var product = Product.Create(productId, "Product1", 5m, 5);
 
             // Act
-            product.Reserve(order.Id, 2);
+            order.ReserveInventory();
 
             // Assert
-            Assert.Equal(3, product.AvailableQuantity);
-            Assert.Equal(2, product.ReservedQuantity);
-            Assert.Contains(product.DomainEvents, e => e is InventoryReserved);
+            Assert.Equal(9, order.Items.First().Product.AvailableQuantity);
+            Assert.Equal(1, order.Items.First().Product.ReservedQuantity);
+            Assert.Contains(order.DomainEvents, e => e is OrderInventoryReserved);
         }
 
         [Fact(DisplayName = "3. Aguardar Pagamento")]
@@ -51,6 +49,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange & Act
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
 
             // Assert
@@ -63,6 +62,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
 
             // Act
@@ -79,6 +79,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
 
@@ -96,6 +97,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
             order.StartShipment();
@@ -116,6 +118,7 @@ namespace CommerceFlow.Tests
         {
             // Arrange
             var order = CreateOrderHelper();
+            order.ReserveInventory();
             order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
             order.StartShipment();

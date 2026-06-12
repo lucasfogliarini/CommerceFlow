@@ -17,8 +17,7 @@ public class Order : AggregateRoot
 
     public static Order Create(Guid customerId, IEnumerable<OrderItem> items)
     {
-        if (items is null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         if (!items.Any())
             throw new ArgumentException("Order must contain at least one item.", nameof(items));
@@ -38,15 +37,27 @@ public class Order : AggregateRoot
         return order;
     }
 
-    public void WaitForPayment()
+    public void ReserveInventory()
     {
         if (Status != OrderStatus.Created)
-            throw new InvalidOperationException("Order must be in Created status to wait for payment.");
+            throw new InvalidOperationException("Order must be in Created status to reserve inventory.");
+        foreach (var item in Items)
+        {
+            var reserved = item.Product.Reserve(Id, item.Quantity);
+            if (!reserved)
+                throw new InvalidOperationException("Failed to reserve inventory for one or more items.");
+        }
+        Status = OrderStatus.InventoryReserved;
+        AddDomainEvent(new OrderInventoryReserved(Id));
+    }
+    public void WaitForPayment()
+    {
+        if (Status != OrderStatus.InventoryReserved)
+            throw new InvalidOperationException("Order must be in InventoryReserved status to wait for payment.");
         
         Status = OrderStatus.WaitingForPayment;
         AddDomainEvent(new OrderWaitingForPayment(Id));
     }
-
     public void ApprovePayment(string paymentReference)
     {
         if (Status != OrderStatus.WaitingForPayment)
@@ -68,7 +79,6 @@ public class Order : AggregateRoot
 
         Cancel(reason);
     }
-
     public void StartShipment()
     {
         if (Status != OrderStatus.PaymentApproved)
@@ -77,7 +87,6 @@ public class Order : AggregateRoot
         Shipment = Shipment.Create();
         AddDomainEvent(new ShipmentStarted(Id));
     }
-
     public void DispatchShipment(string trackingCode)
     {
         if (Shipment is null || Shipment.Status != ShipmentStatus.Started)
@@ -86,7 +95,6 @@ public class Order : AggregateRoot
         Shipment.Dispatch(trackingCode);
         AddDomainEvent(new OrderShipped(Id, trackingCode));
     }
-
     public void CompleteShipment()
     {
         if (Shipment is null || Shipment.Status != ShipmentStatus.Dispatched)
@@ -96,7 +104,6 @@ public class Order : AggregateRoot
         Status = OrderStatus.Delivered;
         AddDomainEvent(new OrderDelivered(Id));
     }
-
     public void Cancel(string reason)
     {
         if (Status == OrderStatus.Delivered)

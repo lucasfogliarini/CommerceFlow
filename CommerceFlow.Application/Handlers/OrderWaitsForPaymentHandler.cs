@@ -1,12 +1,12 @@
 namespace CommerceFlow.Application;
 
-public class OrderWaitsForPaymentHandler(IOrderRepository orderRepository) : IDomainEventHandler<InventoryReserved>
+public class OrderWaitsForPaymentHandler(IOrderRepository orderRepository) : IDomainEventHandler<OrderInventoryReserved>
 {
-    public async Task HandleAsync(InventoryReserved inventoryReserved, CancellationToken cancellationToken)
+    public async Task HandleAsync(OrderInventoryReserved orderInventoryReserved, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(inventoryReserved);
+        ArgumentNullException.ThrowIfNull(orderInventoryReserved);
 
-        var order = await orderRepository.GetByIdAsync(inventoryReserved.OrderId, cancellationToken);
+        var order = await orderRepository.GetByIdAsync(orderInventoryReserved.OrderId, cancellationToken);
         if (order is null) return;
 
         order.WaitForPayment();
