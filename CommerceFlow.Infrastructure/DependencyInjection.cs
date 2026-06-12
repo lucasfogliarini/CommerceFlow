@@ -4,6 +4,7 @@ using CommerceFlow.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -79,6 +80,8 @@ public static class DependencyInjection
         using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<CommerceFlowDbContext>();
 
+        await db.Database.EnsureCreatedAsync();
+
         // avoid seeding if already populated
         if (await db.Set<Product>().AnyAsync()) return;
 
@@ -104,6 +107,10 @@ public static class DependencyInjection
     {
         var connectionString = builder.Configuration.GetConnectionString(connectionStringKey);
 
+        var connection = new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        builder.Services.AddSingleton(connection);
+
         void BuilderOptions(DbContextOptionsBuilder options)
         {
             //if (connectionString is not null)
@@ -111,7 +118,8 @@ public static class DependencyInjection
             //else
             //    options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
 
-            options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
+            //options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
+            options.UseSqlite(connection);
 
             // Use the following options only during development or troubleshooting
             options.EnableSensitiveDataLogging();

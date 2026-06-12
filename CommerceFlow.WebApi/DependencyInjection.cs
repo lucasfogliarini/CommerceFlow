@@ -1,4 +1,5 @@
 ﻿using CommerceFlow.Application;
+using CommerceFlow.Infrastructure;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Wolverine;
@@ -17,6 +18,7 @@ public static class DependencyInjection
         {
             opts.UseRuntimeCompilation();
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
+            opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
     }
     public static void UseWebApi(this WebApplication app)

@@ -28,8 +28,9 @@ public class Order : AggregateRoot
             Id = Guid.NewGuid(),
             Number = DateTime.UtcNow.Ticks.ToString(),
             CustomerId = customerId,
-            Status = OrderStatus.Created
+            Status = OrderStatus.Created,
         };
+        order.Payment = Payment.Create(order.TotalAmount);
 
         order._items.AddRange(items);
         order.AddDomainEvent(new OrderCreated(order.Id, customerId));
@@ -41,8 +42,7 @@ public class Order : AggregateRoot
     {
         if (Status != OrderStatus.Created)
             throw new InvalidOperationException("Order must be in Created status to wait for payment.");
-
-        Payment = Payment.Create(TotalAmount);
+        
         Status = OrderStatus.WaitingForPayment;
         AddDomainEvent(new OrderWaitingForPayment(Id));
     }
