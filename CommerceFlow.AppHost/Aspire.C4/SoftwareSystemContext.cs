@@ -85,37 +85,37 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
             system.Resource.WithUrl(DomainUniformResourceLocator);
         Services.Add(system);
 
-        var observabilityService = AddService("observabilityservice");
+        var observabilityService = AddService();
 
         Builder.Configuration["ASPIRE_ALLOW_UNSECURED_TRANSPORT"] = "true";
-        Builder.Configuration["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"] = observabilityService!.Uri.ToString();
+        Builder.Configuration["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"] = observabilityService.Uri.ToString();
         Builder.Configuration["ASPNETCORE_URLS"] = system.Uri.ToString();
 
         return system.Resource;
     }
 
-    public Service<Resource> AddService(string name, string host = HostDefault, int? port = null)
-    {
-        return AddService<Service<Resource>>(name, host, port);
-    }
-    public TService AddService<TService>(string name, string host = HostDefault, int? port = null) where TService : Service
+    public Service<TResource> AddService<TResource>(string name, IResourceBuilder<TResource> resource, string host = HostDefault, int? port = null) where TResource : Resource, IResourceWithEndpoints
     {
         port ??= Services.Any() ? Services.Max(e => e.Port) + 1 : Port + 1;
-        var service = Activator.CreateInstance<TService>();
+        var service = Activator.CreateInstance<Service<TResource>>();
         service.Host = host;
         service.Port = port.Value;
         service.Name = name;
+        service.Resource = resource;
         Services.Add(service);
+        resource.WithHttpEndpoint(name: name, port: port, isProxied: false);
         return service;
     }
-    public DatabaseServer<TDatabaseServerResource> AddDatabaseServer<TDatabaseServerResource>(string name, string username, string password, string provider, string host = HostDefault, int? servicePort = null) where TDatabaseServerResource : Resource
+    public Service AddService()
     {
-        var databaseServer = AddService<DatabaseServer<TDatabaseServerResource>>(name, host, servicePort);
-        databaseServer.Provider = provider;
-        databaseServer.UsernameResource = Builder.AddParameter(DatabaseServers.DatabaseServerUsernameKey, username);
-        databaseServer.PasswordResource = Builder.AddParameter(DatabaseServers.DatabaseServerPasswordKey, password, secret: true);
-
-        return databaseServer;
+        var service = new Service
+        {
+            Host = HostDefault,
+            Port = Services.Any() ? Services.Max(e => e.Port) + 1 : Port + 1,
+            Name = $"service-{Services.Count + 1}"
+        };
+        Services.Add(service);
+        return service;
     }
     public TService? GetService<TService>(string? name = null) where TService : Service
     {

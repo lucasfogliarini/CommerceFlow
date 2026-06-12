@@ -1,6 +1,6 @@
 using Aspire.C4;
 
-public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowSystem(builder)
+public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowKafkaServer(builder)
 {
     public override IResourceBuilder<ExternalServiceResource> AddSystem()
     {
@@ -9,14 +9,15 @@ public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : Commer
         return system
                 .WithChildRelationship(WebApi.Resource);
     }  
-    public Service<ProjectResource> WebApi { get { return GetService<Service<ProjectResource>>(); } }
+    public Service<ProjectResource>? WebApi { get { return GetService<Service<ProjectResource>>(nameof(CommerceFlowWebApi)); } }
     const string WebApiFolder = $"../CommerceFlow.WebApi";
     private void AddWebApi()
     {
-        var webApiService = AddService<Service<ProjectResource>>(nameof(WebApi));
-        webApiService.Resource = Builder.AddProject(WebApi.Name, WebApiFolder)
-                //.WithReference(BoraDatabaseServer.Database!.Resource)
-                //.WaitFor(BoraDatabaseServer.Database!.Resource)
-                .WithHttpEndpoint(name: WebApi.Name, port: WebApi.Port, isProxied: false);
+        var resource = Builder.AddProject(nameof(CommerceFlowWebApi), WebApiFolder)
+                .WithReference(KafkaServer.Resource)
+                .WaitFor(KafkaServer.Resource);
+                //.WithHttpEndpoint(name: WebApi.Name, port: WebApi.Port, isProxied: false);
+
+        AddService(nameof(CommerceFlowWebApi), resource);
     }
 }
