@@ -2,7 +2,8 @@ namespace CommerceFlow.Orders;
 
 public enum ShipmentStatus
 {
-    Started,
+    Created,
+    Requested,
     Dispatched,
     Delivered
 }

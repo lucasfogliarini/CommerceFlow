@@ -14,7 +14,8 @@ namespace CommerceFlow.Tests
             productId ??= Guid.NewGuid();
             var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
             var item = new OrderItem(product, quantity);
-            var order = Order.Create(customerId.Value, [item]);
+            var shippingAddress = new ShippingAddress("Rua Teste","123", "Cidade Teste", "Estado Teste", "12345-678", "Pais Teste");
+            var order = Order.Create(customerId.Value, shippingAddress, [item]);
             return order;
         }
 
@@ -76,7 +77,7 @@ namespace CommerceFlow.Tests
         }
 
         [Fact(DisplayName = "5. Iniciar Entrega")]
-        public void WhenOrderIsConfirmed_ThenStartShipment()
+        public void WhenOrderIsConfirmed_ThenRequestShipment()
         {
             // Arrange
             var order = CreateOrderHelper();
@@ -85,12 +86,12 @@ namespace CommerceFlow.Tests
             order.ApprovePayment("PAYMENT123");
 
             // Act
-            order.StartShipment();
+            order.RequestShipment();
 
             // Assert
             Assert.NotNull(order.Shipment);
-            Assert.Equal(ShipmentStatus.Started, order.Shipment!.Status);
-            Assert.Contains(order.DomainEvents, e => e is ShipmentStarted);
+            Assert.Equal(ShipmentStatus.Requested, order.Shipment!.Status);
+            Assert.Contains(order.DomainEvents, e => e is ShipmentRequested);
         }
 
         [Fact(DisplayName = "6. Despachar Entrega")]
@@ -101,7 +102,7 @@ namespace CommerceFlow.Tests
             order.ReserveInventory();
             order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
-            order.StartShipment();
+            order.RequestShipment();
             var trackingCode = "TRACK123";
 
             // Act
@@ -122,7 +123,7 @@ namespace CommerceFlow.Tests
             order.ReserveInventory();
             order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
-            order.StartShipment();
+            order.RequestShipment();
             order.DispatchShipment("TRACK123");
 
             // Act

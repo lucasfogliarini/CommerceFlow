@@ -15,9 +15,10 @@ public class Order : AggregateRoot
 
     private Order() { }
 
-    public static Order Create(Guid customerId, IEnumerable<OrderItem> items)
+    public static Order Create(Guid customerId, ShippingAddress shippingAddress, IEnumerable<OrderItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(shippingAddress);
 
         if (!items.Any())
             throw new ArgumentException("Order must contain at least one item.", nameof(items));
@@ -28,6 +29,7 @@ public class Order : AggregateRoot
             Number = DateTime.UtcNow.Ticks.ToString(),
             CustomerId = customerId,
             Status = OrderStatus.Created,
+            Shipment = Shipment.Create(shippingAddress)
         };
         order.Payment = Payment.Create(order.TotalAmount);
 
@@ -79,17 +81,17 @@ public class Order : AggregateRoot
 
         Cancel(reason);
     }
-    public void StartShipment()
+    public void RequestShipment()
     {
         if (Status != OrderStatus.PaymentApproved)
             throw new InvalidOperationException("Order must be confirmed to start shipment.");
 
-        Shipment = Shipment.Create();
-        AddDomainEvent(new ShipmentStarted(Id));
+        Shipment!.Request();
+        AddDomainEvent(new ShipmentRequested(Id, Shipment.Address));
     }
     public void DispatchShipment(string trackingCode)
     {
-        if (Shipment is null || Shipment.Status != ShipmentStatus.Started)
+        if (Shipment is null || Shipment.Status != ShipmentStatus.Requested)
             throw new InvalidOperationException("Shipment has not been started.");
 
         Status = OrderStatus.Dispatched;
@@ -102,7 +104,7 @@ public class Order : AggregateRoot
         if (Shipment is null || Shipment.Status != ShipmentStatus.Dispatched)
             throw new InvalidOperationException("Shipment has not been dispatched.");
 
-        Shipment.Complete();
+        Shipment.Deliver();
         Status = OrderStatus.Delivered;
         AddDomainEvent(new OrderDelivered(Id));
     }

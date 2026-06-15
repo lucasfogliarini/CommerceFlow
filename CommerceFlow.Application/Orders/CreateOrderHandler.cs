@@ -10,7 +10,7 @@ public class CreateOrderHandler(IOrderRepository orderRepository, IProductReposi
 
         var products = await productRepository.GetProductsByIds(createOrder.Items.Select(i=>i.ProductId).ToArray(), cancellationToken);
         var orderItems = createOrder.Items.Select(i => new OrderItem(products.FirstOrDefault(p => p.Id == i.ProductId), i.Quantity));
-        var order = Order.Create(createOrder.CustomerId, orderItems);
+        var order = Order.Create(createOrder.CustomerId, createOrder.ShippingAddress, orderItems);
 
         await orderRepository.AddAsync(order, cancellationToken);
 
@@ -20,5 +20,5 @@ public class CreateOrderHandler(IOrderRepository orderRepository, IProductReposi
     }
 }
 
-public record CreateOrder(Guid CustomerId, List<CreateOrderItem> Items);
+public record CreateOrder(Guid CustomerId, ShippingAddress ShippingAddress, List<CreateOrderItem> Items);
 public record CreateOrderItem(int Quantity, Guid ProductId);

@@ -3,6 +3,12 @@ public record Shipment
 {
     public ShipmentStatus Status { get; private set; }
     public string? TrackingCode { get; private set; }
+    public ShippingAddress? Address { get; set; }
+
+    public void Request()
+    {
+        Status = ShipmentStatus.Requested;
+    }
 
     public void Dispatch(string trackingCode)
     {
@@ -10,16 +16,17 @@ public record Shipment
         Status = ShipmentStatus.Dispatched;
     }
 
-    public void Complete()
+    public void Deliver()
     {
         Status = ShipmentStatus.Delivered;
     }
 
-    public static Shipment Create()
+    public static Shipment Create(ShippingAddress shippingAddress)
     {
         var shipment = new Shipment
         {
-            Status = ShipmentStatus.Started
+            Status = ShipmentStatus.Created,
+            Address = shippingAddress
         };
         return shipment;
     }

@@ -2,6 +2,7 @@
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
 using CommerceFlow.Orders;
+using CommerceFlow.Shipments;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,9 @@ using OpenTelemetry.Trace;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
-using Wolverine;
 
 namespace Microsoft.Extensions.DependencyInjection;
+
 public static class DependencyInjection
 {
     public static void AddInfrastructure(this WebApplicationBuilder builder)
@@ -73,6 +74,7 @@ public static class DependencyInjection
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IShipmentRepository, ShipmentRepository>();
         services.AddTransient<IProductRepository, ProductRepository>();
     }
     public static async Task SeedAsync(this WebApplication app)
