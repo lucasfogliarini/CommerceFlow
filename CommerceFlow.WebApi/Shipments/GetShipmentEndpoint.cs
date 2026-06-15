@@ -5,11 +5,11 @@ namespace CommerceFlow.WebApi.Shipments;
 internal sealed class GetShipmentEndpoint : IEndpoint
 {
     public async Task<IResult> GetShipmentAsync(
-        Guid shipmentId,
+        Guid orderId,
         IShipmentRepository shipmentRepository,
         CancellationToken cancellationToken = default)
     {
-        var shipment = await shipmentRepository.GetByIdAsync(shipmentId, cancellationToken);
+        var shipment = await shipmentRepository.GetByOrderIdAsync(orderId, cancellationToken);
 
         if (shipment is null)
             return Results.NotFound();
@@ -19,10 +19,10 @@ internal sealed class GetShipmentEndpoint : IEndpoint
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapGet($"{Routes.Shipments}/{{shipmentId}}", GetShipmentAsync)
+        return app.MapGet($"{Routes.Shipments}", GetShipmentAsync)
            .WithTags(Routes.Shipments)
            .Produces<Shipment>(StatusCodes.Status200OK)
            .Produces(StatusCodes.Status404NotFound)
-           .WithSummary("Get shipment by id.");
+           .WithSummary("Get shipment by order ID.");
     }
 }

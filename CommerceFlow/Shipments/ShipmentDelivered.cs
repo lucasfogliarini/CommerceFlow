@@ -1,4 +1,4 @@
 ﻿
 namespace CommerceFlow.Shipments;
 
-public sealed record ShipmentDelivered(Guid ShipmentId) : IDomainEvent;
+public sealed record ShipmentDelivered(Guid ShipmentId, Guid OrderId) : IDomainEvent;

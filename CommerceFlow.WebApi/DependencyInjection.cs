@@ -1,13 +1,17 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Application;
+using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+using OpenTelemetry.Logs;
 using System.Text.Json.Serialization;
 using Wolverine;
 using Wolverine.Kafka;
+using Wolverine.Transports.SharedMemory;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +23,7 @@ public static class DependencyInjection
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
+        builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.Host.UseWolverine(opts =>
         {
             var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
@@ -28,12 +33,15 @@ public static class DependencyInjection
             ConfigurePubSub<OrderInventoryReserved>(opts, "order-inventory-reserved");
             opts.PublishMessage<OrderWaitingForPayment>().ToKafkaTopic("order-waiting-for-payment");            
             ConfigurePubSub<PaymentApproved>(opts, "order-payment-approved");
-            ConfigurePubSub<CommerceFlow.Orders.ShipmentRequested>(opts, "order-shipment-requested");
+
+            ConfigurePubSub<CommerceFlow.Orders.ShipmentRequested, CommerceFlow.Shipments.ShipmentRequested>(opts, "shipment-requested");
+
             ConfigurePubSub<ShipmentCreated>(opts, "shipment-created");
             ConfigurePubSub<CarrierAssigned>(opts, "shipment-carrier-assigned");
             ConfigurePubSub<PackingCompleted>(opts, "shipment-packing-completed");
-            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDispatched>(opts, "shipment-dispatched");
-            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDelivered>(opts, "shipment-delivered");
+
+            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDispatched, CommerceFlow.Orders.ShipmentDispatched>(opts, "shipment-dispatched");
+            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDelivered, CommerceFlow.Orders.ShipmentDelivered>(opts, "shipment-delivered");
 
             opts.PublishMessage<OrderCancelled>().ToKafkaTopic("order-cancelled");
 
@@ -48,13 +56,18 @@ public static class DependencyInjection
         });
     }
 
-    public static void ConfigurePubSub<TMessage>(WolverineOptions options, string topic)
+    public static void ConfigurePubSub<TPublishMessage, TConsumerMessage>(WolverineOptions options, string topic)
     {
-        options.PublishMessage<TMessage>()
+        options.PublishMessage<TPublishMessage>()
                 .ToKafkaTopic(topic);
 
         options.ListenToKafkaTopic(topic)
-            .DefaultIncomingMessage<TMessage>();
+            .DefaultIncomingMessage<TConsumerMessage>();
+    }
+
+    public static void ConfigurePubSub<TMessage>(WolverineOptions options, string topic)
+    {
+        ConfigurePubSub<TMessage, TMessage>(options, topic);
     }
 
     public static void UseWebApi(this WebApplication app)

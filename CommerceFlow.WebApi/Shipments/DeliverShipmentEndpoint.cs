@@ -7,11 +7,11 @@ namespace CommerceFlow.WebApi.Shipments;
 internal sealed class DeliverShipmentEndpoint : IEndpoint
 {
     public async Task<IResult> DeliverShipmentAsync(
-        Guid orderId,
+        Guid shipmentId,
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        var command = new DeliverShipment(orderId);
+        var command = new DeliverShipment(shipmentId);
         await bus.InvokeAsync(command, cancellationToken);
 
         return Results.Ok();

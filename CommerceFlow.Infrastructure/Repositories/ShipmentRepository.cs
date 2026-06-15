@@ -21,7 +21,11 @@ public class ShipmentRepository(CommerceFlowDbContext dbContext) : Repository(db
 
     public Task<Shipment?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
-        return Set<Shipment>().FirstOrDefaultAsync(s => s.OrderId == orderId, cancellationToken);
+        return Set<Shipment>()
+                .Include(s => s.Carrier)
+                .Include(s => s.Tracking)
+                .ThenInclude(t => t.Events)
+                .FirstOrDefaultAsync(s => s.OrderId == orderId, cancellationToken);
     }
 
     public void Update(Shipment shipment)

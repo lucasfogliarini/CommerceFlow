@@ -118,7 +118,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Delivered;
 
-        AddDomainEvent(new ShipmentDelivered(Id));
+        AddDomainEvent(new ShipmentDelivered(Id, OrderId));
     }
 
     public void Cancel()

@@ -2,7 +2,7 @@ using CommerceFlow.Shipments;
 
 namespace CommerceFlow.Application.Shipments;
 
-public class RequestShipmentHandler(IShipmentRepository shipmentRepository, IProductRepository productRepository) : IDomainEventHandler<ShipmentRequested>
+public class ShipmentRequestedHandler(IShipmentRepository shipmentRepository, IProductRepository productRepository)
 {
     public async Task HandleAsync(ShipmentRequested shipmentRequested, CancellationToken cancellationToken)
     {

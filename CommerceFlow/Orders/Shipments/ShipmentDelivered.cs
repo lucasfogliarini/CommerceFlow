@@ -1,3 +1,3 @@
 ﻿namespace CommerceFlow.Orders;
 
-public record ShipmentDelivered(Guid OrderId);
+public record ShipmentDelivered(Guid ShipmentId, Guid OrderId);
