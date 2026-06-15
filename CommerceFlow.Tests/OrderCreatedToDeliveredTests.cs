@@ -127,7 +127,7 @@ namespace CommerceFlow.Tests
             order.DispatchShipment("TRACK123");
 
             // Act
-            order.CompleteShipment();
+            order.DeliverShipment();
 
             // Assert
             Assert.NotNull(order.Shipment);

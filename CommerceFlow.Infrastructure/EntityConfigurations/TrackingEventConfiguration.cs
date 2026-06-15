@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CommerceFlow.Infrastructure.EntityConfigurations;
 
-public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
+public class TrackingEventConfiguration : IEntityTypeConfiguration<TrackingEvent>
 {
-    public void Configure(EntityTypeBuilder<Shipment> builder)
+    public void Configure(EntityTypeBuilder<TrackingEvent> builder)
     {
         builder.HasKey(s => s.Id);
-
-        builder.ComplexProperty(s => s.ShippingAddress);
     }
 }

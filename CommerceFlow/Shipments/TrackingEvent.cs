@@ -1,6 +1,6 @@
 ﻿namespace CommerceFlow.Shipments;
 
-public class TrackingEvent
+public class TrackingEvent : Entity
 {
     private TrackingEvent()
     {

@@ -71,20 +71,23 @@ public class Shipment : AggregateRoot
         AddDomainEvent(new PackingCompleted(Id));
     }
 
-    public void Dispatch(string trackingCode)
+    public void Dispatch()
     {
         if (Status != ShipmentStatus.Packed)
             throw new InvalidOperationException(
                 "Shipment must be packed before dispatch.");
 
-        Tracking = new Tracking(trackingCode);
+        Tracking = Tracking.Create();
+
+        Tracking.AddEvent(DateTime.UtcNow, "Shipment dispatched", ShippingAddress.City);
 
         Status = ShipmentStatus.Dispatched;
 
         AddDomainEvent(
             new ShipmentDispatched(
                 Id,
-                trackingCode));
+                OrderId,
+                Tracking.TrackingCode));
     }
 
     public void RegisterTrackingEvent(
@@ -96,10 +99,9 @@ public class Shipment : AggregateRoot
                 "Tracking updates are only allowed after dispatch.");
 
         Tracking!.AddEvent(
-            new TrackingEvent(
                 DateTime.UtcNow,
                 description,
-                location));
+                location);
 
         AddDomainEvent(
             new TrackingUpdated(

@@ -12,7 +12,11 @@ public class ShipmentRepository(CommerceFlowDbContext dbContext) : Repository(db
 
     public Task<Shipment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return Set<Shipment>().FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+        return Set<Shipment>()
+                .Include(s=>s.Carrier)
+                .Include(s=>s.Tracking)
+                .ThenInclude(t=>t.Events)
+                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     public Task<Shipment?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)

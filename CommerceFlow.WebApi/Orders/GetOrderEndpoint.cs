@@ -35,7 +35,7 @@ internal sealed class GetOrderEndpoint : IEndpoint
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapGet($"{Routes.Orders}/orders/{{orderId}}", GetOrderAsync)
+        return app.MapGet($"{Routes.Orders}/{{orderId}}", GetOrderAsync)
            .WithTags(Routes.Orders)
            .Produces<OrderResponse>(StatusCodes.Status200OK)
            .Produces(StatusCodes.Status404NotFound)

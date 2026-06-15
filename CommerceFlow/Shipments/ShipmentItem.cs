@@ -1,6 +1,6 @@
 ﻿namespace CommerceFlow.Shipments
 {
-    public class ShipmentItem
+    public class ShipmentItem : Entity
     {
         private ShipmentItem()
         {

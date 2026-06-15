@@ -1,6 +1,6 @@
 ﻿namespace CommerceFlow.Shipments;
 
-public class Tracking
+public class Tracking : Entity
 {
     private readonly List<TrackingEvent> _events = [];
 
@@ -8,17 +8,26 @@ public class Tracking
     {
     }
 
-    public Tracking(string trackingCode)
-    {
-        TrackingCode = trackingCode;
-    }
-
     public string TrackingCode { get; private set; }
 
     public IReadOnlyCollection<TrackingEvent> Events => _events;
 
-    public void AddEvent(TrackingEvent trackingEvent)
+    public void AddEvent(
+        DateTime occurredAt,
+        string description,
+        string location)
     {
+        var trackingEvent = new TrackingEvent(occurredAt, description, location);
         _events.Add(trackingEvent);
+    }
+
+    public static Tracking Create()
+    {
+        var tracking = new Tracking
+        {
+            TrackingCode = $"TRK-{Guid.NewGuid():N}"[..16]
+        };
+
+        return tracking;
     }
 }

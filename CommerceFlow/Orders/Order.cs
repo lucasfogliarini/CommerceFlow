@@ -101,7 +101,7 @@ public class Order : AggregateRoot
         Shipment.Dispatch(trackingCode);
         AddDomainEvent(new OrderShipped(Id, trackingCode));
     }
-    public void CompleteShipment()
+    public void DeliverShipment()
     {
         if (Shipment is null || Shipment.Status != ShipmentStatus.Dispatched)
             throw new InvalidOperationException("Shipment has not been dispatched.");

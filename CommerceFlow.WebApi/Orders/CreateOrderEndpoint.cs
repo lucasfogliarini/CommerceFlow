@@ -20,7 +20,7 @@ internal sealed class CreateOrderEndpoint : IEndpoint
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPost($"{Routes.Orders}/orders", CreateOrderAsync)
+        return app.MapPost($"{Routes.Orders}", CreateOrderAsync)
            .WithTags(Routes.Orders)
            .Produces(StatusCodes.Status200OK)
            .WithSummary("Cria um novo pedido.");
