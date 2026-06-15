@@ -17,5 +17,3 @@ public class ShipmentDeliveredHandler(IOrderRepository orderRepository)
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }
-
-public record ShipmentDelivered(Guid OrderId);

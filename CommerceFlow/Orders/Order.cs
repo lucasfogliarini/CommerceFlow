@@ -99,7 +99,6 @@ public class Order : AggregateRoot
         Status = OrderStatus.Dispatched;
 
         Shipment.Dispatch(trackingCode);
-        AddDomainEvent(new OrderShipped(Id, trackingCode));
     }
     public void DeliverShipment()
     {
@@ -108,7 +107,6 @@ public class Order : AggregateRoot
 
         Shipment.Deliver();
         Status = OrderStatus.Delivered;
-        AddDomainEvent(new OrderDelivered(Id));
     }
     public void Cancel(string reason)
     {

@@ -1,4 +1,5 @@
 namespace CommerceFlow.Orders;
+
 public record Shipment
 {
     public ShipmentStatus Status { get; private set; }

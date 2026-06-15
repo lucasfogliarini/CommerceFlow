@@ -1,8 +1,11 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Application;
 using CommerceFlow.Infrastructure;
+using CommerceFlow.Orders;
+using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Text.Json.Serialization;
 using Wolverine;
 using Wolverine.Kafka;
 
@@ -25,13 +28,23 @@ public static class DependencyInjection
             ConfigurePubSub<OrderInventoryReserved>(opts, "order-inventory-reserved");
             opts.PublishMessage<OrderWaitingForPayment>().ToKafkaTopic("order-waiting-for-payment");            
             ConfigurePubSub<PaymentApproved>(opts, "order-payment-approved");
-            opts.PublishMessage<OrderShipped>().ToKafkaTopic("order-shipped");
-            opts.PublishMessage<OrderDelivered>().ToKafkaTopic("order-delivered");
+            ConfigurePubSub<CommerceFlow.Orders.ShipmentRequested>(opts, "order-shipment-requested");
+            ConfigurePubSub<ShipmentCreated>(opts, "shipment-created");
+            ConfigurePubSub<CarrierAssigned>(opts, "shipment-carrier-assigned");
+            ConfigurePubSub<PackingCompleted>(opts, "shipment-packing-completed");
+            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDispatched>(opts, "shipment-dispatched");
+            ConfigurePubSub<CommerceFlow.Shipments.ShipmentDelivered>(opts, "shipment-delivered");
+
             opts.PublishMessage<OrderCancelled>().ToKafkaTopic("order-cancelled");
 
             opts.UseRuntimeCompilation();
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
+        });
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(
+                new JsonStringEnumConverter());
         });
     }
 

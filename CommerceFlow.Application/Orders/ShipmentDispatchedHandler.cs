@@ -17,5 +17,3 @@ public class ShipmentDispatchedHandler(IOrderRepository orderRepository)
         await orderRepository.CommitScope.CommitAsync(cancellationToken);
     }
 }
-
-public  record ShipmentDispatched(Guid ShipmentId, Guid OrderId, string TrackingCode);
