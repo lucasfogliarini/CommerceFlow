@@ -1,15 +1,10 @@
-﻿using Avro;
-using CommerceFlow;
+﻿using CommerceFlow;
 using CommerceFlow.Application;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.WebApi;
-using Confluent.Kafka;
-using ImTools;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Wolverine;
 using Wolverine.Kafka;
-using Wolverine.Transports.SharedMemory;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

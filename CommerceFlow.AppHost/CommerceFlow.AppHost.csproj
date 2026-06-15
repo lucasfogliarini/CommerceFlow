@@ -7,7 +7,7 @@
     <UserSecretsId>473a8d71-7028-4291-a5a0-d1049ca08a88</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Kafka" Version="13.4.3" />
+    <PackageReference Include="Aspire.Hosting.Kafka" Version="13.4.4" />
   </ItemGroup>
 
 </Project>
