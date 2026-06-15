@@ -1,3 +1,5 @@
+using CommerceFlow.Orders;
+
 namespace CommerceFlow.Application;
 
 public class ReserveInventoryHandler(IOrderRepository orderRepository) : IDomainEventHandler<OrderCreated>

@@ -1,6 +1,7 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
+using CommerceFlow.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;

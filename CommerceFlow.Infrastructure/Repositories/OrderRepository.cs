@@ -1,5 +1,6 @@
 namespace CommerceFlow.Infrastructure.Repositories;
 
+using CommerceFlow.Orders;
 using Microsoft.EntityFrameworkCore;
 
 public class OrderRepository(CommerceFlowDbContext dbContext) : Repository(dbContext), IOrderRepository

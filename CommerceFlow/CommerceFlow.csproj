@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Shipments\PackingCompleted.cs" />
+  </ItemGroup>
+
 </Project>

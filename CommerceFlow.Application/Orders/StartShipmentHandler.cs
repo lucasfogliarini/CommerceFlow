@@ -1,3 +1,5 @@
+using CommerceFlow.Orders;
+
 namespace CommerceFlow.Application;
 
 public class StartShipmentHandler(IOrderRepository orderRepository) : IDomainEventHandler<PaymentApproved>

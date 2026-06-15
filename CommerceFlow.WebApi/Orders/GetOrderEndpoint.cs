@@ -1,3 +1,5 @@
+using CommerceFlow.Orders;
+
 namespace CommerceFlow.WebApi.Endpoints;
 
 internal sealed class GetOrderEndpoint : IEndpoint
