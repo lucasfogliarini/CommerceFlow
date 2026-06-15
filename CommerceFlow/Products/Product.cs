@@ -4,6 +4,7 @@ public class Product : AggregateRoot
 {
     public string Name { get; private set; } = default!;
     public decimal UnitPrice { get; private set; }
+    public decimal Weight { get; private set; }
     public int AvailableQuantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 

@@ -1,4 +1,5 @@
 using CommerceFlow.Application;
+using CommerceFlow.Orders;
 using Wolverine;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
@@ -11,7 +12,7 @@ internal sealed class CreateOrderEndpoint : IEndpoint
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        var command = new CreateOrder(request.CustomerId, request.Items);
+        var command = new CreateOrder(request.CustomerId, request.ShippingAddress, request.Items);
         var guid = await bus.InvokeAsync<Guid>(command, cancellationToken);
 
         return Results.Ok(guid);
@@ -26,4 +27,4 @@ internal sealed class CreateOrderEndpoint : IEndpoint
     }
 }
 
-internal sealed record CreateOrderRequest(Guid CustomerId, List<CreateOrderItem> Items);
+internal sealed record CreateOrderRequest(Guid CustomerId, ShippingAddress ShippingAddress, List<CreateOrderItem> Items);

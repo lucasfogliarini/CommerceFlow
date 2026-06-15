@@ -8,15 +8,11 @@ public class Carrier : Entity
 
     public Carrier(
         Guid id,
-        string name,
-        string serviceLevel)
+        string name)
     {
         Id = id;
         Name = name;
-        ServiceLevel = serviceLevel;
     }
 
     public string Name { get; private set; }
-
-    public string ServiceLevel { get; private set; }
 }

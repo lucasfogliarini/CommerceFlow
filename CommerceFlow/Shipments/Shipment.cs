@@ -45,26 +45,19 @@ public class Shipment : AggregateRoot
         return shipment;
     }
 
-    public void AssignCarrier(
-        Guid carrierId,
-        string carrierName,
-        string serviceLevel)
+    public void AssignCarrier(Carrier carrier)
     {
+        ArgumentNullException.ThrowIfNull(carrier);
+
         if (Status != ShipmentStatus.Created)
             throw new InvalidOperationException(
                 "Carrier can only be assigned to a newly created shipment.");
 
-        Carrier = new Carrier(
-            carrierId,
-            carrierName,
-            serviceLevel);
+        Carrier = carrier;
 
         Status = ShipmentStatus.CarrierAssigned;
 
-        AddDomainEvent(
-            new CarrierAssigned(
-                Id,
-                carrierId));
+        AddDomainEvent(new CarrierAssigned(Id, carrier.Id));
     }
 
     public void CompletePacking()

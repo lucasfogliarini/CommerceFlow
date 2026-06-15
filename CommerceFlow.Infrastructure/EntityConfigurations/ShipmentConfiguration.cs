@@ -10,32 +10,7 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
     {
         builder.HasKey(s => s.Id);
 
-        builder.Property(s => s.OrderId).IsRequired();
-
-        builder.OwnsOne(s => s.ShippingAddress);
-
-        builder.OwnsOne(s => s.Carrier, cb =>
-        {
-            cb.Property(c => c.Name).IsRequired();
-            cb.Property(c => c.ServiceLevel).IsRequired();
-        });
-
-        builder.OwnsOne(s => s.Tracking, tb =>
-        {
-            tb.Property(t => t.TrackingCode).HasColumnName("TrackingCode");
-            tb.OwnsMany(t => t.Events, eb =>
-            {
-                eb.Property<Guid>("Id");
-                eb.HasKey("Id");
-                eb.Property(e => e.OccurredAt).IsRequired();
-                eb.Property(e => e.Description).IsRequired();
-                eb.Property(e => e.Location).IsRequired();
-            });
-        });
-
-        builder.HasMany(typeof(ShipmentItem))
-            .WithOne()
-            .Metadata.PrincipalToDependent?
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
+        builder.ComplexProperty(s => s.ShippingAddress);
+        builder.ComplexProperty(s => s.Tracking);
     }
 }

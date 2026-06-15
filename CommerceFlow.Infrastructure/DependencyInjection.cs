@@ -76,6 +76,7 @@ public static class DependencyInjection
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IShipmentRepository, ShipmentRepository>();
         services.AddTransient<IProductRepository, ProductRepository>();
+        services.AddTransient<ICarrierRepository, CarrierRepository>();
     }
     public static async Task SeedAsync(this WebApplication app)
     {
@@ -94,6 +95,11 @@ public static class DependencyInjection
         await db.AddAsync(p2);
         await db.AddAsync(p3);
 
+        var c1 = new Carrier(new Guid("00000000-0000-0000-0000-000000000001"), "FedEx");
+        var c2 = new Carrier(new Guid("00000000-0000-0000-0000-000000000002"), "UPS");
+
+        await db.AddAsync(c1);
+        await db.AddAsync(c2);
         await db.CommitAsync();
     }
     private static void AddDbContext(this IHostApplicationBuilder builder, string connectionStringKey = "CommerceFlow")

@@ -86,8 +86,10 @@ public class Order : AggregateRoot
         if (Status != OrderStatus.PaymentApproved)
             throw new InvalidOperationException("Order must be confirmed to start shipment.");
 
+        var items = Items.Select(x => new ShipmentRequestedItem(x.ProductId, x.Quantity)).ToList();
+
         Shipment!.Request();
-        AddDomainEvent(new ShipmentRequested(Id, Shipment.Address));
+        AddDomainEvent(new ShipmentRequested(Id, Shipment.Address, items));
     }
     public void DispatchShipment(string trackingCode)
     {
