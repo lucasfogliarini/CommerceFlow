@@ -1,6 +1,6 @@
 using Aspire.C4;
 
-public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowApplicationRunner(builder)
+public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowEventWorkers(builder)
 {
     public override IResourceBuilder<ExternalServiceResource> AddSystem()
     {

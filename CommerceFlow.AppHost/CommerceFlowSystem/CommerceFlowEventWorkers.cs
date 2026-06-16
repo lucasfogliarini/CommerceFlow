@@ -1,6 +1,6 @@
 using Aspire.C4;
 
-public class CommerceFlowApplicationRunner(IDistributedApplicationBuilder builder) : CommerceFlowKafkaServer(builder)
+public class CommerceFlowEventWorkers(IDistributedApplicationBuilder builder) : CommerceFlowKafkaServer(builder)
 {
     public override IResourceBuilder<ExternalServiceResource> AddSystem()
     {
@@ -9,15 +9,15 @@ public class CommerceFlowApplicationRunner(IDistributedApplicationBuilder builde
         return system
                 .WithChildRelationship(ApplicationRunner.ResourceBuilder);
     }  
-    public Service<ProjectResource>? ApplicationRunner { get { return GetService<Service<ProjectResource>>(nameof(CommerceFlowApplicationRunner)); } }
+    public Service<ProjectResource>? ApplicationRunner { get { return GetService<Service<ProjectResource>>(nameof(CommerceFlowEventWorkers)); } }
     private void AddApplicationRunner()
     {
-        var resourceBuilder = Builder.AddProject<Projects.CommerceFlow_ApplicationRunner>(nameof(CommerceFlowApplicationRunner))
+        var resourceBuilder = Builder.AddProject<Projects.CommerceFlow_EventWorkers>(nameof(CommerceFlowEventWorkers))
                 .WithReference(PostgresDatabase.ResourceBuilder)
                 .WaitFor(PostgresDatabase.ResourceBuilder)
                 .WithReference(KafkaServer.ResourceBuilder)
                 .WaitFor(KafkaServer.ResourceBuilder);
 
-        AddService(nameof(CommerceFlowApplicationRunner), resourceBuilder);
+        AddService(nameof(CommerceFlowEventWorkers), resourceBuilder);
     }
 }

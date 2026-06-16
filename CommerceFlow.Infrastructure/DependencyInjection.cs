@@ -98,9 +98,9 @@ public static class DependencyInjection
 
         if (await db.Set<Product>().AnyAsync()) return;
 
-        var p1 = Product.Create(new Guid("00000000-0000-0000-0000-000000000001"), "Keyboard", 50.0m, 10);
-        var p2 = Product.Create(new Guid("00000000-0000-0000-0000-000000000002"), "Mouse", 25.0m, 20);
-        var p3 = Product.Create(new Guid("00000000-0000-0000-0000-000000000003"), "Monitor", 3m, 5);
+        var p1 = Product.Create(new Guid("00000000-0000-0000-0000-000000000001"), "Keyboard", 50.0m, 1000);
+        var p2 = Product.Create(new Guid("00000000-0000-0000-0000-000000000002"), "Mouse", 25.0m, 2000);
+        var p3 = Product.Create(new Guid("00000000-0000-0000-0000-000000000003"), "Monitor", 3m, 5000);
 
         await db.AddAsync(p1);
         await db.AddAsync(p2);
