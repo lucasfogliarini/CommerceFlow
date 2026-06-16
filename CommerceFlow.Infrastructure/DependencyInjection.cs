@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this WebApplicationBuilder builder)
+    public static void AddInfrastructure(this IHostApplicationBuilder builder)
     {
         builder.AddDbContext();        
         builder.Services.AddRepositories();

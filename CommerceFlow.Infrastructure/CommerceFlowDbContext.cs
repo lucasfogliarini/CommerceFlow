@@ -4,7 +4,7 @@ using Wolverine;
 
 namespace CommerceFlow.Infrastructure;
 
-public class CommerceFlowDbContext(IMessageBus bus, DbContextOptions options) : DbContext(options), ICommitScope
+public sealed class CommerceFlowDbContext(IMessageBus bus, DbContextOptions options) : DbContext(options), ICommitScope
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -12,7 +12,7 @@ internal sealed class DeliverShipmentEndpoint : IEndpoint
         CancellationToken cancellationToken = default)
     {
         var command = new DeliverShipment(shipmentId);
-        await bus.InvokeAsync(command, cancellationToken);
+        await bus.PublishAsync(command);
 
         return Results.Ok();
     }

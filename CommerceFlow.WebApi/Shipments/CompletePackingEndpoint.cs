@@ -12,7 +12,7 @@ internal sealed class CompletePackingEndpoint : IEndpoint
         CancellationToken cancellationToken = default)
     {
         var command = new CompletePacking(shipmentId);
-        await bus.InvokeAsync(command, cancellationToken);
+        await bus.PublishAsync(command);
 
         return Results.Ok();
     }

@@ -13,7 +13,7 @@ internal sealed class RegisterTrackingEventEndpoint : IEndpoint
         CancellationToken cancellationToken = default)
     {
         var command = new RegisterTrackingEvent(shipmentId, request.Description, request.Location);
-        await bus.InvokeAsync(command, cancellationToken);
+        await bus.PublishAsync(command);
 
         return Results.Ok();
     }

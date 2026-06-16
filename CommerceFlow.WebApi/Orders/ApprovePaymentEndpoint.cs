@@ -13,7 +13,7 @@ internal sealed class ApprovePaymentEndpoint : IEndpoint
         CancellationToken cancellationToken = default)
     {
         var command = new ApprovePayment(orderId, request.PaymentReference);
-        await bus.InvokeAsync(command, cancellationToken);
+        await bus.PublishAsync(command);
 
         return Results.Ok();
     }

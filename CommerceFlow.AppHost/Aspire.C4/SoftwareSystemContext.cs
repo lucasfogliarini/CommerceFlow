@@ -11,8 +11,7 @@ using Aspire.Hosting.ApplicationModel;
 /// </summary>
 public abstract class SoftwareSystemContext(IDistributedApplicationBuilder builder, int Port = 2000)
 {
-    public const string LucasFogliariniAuthor = "lucasfogliarini";
-    public const string GithubUniformResourceLocator = "https://github.com";
+    public const string GithubDomainUrl = "https://github.com";
     public const string HostDefault = "127.0.0.1";//localhost
 
     /// <summary>
@@ -22,11 +21,11 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
     /// <summary>
     /// The URL of the repositories for the domains and software systems (e.g. https://github.com, https://gitlab.com)
     /// </summary>
-    protected abstract string RepositoriesUniformResourceLocator { get; init; }
+    protected abstract string RepositoriesDomainUrl { get; init; }
     /// <summary>
     /// The repository URL for this domain or software system. (<see cref="RepositoryUniformResourceLocator"/> + <see cref="RepositoriesAuthor"/> + <see cref="Name"/>)
     /// </summary>
-    protected string RepositoryUniformResourceLocator { get { return $"{RepositoriesUniformResourceLocator}/{RepositoriesAuthor}/{Name}"; } }
+    protected string RepositoryUniformResourceLocator { get { return $"{RepositoriesDomainUrl}/{RepositoriesAuthor}/{Name}"; } }
     /// <summary>
     /// A Top-Level Domain (TLD) is the final part of a domain name, appearing after the last dot (e.g., .earth, .org, .br, .com)
     /// </summary>
