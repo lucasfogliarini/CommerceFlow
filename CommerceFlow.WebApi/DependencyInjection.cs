@@ -6,18 +6,19 @@ using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using Wolverine;
+using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
-    public static void AddWebApi(this WebApplicationBuilder builder)
+    public static void AddApplication(this IHostApplicationBuilder builder)
     {
         builder.AddInfrastructure();
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
-        builder.Host.UseWolverine(opts =>
+        builder.ConfigureMessageBus(opts =>
         {
             opts.ConfigurePublisher<OrderCreated>();
             opts.ConfigurePublisher<ApprovePayment>();
@@ -25,9 +26,7 @@ public static class DependencyInjection
             opts.ConfigurePublisher<DeliverShipment>();
             opts.ConfigurePublisher<RegisterTrackingEvent>();
 
-            opts.UseRuntimeCompilation();
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
-            opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
@@ -35,7 +34,7 @@ public static class DependencyInjection
                 new JsonStringEnumConverter());
         });
     }
-    public static void UseWebApi(this WebApplication app)
+    public static void UseApplication(this WebApplication app)
     {
         app.MapEndpoints();
         if (app.Environment.IsDevelopment())

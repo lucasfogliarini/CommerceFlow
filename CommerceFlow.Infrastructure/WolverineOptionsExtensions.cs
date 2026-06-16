@@ -5,12 +5,14 @@ using Wolverine.Kafka;
 namespace CommerceFlow.Infrastructure;
 public static class WolverineOptionsExtensions
 {
-    public static WolverineOptions Subscribe<TMessage>(this WolverineOptions options)
+    public static WolverineOptions Subscribe<TMessage>(this WolverineOptions options, string groupId = "commerceflow")
     {
         var topic = ToTopic<TMessage>();
 
-        options.ListenToKafkaTopic(topic)
-            .DefaultIncomingMessage<TMessage>();
+        options.ConfigurePublisher<TMessage>();//Must have it for AutoProvision the topic
+        options.ListenToKafkaTopic(topic)            
+            .DefaultIncomingMessage<TMessage>()
+            .WithGroupId(groupId);
         return options;
     }
     public static WolverineOptions ConfigurePublisher<TMessage>(this WolverineOptions options)

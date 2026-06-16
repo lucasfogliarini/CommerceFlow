@@ -22,5 +22,5 @@ public class Service
 /// </summary>
 public class Service<TResource> : Service where TResource : Resource
 {
-    public IResourceBuilder<TResource>? Resource { get; set; }
+    public IResourceBuilder<TResource>? ResourceBuilder { get; set; }
 }

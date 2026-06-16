@@ -1,11 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddWebApi();
+builder.AddApplication();
 
 var app = builder.Build();
 
-await app.SeedAsync();
-
-app.UseWebApi();
+app.UseApplication();
 
 app.Run();

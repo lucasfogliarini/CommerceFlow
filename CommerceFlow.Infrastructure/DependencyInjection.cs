@@ -3,6 +3,8 @@ using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
+using ImTools;
+using JasperFx.Resources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -16,9 +18,12 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
+using Wolverine;
+using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -32,12 +37,18 @@ public static class DependencyInjection
         builder.AddRateLimiter();
         builder.AddLivenessHealthCheck();
     }
-    public static void Migrate(this WebApplication app)
+    public static void ConfigureMessageBus(this IHostApplicationBuilder builder, Action<WolverineOptions>? configure)
     {
-        using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<CommerceFlowDbContext>();
+        builder.UseWolverine(opts =>
+        {
+            var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
+            opts.UseKafka(kafkaEndpoint).AutoProvision();
 
-        db.Database.Migrate();
+            configure?.Invoke(opts);
+
+            opts.UseRuntimeCompilation();
+            opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
+        });
     }
     public static void MapHealthChecks(this WebApplication app)
     {
@@ -78,12 +89,12 @@ public static class DependencyInjection
         services.AddTransient<IProductRepository, ProductRepository>();
         services.AddTransient<ICarrierRepository, CarrierRepository>();
     }
-    public static async Task SeedAsync(this WebApplication app)
+    public static async Task MigrateAndSeedAsync(this IHost host)
     {
-        using var scope = app.Services.CreateScope();
+        using var scope = host.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<CommerceFlowDbContext>();
 
-        await db.Database.EnsureCreatedAsync();
+        db.Database.Migrate();
 
         if (await db.Set<Product>().AnyAsync()) return;
 
@@ -105,20 +116,17 @@ public static class DependencyInjection
     private static void AddDbContext(this IHostApplicationBuilder builder, string connectionStringKey = "CommerceFlow")
     {
         var connectionString = builder.Configuration.GetConnectionString(connectionStringKey);
-
-        var connection = new SqliteConnection("Data Source=:memory:");
-        connection.Open();
-        builder.Services.AddSingleton(connection);
-
         void BuilderOptions(DbContextOptionsBuilder options)
         {
-            //if (connectionString is not null)
-            //    options.UseSqlServer(connectionString);
-            //else
-            //    options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
-
-            //options.UseInMemoryDatabase(nameof(CommerceFlowDbContext));
-            options.UseSqlite(connection);
+            if (connectionString is not null)
+                options.UseNpgsql(connectionString);
+            else
+            {
+                var connection = new SqliteConnection("Data Source=:memory:");
+                connection.Open();
+                builder.Services.AddSingleton(connection);
+                options.UseSqlite(connection);
+            }
 
             // Use the following options only during development or troubleshooting
             options.EnableSensitiveDataLogging();

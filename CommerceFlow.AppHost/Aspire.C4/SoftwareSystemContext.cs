@@ -76,12 +76,12 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
             Name = Name,
             Port = Port,
             Host = HostDefault,
-            Resource = Builder.AddExternalService(Name, SystemContextDiagramUrl)
+            ResourceBuilder = Builder.AddExternalService(Name, SystemContextDiagramUrl)
         };
         if (RepositoryUniformResourceLocator is not null)
-            system.Resource.WithUrl(RepositoryUniformResourceLocator);
+            system.ResourceBuilder.WithUrl(RepositoryUniformResourceLocator);
         if (DomainUniformResourceLocator is not null)
-            system.Resource.WithUrl(DomainUniformResourceLocator);
+            system.ResourceBuilder.WithUrl(DomainUniformResourceLocator);
         Services.Add(system);
 
         var observabilityService = AddService();
@@ -90,19 +90,18 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
         Builder.Configuration["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"] = observabilityService.Uri.ToString();
         Builder.Configuration["ASPNETCORE_URLS"] = system.Uri.ToString();
 
-        return system.Resource;
+        return system.ResourceBuilder;
     }
 
-    public Service<TResource> AddService<TResource>(string name, IResourceBuilder<TResource> resource, string host = HostDefault, int? port = null) where TResource : Resource, IResourceWithEndpoints
+    public Service<TResource> AddService<TResource>(string name, IResourceBuilder<TResource> resource, string host = HostDefault, int? port = null) where TResource : Resource
     {
         port ??= Services.Any() ? Services.Max(e => e.Port) + 1 : Port + 1;
         var service = Activator.CreateInstance<Service<TResource>>();
         service.Host = host;
         service.Port = port.Value;
         service.Name = name;
-        service.Resource = resource;
+        service.ResourceBuilder = resource;
         Services.Add(service);
-        resource.WithHttpEndpoint(name: name, port: port, isProxied: false);
         return service;
     }
     public Service AddService()

@@ -7,15 +7,17 @@ public class CommerceFlowApplicationRunner(IDistributedApplicationBuilder builde
         var system = base.AddSystem();
         AddApplicationRunner();
         return system
-                .WithChildRelationship(ApplicationRunner.Resource);
+                .WithChildRelationship(ApplicationRunner.ResourceBuilder);
     }  
     public Service<ProjectResource>? ApplicationRunner { get { return GetService<Service<ProjectResource>>(nameof(CommerceFlowApplicationRunner)); } }
     private void AddApplicationRunner()
     {
-        var resource = Builder.AddProject<Projects.CommerceFlow_ApplicationRunner>(nameof(CommerceFlowApplicationRunner))
-                .WithReference(KafkaServer.Resource)
-                .WaitFor(KafkaServer.Resource);
+        var resourceBuilder = Builder.AddProject<Projects.CommerceFlow_ApplicationRunner>(nameof(CommerceFlowApplicationRunner))
+                .WithReference(PostgresDatabase.ResourceBuilder)
+                .WaitFor(PostgresDatabase.ResourceBuilder)
+                .WithReference(KafkaServer.ResourceBuilder)
+                .WaitFor(KafkaServer.ResourceBuilder);
 
-        AddService(nameof(CommerceFlowApplicationRunner), resource);
+        AddService(nameof(CommerceFlowApplicationRunner), resourceBuilder);
     }
 }

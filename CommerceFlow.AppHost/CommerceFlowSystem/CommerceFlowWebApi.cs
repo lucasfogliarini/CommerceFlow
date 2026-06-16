@@ -7,15 +7,17 @@ public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : Commer
         var system = base.AddSystem();
         AddWebApi();
         return system
-                .WithChildRelationship(WebApi.Resource);
+                .WithChildRelationship(WebApi.ResourceBuilder);
     }  
     public Service<ProjectResource>? WebApi { get { return GetService<Service<ProjectResource>>(nameof(CommerceFlowWebApi)); } }
     private void AddWebApi()
     {
         var resource = Builder.AddProject<Projects.CommerceFlow_WebApi>(nameof(CommerceFlowWebApi))
-                .WithReference(KafkaServer.Resource)
-                .WaitFor(KafkaServer.Resource);
-                //.WithHttpEndpoint(name: WebApi.Name, port: WebApi.Port, isProxied: false);
+                .WithReference(PostgresDatabase.ResourceBuilder)
+                .WaitFor(PostgresDatabase.ResourceBuilder)
+                .WithReference(KafkaServer.ResourceBuilder)
+                .WaitFor(KafkaServer.ResourceBuilder)
+                .WaitFor(ApplicationRunner.ResourceBuilder);
 
         AddService(nameof(CommerceFlowWebApi), resource);
     }
