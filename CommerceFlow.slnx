@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="CommerceFlow.AppHost/CommerceFlow.AppHost.csproj" />
   <Project Path="CommerceFlow.Application/CommerceFlow.Application.csproj" />
+  <Project Path="CommerceFlow.EventWorkers/CommerceFlow.EventWorkers.csproj" />
   <Project Path="CommerceFlow.Infrastructure/CommerceFlow.Infrastructure.csproj" Id="bba232d0-0b42-424f-9575-0746d7c9501e" />
   <Project Path="CommerceFlow.Tests/CommerceFlow.Tests.csproj" />
   <Project Path="CommerceFlow.WebApi/CommerceFlow.WebApi.csproj" Id="370642a7-6f8b-497d-9868-e64bce5da79c" />

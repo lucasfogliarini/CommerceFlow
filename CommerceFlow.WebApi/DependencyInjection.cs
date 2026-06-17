@@ -18,29 +18,13 @@ public static class DependencyInjection
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
-        builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.ConfigureMessageBus(opts =>
         {
-            // Orders
-            opts.Subscribe<CreateOrder>();
-            opts.Subscribe<OrderCreated>();
-            opts.Subscribe<OrderInventoryReserved>();
-            opts.ConfigurePublisher<OrderWaitingForPayment>();
-            opts.Subscribe<ApprovePayment>();
-            opts.Subscribe<PaymentApproved>();
-            opts.Subscribe<OrderReadyForShipment>();
-
-            // Shipments
-            opts.Subscribe<ShipmentCreated>();
-            opts.Subscribe<CarrierAssigned>();
-            opts.Subscribe<CompletePacking>();
-            opts.Subscribe<PackingCompleted>();
-            opts.Subscribe<ShipmentDispatched>();
-            opts.Subscribe<RegisterTrackingEvent>();
-            opts.Subscribe<DeliverShipment>();
-            opts.Subscribe<ShipmentDelivered>();
-
-            opts.Subscribe<OrderCancelled>();
+            opts.ConfigurePublisher<OrderCreated>();
+            opts.ConfigurePublisher<ApprovePayment>();
+            opts.ConfigurePublisher<CompletePacking>();
+            opts.ConfigurePublisher<DeliverShipment>();
+            opts.ConfigurePublisher<RegisterTrackingEvent>();
 
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });
