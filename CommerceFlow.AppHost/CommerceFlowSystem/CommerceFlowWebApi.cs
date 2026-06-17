@@ -1,6 +1,6 @@
 using Aspire.C4;
 
-public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowEventWorkers(builder)
+public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : CommerceFlowPostgresServer(builder)
 {
     public override IResourceBuilder<ExternalServiceResource> AddSystem()
     {
@@ -14,10 +14,7 @@ public class CommerceFlowWebApi(IDistributedApplicationBuilder builder) : Commer
     {
         var resource = Builder.AddProject<Projects.CommerceFlow_WebApi>(nameof(CommerceFlowWebApi))
                 .WithReference(PostgresDatabase.ResourceBuilder)
-                .WaitFor(PostgresDatabase.ResourceBuilder)
-                .WithReference(KafkaServer.ResourceBuilder)
-                .WaitFor(KafkaServer.ResourceBuilder)
-                .WaitFor(ApplicationRunner.ResourceBuilder);
+                .WaitFor(PostgresDatabase.ResourceBuilder);
 
         AddService(nameof(CommerceFlowWebApi), resource);
     }

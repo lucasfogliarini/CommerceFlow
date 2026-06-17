@@ -14,7 +14,7 @@ public class Shipment : AggregateRoot
 
     public ShipmentStatus Status { get; private set; }
 
-    public ShippingAddress ShippingAddress { get; private set; }
+    public Address Address { get; private set; }
 
     public Carrier? Carrier { get; private set; }
 
@@ -24,14 +24,14 @@ public class Shipment : AggregateRoot
 
     public static Shipment Create(
         Guid orderId,
-        ShippingAddress shippingAddress,
+        Address shipmentAddress,
         IEnumerable<ShipmentItem> items)
     {
         var shipment = new Shipment
         {
             Id = Guid.NewGuid(),
             OrderId = orderId,
-            ShippingAddress = shippingAddress,
+            Address = shipmentAddress,
             Status = ShipmentStatus.Created
         };
 
@@ -79,7 +79,7 @@ public class Shipment : AggregateRoot
 
         Tracking = Tracking.Create();
 
-        Tracking.AddEvent(DateTime.UtcNow, "Shipment dispatched", ShippingAddress.City);
+        Tracking.AddEvent(DateTime.UtcNow, "Shipment dispatched", Address.City);
 
         Status = ShipmentStatus.Dispatched;
 

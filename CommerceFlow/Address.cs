@@ -1,6 +1,6 @@
-﻿namespace CommerceFlow.Shipments;
+﻿namespace CommerceFlow;
 
-public record ShippingAddress(
+public record Address(
                 string Street,
                 string Number,
                 string City,

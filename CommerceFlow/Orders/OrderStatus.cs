@@ -1,4 +1,4 @@
-namespace CommerceFlow;
+namespace CommerceFlow.Orders;
 
 public enum OrderStatus
 {
@@ -6,6 +6,7 @@ public enum OrderStatus
     InventoryReserved,
     WaitingForPayment,
     PaymentApproved,
+    ReadyForShipment,
     Dispatched,    
     Delivered,
     Cancelled,

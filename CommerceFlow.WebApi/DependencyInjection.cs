@@ -1,12 +1,8 @@
-﻿using CommerceFlow;
-using CommerceFlow.Application;
+﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
-using CommerceFlow.Infrastructure;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
-using Wolverine;
-using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,14 +14,10 @@ public static class DependencyInjection
         builder.Services.AddEndpoints();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
+
+        builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.ConfigureMessageBus(opts =>
         {
-            opts.ConfigurePublisher<OrderCreated>();
-            opts.ConfigurePublisher<ApprovePayment>();
-            opts.ConfigurePublisher<CompletePacking>();
-            opts.ConfigurePublisher<DeliverShipment>();
-            opts.ConfigurePublisher<RegisterTrackingEvent>();
-
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });
         builder.Services.ConfigureHttpJsonOptions(options =>

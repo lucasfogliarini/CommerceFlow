@@ -2,7 +2,7 @@ using CommerceFlow.Orders;
 
 namespace CommerceFlow.Application;
 
-public class RequestShipmentHandler(IOrderRepository orderRepository) : IDomainEventHandler<PaymentApproved>
+public class OrderReadyForShipmentHandler(IOrderRepository orderRepository) : IDomainEventHandler<PaymentApproved>
 {
     public async Task HandleAsync(PaymentApproved paymentApproved, CancellationToken cancellationToken)
     {
@@ -11,7 +11,7 @@ public class RequestShipmentHandler(IOrderRepository orderRepository) : IDomainE
         var order = await orderRepository.GetByIdAsync(paymentApproved.OrderId, cancellationToken);
         if (order is null) return;
 
-        order.RequestShipment();
+        order.ReadyForShipment();
 
         orderRepository.Update(order);
         await orderRepository.CommitScope.CommitAsync(cancellationToken);

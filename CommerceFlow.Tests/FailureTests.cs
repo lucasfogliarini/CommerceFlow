@@ -1,4 +1,5 @@
 using CommerceFlow.Orders;
+using CommerceFlow.Orders;
 using System;
 using System.Linq;
 using Xunit;
@@ -14,7 +15,7 @@ namespace CommerceFlow.Tests
             productId ??= Guid.NewGuid();
             var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
             var item = new OrderItem(product, quantity);
-            var shippingAddress = new ShippingAddress("Rua Teste", "123", "Cidade Teste", "Estado Teste", "12345-678", "Pais Teste");
+            var shippingAddress = new Address("Rua Teste", "123", "Cidade Teste", "Estado Teste", "12345-678", "Pais Teste");
             var order = Order.Create(customerId.Value, shippingAddress, [item]);
             return order;
         }

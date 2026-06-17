@@ -1,4 +1,4 @@
-namespace CommerceFlow;
+namespace CommerceFlow.Orders;
 
 public class OrderItem : Entity
 {

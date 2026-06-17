@@ -1,5 +1,4 @@
 using CommerceFlow.Application;
-using CommerceFlow.Orders;
 using Wolverine;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
@@ -27,4 +26,4 @@ internal sealed class CreateOrderEndpoint : IEndpoint
     }
 }
 
-internal sealed record CreateOrderRequest(Guid CustomerId, ShippingAddress ShippingAddress, List<CreateOrderItem> Items);
+internal sealed record CreateOrderRequest(Guid CustomerId, Address ShippingAddress, List<CreateOrderItem> Items);

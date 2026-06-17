@@ -13,9 +13,12 @@ public class CommerceFlowPostgresServer(IDistributedApplicationBuilder builder) 
     public Service<PostgresDatabaseResource>? PostgresDatabase { get { return GetService<Service<PostgresDatabaseResource>>(nameof(PostgresDatabase)); } }
     void AddPostgresServer()
     {
-        var postgresServerResourceBuilder = Builder.AddPostgres(nameof(PostgresServer))
+        var postgresServerResourceBuilder = Builder.AddPostgres(nameof(PostgresServer), port: 5432)
                                     .WithLifetime(ContainerLifetime.Persistent)
-                                    //.WithPgAdmin()
+                                    .WithPgAdmin((pgAdminResourceBuilder) =>
+                                    {
+                                        AddService("pgadmin", pgAdminResourceBuilder);
+                                    })
                                     .WithDataVolume($"{nameof(PostgresServer)}_data");
         var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlow");
         AddService(nameof(PostgresDatabase), postgresDatabaseResourceBuilder);

@@ -111,12 +111,12 @@ namespace CommerceFlow.Infrastructure.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CarrierId = table.Column<Guid>(type: "uuid", nullable: true),
                     TrackingId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ShippingAddress_City = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress_Country = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress_Number = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress_State = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress_Street = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    Address_City = table.Column<string>(type: "text", nullable: false),
+                    Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Address_Number = table.Column<string>(type: "text", nullable: false),
+                    Address_State = table.Column<string>(type: "text", nullable: false),
+                    Address_Street = table.Column<string>(type: "text", nullable: false),
+                    Address_ZipCode = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

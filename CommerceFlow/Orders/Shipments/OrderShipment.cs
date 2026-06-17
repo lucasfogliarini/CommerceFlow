@@ -1,10 +1,10 @@
 namespace CommerceFlow.Orders;
 
-public record Shipment
+public record OrderShipment
 {
     public ShipmentStatus Status { get; private set; }
     public string? TrackingCode { get; private set; }
-    public ShippingAddress? Address { get; set; }
+    public Address? Address { get; set; }
 
     public void Request()
     {
@@ -22,9 +22,9 @@ public record Shipment
         Status = ShipmentStatus.Delivered;
     }
 
-    public static Shipment Create(ShippingAddress shippingAddress)
+    public static OrderShipment Create(Address shippingAddress)
     {
-        var shipment = new Shipment
+        var shipment = new OrderShipment
         {
             Status = ShipmentStatus.Created,
             Address = shippingAddress

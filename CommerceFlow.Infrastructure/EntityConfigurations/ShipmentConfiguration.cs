@@ -10,6 +10,6 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
     {
         builder.HasKey(s => s.Id);
 
-        builder.ComplexProperty(s => s.ShippingAddress);
+        builder.ComplexProperty(s => s.Address);
     }
 }

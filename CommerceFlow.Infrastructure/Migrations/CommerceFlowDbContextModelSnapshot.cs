@@ -23,30 +23,6 @@ namespace CommerceFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CommerceFlow.OrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderItem");
-                });
-
             modelBuilder.Entity("CommerceFlow.Orders.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -80,7 +56,7 @@ namespace CommerceFlow.Infrastructure.Migrations
                                 .HasColumnType("integer");
                         });
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shipment", "CommerceFlow.Orders.Order.Shipment#Shipment", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shipment", "CommerceFlow.Orders.Order.Shipment#OrderShipment", b1 =>
                         {
                             b1.Property<int>("Status")
                                 .HasColumnType("integer");
@@ -88,7 +64,7 @@ namespace CommerceFlow.Infrastructure.Migrations
                             b1.Property<string>("TrackingCode")
                                 .HasColumnType("text");
 
-                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Address", "CommerceFlow.Orders.Order.Shipment#Shipment.Address#ShippingAddress", b2 =>
+                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Address", "CommerceFlow.Orders.Order.Shipment#OrderShipment.Address#Address", b2 =>
                                 {
                                     b2.Property<string>("City")
                                         .IsRequired()
@@ -119,6 +95,30 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Orders.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("CommerceFlow.Product", b =>
@@ -181,7 +181,7 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.Property<Guid?>("TrackingId")
                         .HasColumnType("uuid");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "ShippingAddress", "CommerceFlow.Shipments.Shipment.ShippingAddress#ShippingAddress", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "CommerceFlow.Shipments.Shipment.Address#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -286,7 +286,7 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.ToTable("TrackingEvent");
                 });
 
-            modelBuilder.Entity("CommerceFlow.OrderItem", b =>
+            modelBuilder.Entity("CommerceFlow.Orders.OrderItem", b =>
                 {
                     b.HasOne("CommerceFlow.Orders.Order", null)
                         .WithMany("Items")

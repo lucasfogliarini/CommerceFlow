@@ -4,6 +4,8 @@ builder.AddApplication();
 
 var app = builder.Build();
 
+await app.MigrateAndSeedAsync();
+
 app.UseApplication();
 
 app.Run();

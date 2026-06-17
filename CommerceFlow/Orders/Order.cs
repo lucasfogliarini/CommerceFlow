@@ -9,13 +9,13 @@ public class Order : AggregateRoot
     public OrderStatus Status { get; private set; }
     public IReadOnlyCollection<OrderItem> Items => _items;
     public decimal TotalAmount => _items.Sum(x => x.TotalAmount);
-    public Shipment? Shipment { get; private set; }
+    public OrderShipment? Shipment { get; private set; }
     public Payment Payment { get; private set; }
     
 
     private Order() { }
 
-    public static Order Create(Guid customerId, ShippingAddress shippingAddress, IEnumerable<OrderItem> items)
+    public static Order Create(Guid customerId, Address shippingAddress, IEnumerable<OrderItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
         ArgumentNullException.ThrowIfNull(shippingAddress);
@@ -29,7 +29,7 @@ public class Order : AggregateRoot
             Number = DateTime.UtcNow.Ticks.ToString(),
             CustomerId = customerId,
             Status = OrderStatus.Created,
-            Shipment = Shipment.Create(shippingAddress)
+            Shipment = OrderShipment.Create(shippingAddress)
         };
         order.Payment = Payment.Create(order.TotalAmount);
 
@@ -81,15 +81,16 @@ public class Order : AggregateRoot
 
         Cancel(reason);
     }
-    public void RequestShipment()
+    public void ReadyForShipment()
     {
         if (Status != OrderStatus.PaymentApproved)
-            throw new InvalidOperationException("Order must be confirmed to start shipment.");
+            throw new InvalidOperationException("Order must be payed to be ready for shipment.");
 
-        var items = Items.Select(x => new ShipmentRequestedItem(x.ProductId, x.Quantity)).ToList();
+        var items = Items.Select(x => new OrderReadyForShipmentItem(x.ProductId, x.Quantity)).ToList();
 
         Shipment!.Request();
-        AddDomainEvent(new ShipmentRequested(Id, Shipment.Address, items));
+        Status = OrderStatus.ReadyForShipment;
+        AddDomainEvent(new OrderReadyForShipment(Id, Shipment.Address, items));
     }
     public void DispatchShipment(string trackingCode)
     {

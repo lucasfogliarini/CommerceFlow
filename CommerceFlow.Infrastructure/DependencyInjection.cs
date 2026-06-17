@@ -3,8 +3,6 @@ using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
-using ImTools;
-using JasperFx.Resources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +16,10 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
-using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -41,9 +37,6 @@ public static class DependencyInjection
     {
         builder.UseWolverine(opts =>
         {
-            var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
-            opts.UseKafka(kafkaEndpoint).AutoProvision();
-
             configure?.Invoke(opts);
 
             opts.UseRuntimeCompilation();
