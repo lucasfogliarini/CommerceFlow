@@ -16,7 +16,6 @@ public static class DependencyInjection
         builder.ConfigureMessageBus(opts =>
         {
             // Orders
-            opts.Subscribe<CreateOrder>();
             opts.Subscribe<OrderCreated>();
             opts.Subscribe<OrderInventoryReserved>();
             opts.ConfigurePublisher<OrderWaitingForPayment>();
