@@ -2,7 +2,7 @@ using Aspire.C4;
 
 public class CommerceFlowPostgresServer : Service
 {
-    public override string Name => nameof(CommerceFlowPostgresServer);
+    public override string Name => "PostgresServer";
     public override void Configure(SoftwareSystemContext system)
     {
         var postgresServerResourceBuilder = system.Builder.AddPostgres(Name, port: system.GetNextPort())

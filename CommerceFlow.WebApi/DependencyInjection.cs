@@ -38,11 +38,7 @@ public static class DependencyInjection
             opts.Subscribe<ShipmentDispatched>();
             opts.Subscribe<RegisterTrackingEvent>();
             opts.Subscribe<DeliverShipment>();
-            opts.ConfigurePublisher<ShipmentDelivered>();
-
-            // Orders - continued
-            opts.Subscribe<CommerceFlow.Orders.ShipmentDispatched>();
-            opts.Subscribe<CommerceFlow.Orders.ShipmentDelivered>();
+            opts.Subscribe<ShipmentDelivered>();
 
             opts.Subscribe<OrderCancelled>();
 
