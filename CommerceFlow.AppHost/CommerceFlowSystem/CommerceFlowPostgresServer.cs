@@ -1,27 +1,22 @@
 using Aspire.C4;
 
-public class CommerceFlowPostgresServer(IDistributedApplicationBuilder builder) : CommerceFlowSystem(builder)
+public class CommerceFlowPostgresServer : Service
 {
-    public override IResourceBuilder<ExternalServiceResource> AddSystem()
+    public override string Name => nameof(CommerceFlowPostgresServer);
+    public override void Configure(SoftwareSystemContext system)
     {
-        var system = base.AddSystem();
-        AddPostgresServer();
-        return system
-                .WithChildRelationship(PostgresServer.ResourceBuilder);
-    }  
-    public Service<PostgresServerResource>? PostgresServer { get { return GetService<Service<PostgresServerResource>>(nameof(PostgresServer)); } }
-    public Service<PostgresDatabaseResource>? PostgresDatabase { get { return GetService<Service<PostgresDatabaseResource>>(nameof(PostgresDatabase)); } }
-    void AddPostgresServer()
-    {
-        var postgresServerResourceBuilder = Builder.AddPostgres(nameof(PostgresServer), port: 5432)
+        var postgresServerResourceBuilder = system.Builder.AddPostgres(Name, port: system.GetNextPort())
                                     .WithLifetime(ContainerLifetime.Persistent)
                                     .WithPgAdmin((pgAdminResourceBuilder) =>
                                     {
-                                        AddService("pgadmin", pgAdminResourceBuilder);
+                                        pgAdminResourceBuilder.WithHostPort(system.GetNextPort());
+                                        pgAdminResourceBuilder.WithLifetime(ContainerLifetime.Persistent);
+                                        system.AddService(pgAdminResourceBuilder);
                                     })
-                                    .WithDataVolume($"{nameof(PostgresServer)}_data");
+                                    .WithDataVolume($"{nameof(CommerceFlowPostgresServer)}_data");
         var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlow");
-        AddService(nameof(PostgresDatabase), postgresDatabaseResourceBuilder);
-        AddService(nameof(PostgresServer), postgresServerResourceBuilder);
+
+        system.AddService(postgresServerResourceBuilder);
+        system.AddService(postgresDatabaseResourceBuilder);
     }
 }

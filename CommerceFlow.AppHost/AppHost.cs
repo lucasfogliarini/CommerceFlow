@@ -1,7 +1,7 @@
 using Aspire.C4;
 
-var softwareSystemContextBuilder = SoftwareSystemContext.CreateBuilder<CommerceFlowWebApi>();
+var systemBuilder = SoftwareSystemContext.Configure<CommerceFlowSystem>();
 
-var app = softwareSystemContextBuilder.Builder.Build();
+var app = systemBuilder.Build();
 
 await app.RunAsync();

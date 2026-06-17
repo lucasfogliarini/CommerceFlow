@@ -1,6 +1,6 @@
 using Aspire.C4;
 
-public abstract class CommerceFlowSystem(IDistributedApplicationBuilder builder) : SoftwareSystemContext(builder)
+public class CommerceFlowSystem(IDistributedApplicationBuilder builder) : SoftwareSystemContext(builder)
 {
     protected override string RepositoriesAuthor { get; init; } = "lucasfogliarini";
     protected override string RepositoriesDomainUrl { get; init; } = GithubDomainUrl;
