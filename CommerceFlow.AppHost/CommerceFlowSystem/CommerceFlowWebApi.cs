@@ -1,6 +1,7 @@
 using Aspire.C4;
 
 [DependsOn<PostgresDatabaseResource>]
+[DependsOn<KafkaServerResource>]
 public class CommerceFlowWebApi : Service
 {
     public override string Name => nameof(CommerceFlowWebApi);

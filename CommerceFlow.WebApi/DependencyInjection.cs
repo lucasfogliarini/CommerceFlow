@@ -1,5 +1,8 @@
 ﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
+using CommerceFlow.Infrastructure;
+using CommerceFlow.Orders;
+using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
@@ -18,6 +21,31 @@ public static class DependencyInjection
         builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.ConfigureMessageBus(opts =>
         {
+            // Orders
+            opts.Subscribe<CreateOrder>();
+            opts.Subscribe<OrderCreated>();
+            opts.Subscribe<OrderInventoryReserved>();
+            opts.ConfigurePublisher<OrderWaitingForPayment>();
+            opts.Subscribe<ApprovePayment>();
+            opts.Subscribe<PaymentApproved>();
+            opts.Subscribe<OrderReadyForShipment>();
+
+            // Shipments
+            opts.Subscribe<ShipmentCreated>();
+            opts.Subscribe<CarrierAssigned>();
+            opts.Subscribe<CompletePacking>();
+            opts.Subscribe<PackingCompleted>();
+            opts.Subscribe<ShipmentDispatched>();
+            opts.Subscribe<RegisterTrackingEvent>();
+            opts.Subscribe<DeliverShipment>();
+            opts.ConfigurePublisher<ShipmentDelivered>();
+
+            // Orders - continued
+            opts.Subscribe<CommerceFlow.Orders.ShipmentDispatched>();
+            opts.Subscribe<CommerceFlow.Orders.ShipmentDelivered>();
+
+            opts.Subscribe<OrderCancelled>();
+
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });
         builder.Services.ConfigureHttpJsonOptions(options =>
