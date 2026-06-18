@@ -20,6 +20,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
+using Wolverine.ErrorHandling;
 using Wolverine.Kafka;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -32,12 +33,18 @@ public static class DependencyInjection
         builder.Services.AddRepositories();
         builder.AddOpenTelemetryExporter();
         builder.AddRateLimiter();
-        builder.AddLivenessHealthCheck();
     }
     public static void ConfigureMessageBus(this IHostApplicationBuilder builder, Action<WolverineOptions>? configure)
     {
         builder.UseWolverine(opts =>
         {
+            opts.Policies
+                .OnException<Exception>()
+                .RetryWithCooldown(
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3));
+
             var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
             opts.UseKafka(kafkaEndpoint).AutoProvision();
 
@@ -191,10 +198,5 @@ public static class DependencyInjection
                 await context.HttpContext.Response.WriteAsync("Limite atingido, tente novamente em breve.", token);
             };
         });
-    }
-    private static void AddLivenessHealthCheck(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
     }
 }

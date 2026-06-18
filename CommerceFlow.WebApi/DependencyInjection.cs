@@ -37,6 +37,7 @@ public static class DependencyInjection
     public static void UseApplication(this WebApplication app)
     {
         app.MapEndpoints();
+        app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

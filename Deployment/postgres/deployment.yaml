@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: commerceflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
+      containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: commerceflow
+            - name: POSTGRES_USER
+              value: commerceflow
+            - name: POSTGRES_PASSWORD
+              value: commerceflow!123
+          resources:
+            requests:
+              cpu: "0.4"
+              memory: "0.5Gi"
+            limits:
+              cpu: "0.8"
+              memory: "1Gi"
+          livenessProbe: # LivenessProbe verifica se o Pod está vivo e reinicia se necessário
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe: # ReadinessProbe verifica se o Pod está pronto para receber tráfego.
+            tcpSocket:
+              port: 5432
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+            initialDelaySeconds: 10
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc

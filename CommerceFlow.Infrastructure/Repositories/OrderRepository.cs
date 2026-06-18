@@ -5,6 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 public class OrderRepository(CommerceFlowDbContext dbContext) : Repository(dbContext), IOrderRepository
 {
+    public async Task<List<Order>> GetOrdersAsync(CancellationToken cancellationToken = default)
+    {
+        return await Set<Order>()
+            .OrderBy(o=> o.Status)
+            .ToListAsync(cancellationToken);
+    }   
+
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
     {
         await dbContext.AddAsync(order, cancellationToken);
