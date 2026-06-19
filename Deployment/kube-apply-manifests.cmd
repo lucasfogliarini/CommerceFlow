@@ -14,11 +14,9 @@ echo.
 call :apply_app "kafka"
 
 echo.
-echo ===== Aguardando infraestrutura ficar pronta =====
-timeout /t 10 /nobreak >nul
+call :apply_app "kafka-ui"
 
 echo.
-
 call :apply_app "webapi"
 call :apply_app "eventworkers"
 

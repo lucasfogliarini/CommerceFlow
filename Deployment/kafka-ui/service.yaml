@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui
+  namespace: commerceflow
+spec:  
+  selector:
+    app: kafka-ui
+  type: LoadBalancer
+  ports:
+    - port: 2003
+      targetPort: 8080
