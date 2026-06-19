@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-CommerceFlow.OrderEventWorkers-29d17ed5-9431-480d-9ce9-02f3238b0f8e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommerceFlow.Application\CommerceFlow.Application.csproj" />
+    <ProjectReference Include="..\CommerceFlow.Infrastructure\CommerceFlow.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

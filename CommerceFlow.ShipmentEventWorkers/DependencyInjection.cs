@@ -1,5 +1,4 @@
-﻿using CommerceFlow;
-using CommerceFlow.Application;
+﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Orders;
@@ -15,15 +14,7 @@ public static class DependencyInjection
         builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.ConfigureMessageBus(opts =>
         {
-            // Orders
-            opts.Subscribe<OrderCreated>();
-            opts.Subscribe<OrderInventoryReserved>();
-            opts.ConfigurePublisher<OrderWaitingForPayment>();
-            opts.Subscribe<ApprovePayment>();
-            opts.Subscribe<PaymentApproved>();
             opts.Subscribe<OrderReadyForShipment>();
-
-            // Shipments
             opts.Subscribe<ShipmentCreated>();
             opts.Subscribe<CarrierAssigned>();
             opts.Subscribe<CompletePacking>();
@@ -32,8 +23,6 @@ public static class DependencyInjection
             opts.Subscribe<RegisterTrackingEvent>();
             opts.Subscribe<DeliverShipment>();
             opts.Subscribe<ShipmentDelivered>();
-
-            opts.Subscribe<OrderCancelled>();
 
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });

@@ -26,7 +26,8 @@ goto menu
 :BuildEventWorkers
 echo.
 echo Building EventWorkers...
-docker build -f CommerceFlow.EventWorkers/Dockerfile -t lucasfogliarini/commerceflow-eventworkers:latest .
+docker build -f CommerceFlow.OrderEventWorkers/Dockerfile -t lucasfogliarini/commerceflow-ordereventworkers:latest .
+docker build -f CommerceFlow.ShipmentEventWorkers/Dockerfile -t lucasfogliarini/commerceflow-shipmenteventworkers:latest .
 
 if errorlevel 1 (
     echo Falha ao buildar EventWorkers.

@@ -18,7 +18,8 @@ call :apply_app "kafka-ui"
 
 echo.
 call :apply_app "webapi"
-call :apply_app "eventworkers"
+call :apply_app "ordereventworkers"
+call :apply_app "shipmenteventworkers"
 
 echo.
 echo ===== Services =====
@@ -67,3 +68,4 @@ if exist "%~1\hpa.yaml" (
 )
 echo ----------
 exit /b
+

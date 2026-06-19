@@ -11,7 +11,8 @@
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.4.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommerceFlow.EventWorkers\CommerceFlow.EventWorkers.csproj" />
+    <ProjectReference Include="..\CommerceFlow.OrderEventWorkers\CommerceFlow.OrderEventWorkers.csproj" />
+    <ProjectReference Include="..\CommerceFlow.ShipmentEventWorkers\CommerceFlow.ShipmentEventWorkers.csproj" />
     <ProjectReference Include="..\CommerceFlow.WebApi\CommerceFlow.WebApi.csproj" />
   </ItemGroup>
 
