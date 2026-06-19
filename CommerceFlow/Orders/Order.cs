@@ -49,15 +49,9 @@ public class Order : AggregateRoot
             if (!reserved)
                 throw new InvalidOperationException("Failed to reserve inventory for one or more items.");
         }
-        Status = OrderStatus.InventoryReserved;
-        AddDomainEvent(new OrderInventoryReserved(Id));
-    }
-    public void WaitForPayment()
-    {
-        if (Status != OrderStatus.InventoryReserved)
-            throw new InvalidOperationException("Order must be in InventoryReserved status to wait for payment.");
-        
         Status = OrderStatus.WaitingForPayment;
+
+        AddDomainEvent(new OrderInventoryReserved(Id));
         AddDomainEvent(new OrderWaitingForPayment(Id));
     }
     public void ApprovePayment(string paymentReference)

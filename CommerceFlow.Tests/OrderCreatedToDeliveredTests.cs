@@ -53,7 +53,6 @@ namespace CommerceFlow.Tests
             // Arrange & Act
             var order = CreateOrderHelper();
             order.ReserveInventory();
-            order.WaitForPayment();
 
             // Assert
             Assert.Equal(OrderStatus.WaitingForPayment, order.Status);
@@ -66,7 +65,6 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             order.ReserveInventory();
-            order.WaitForPayment();
 
             // Act
             order.ApprovePayment("PAYMENT123");
@@ -78,12 +76,11 @@ namespace CommerceFlow.Tests
         }
 
         [Fact(DisplayName = "5. Iniciar Entrega")]
-        public void WhenOrderIsConfirmed_ThenRequestShipment()
+        public void WhenOrderIsPaid_ThenReadyForShipment()
         {
             // Arrange
             var order = CreateOrderHelper();
             order.ReserveInventory();
-            order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
 
             // Act
@@ -101,7 +98,6 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             order.ReserveInventory();
-            order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
             order.ReadyForShipment();
             var trackingCode = "TRACK123";
@@ -121,7 +117,6 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             order.ReserveInventory();
-            order.WaitForPayment();
             order.ApprovePayment("PAYMENT123");
             order.ReadyForShipment();
             order.DispatchShipment("TRACK123");
