@@ -39,28 +39,30 @@ exit /b
 echo Aplicando servico: %~1
 
 if exist "%~1\pvc.yaml" (
-    echo   - Aplicando pvc.yaml
     kubectl apply -f "%~1\pvc.yaml"
 ) else (
     echo   - pvc.yaml NAO encontrado
 )
 
 if exist "%~1\deployment.yaml" (
-    echo   - Aplicando deployment.yaml
     kubectl apply -f "%~1\deployment.yaml"
 ) else (
     echo   - deployment.yaml NAO encontrado
 )
 
 if exist "%~1\service.yaml" (
-    echo   - Aplicando service.yaml
     kubectl apply -f "%~1\service.yaml"
 ) else (
     echo   - service.yaml NAO encontrado
 )
 
+if exist "%~1\ingress.yaml" (
+    kubectl apply -f "%~1\ingress.yaml"
+) else (
+    echo   - ingress.yaml NAO encontrado
+)
+
 if exist "%~1\hpa.yaml" (
-    echo   - Aplicando hpa.yaml
     kubectl apply -f "%~1\hpa.yaml"
 ) else (
     echo   - hpa.yaml NAO encontrado
