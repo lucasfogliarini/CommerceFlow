@@ -1,10 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using Wolverine;
+using Wolverine.ErrorHandling;
 using Wolverine.Kafka;
 
 namespace CommerceFlow.Infrastructure;
 
-public static class WolverineOptionsExtensions
+public static class WolverineExtensions
 {
     public static WolverineOptions Subscribe<TMessage>(this WolverineOptions options, string groupId = "commerceflow")
     {
@@ -22,6 +23,23 @@ public static class WolverineOptionsExtensions
         options.PublishMessage<TMessage>()
             .ToKafkaTopic(topic);
         return options;
+    }
+    public static IAdditionalActions PublishToDeadLetterTopic(
+        this IFailureActions then,
+        string? topicName = null)
+    {
+        var additionalActions = then
+            .Discard()
+            .And(async (_, context, _) =>
+            {
+                var dlqTopic = topicName
+                    ?? $"{context.Envelope.TopicName}.dlq";
+
+                await context.BroadcastToTopicAsync(
+                    dlqTopic,
+                    context.Envelope.Message);
+            });
+        return additionalActions;
     }
 
     private static string ToTopic<TMessage>()

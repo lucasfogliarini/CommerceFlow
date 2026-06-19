@@ -43,7 +43,9 @@ public static class DependencyInjection
                 .RetryWithCooldown(
                     TimeSpan.FromSeconds(1),
                     TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3));
+                    TimeSpan.FromSeconds(3))
+                .Then
+                .PublishToDeadLetterTopic();
 
             var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
             opts.UseKafka(kafkaEndpoint).AutoProvision();
