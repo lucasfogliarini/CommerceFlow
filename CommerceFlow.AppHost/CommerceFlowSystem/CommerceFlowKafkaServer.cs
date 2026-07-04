@@ -4,18 +4,18 @@ public class CommerceFlowKafkaServer : Service
 {
     public override string Name => "KafkaServer";
 
-    public override void Configure(SoftwareSystemContext system)
+    public override void Configure(SoftwareSystemContextBuilder system)
     {
         var kafkaResourceBuilder = system.Builder.AddKafka(Name, system.GetNextPort())
                                .WithKafkaUI((r) =>
                                {
                                    r.WithHostPort(system.GetNextPort());
                                    r.WithLifetime(ContainerLifetime.Persistent);
-                                   system.AddService(r);
+                                   system.AddResourceBuilder(r);
                                })
                                .WithLifetime(ContainerLifetime.Persistent)
                                .WithDataVolume("KafkaServer_data");
 
-        system.AddService(kafkaResourceBuilder);
+        system.AddResourceBuilder(kafkaResourceBuilder);
     }
 }

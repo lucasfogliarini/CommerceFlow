@@ -3,7 +3,7 @@ using Aspire.C4;
 public class CommerceFlowPostgresServer : Service
 {
     public override string Name => "PostgresServer";
-    public override void Configure(SoftwareSystemContext system)
+    public override void Configure(SoftwareSystemContextBuilder system)
     {
         var postgresServerResourceBuilder = system.Builder.AddPostgres(Name, port: system.GetNextPort())
                                     .WithLifetime(ContainerLifetime.Persistent)
@@ -11,12 +11,12 @@ public class CommerceFlowPostgresServer : Service
                                     {
                                         pgAdminResourceBuilder.WithHostPort(system.GetNextPort());
                                         pgAdminResourceBuilder.WithLifetime(ContainerLifetime.Persistent);
-                                        system.AddService(pgAdminResourceBuilder);
+                                        system.AddResourceBuilder(pgAdminResourceBuilder);
                                     })
                                     .WithDataVolume($"{nameof(CommerceFlowPostgresServer)}_data");
         var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlow");
 
-        system.AddService(postgresServerResourceBuilder);
-        system.AddService(postgresDatabaseResourceBuilder);
+        system.AddResourceBuilder(postgresServerResourceBuilder);
+        system.AddResourceBuilder(postgresDatabaseResourceBuilder);
     }
 }

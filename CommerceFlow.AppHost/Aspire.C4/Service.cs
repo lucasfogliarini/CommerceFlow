@@ -8,5 +8,5 @@ namespace Aspire.C4;
 public abstract class Service
 {
     public abstract string Name { get; }
-    public abstract void Configure(SoftwareSystemContext system);
+    public abstract void Configure(SoftwareSystemContextBuilder system);
 }

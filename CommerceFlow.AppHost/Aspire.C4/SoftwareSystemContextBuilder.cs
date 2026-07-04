@@ -3,6 +3,7 @@ namespace Aspire.C4;
 using Aspire.Hosting.ApplicationModel;
 using System.Reflection;
 
+
 /// <summary>
 /// Represents a system context as defined by the C4 Model.
 /// https://c4model.com/abstractions/system-context
@@ -10,7 +11,7 @@ using System.Reflection;
 /// Architectural diagrams for this system should be maintained using a C4-compliant tool.
 /// IcePanel is recommended for creating and maintaining these diagrams: https://icepanel.io/
 /// </summary>
-public abstract class SoftwareSystemContext(IDistributedApplicationBuilder builder)
+public abstract class SoftwareSystemContextBuilder(IDistributedApplicationBuilder builder)
 {
     public const string GithubDomainUrl = "https://github.com";
     public const string HostDefault = "127.0.0.1";//localhost
@@ -71,9 +72,10 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
     /// https://c4model.com/abstractions/container
     /// </summary>
 
+    public IList<Service> Services { get; init; } = [];
     public IList<IResourceBuilder<IResource>> ResourceBuilders { get; init; } = [];
     public IResourceBuilder<ExternalServiceResource>? SystemResourceBuilder { get; private set; }
-    public void Configure()
+    public DistributedApplication Build()
     {
         SystemResourceBuilder = Builder.AddExternalService(Name, SystemContextDiagramUrl);
         if (RepositoryUniformResourceLocator is not null)
@@ -85,13 +87,18 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
         Builder.Configuration["ASPNETCORE_URLS"] = $"http://+:{GetNextPort()}";
         Builder.Configuration["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"] = $"http://+:{GetNextPort()}";
 
-        var services = DiscoverServices();
+        ConfigureServices();
 
-        ConfigureServices(services);
-
-        ConfigureDependencies(services);
+        ConfigureDependencies();
+         
+        return Builder.Build();
     }
-    public void AddService(IResourceBuilder<IResource> resourceBuilder)
+    public void AddService<TService>() where TService : Service
+    {
+        var service = Activator.CreateInstance<TService>()!;
+        Services.Add(service);
+    }
+    public void AddResourceBuilder(IResourceBuilder<IResource> resourceBuilder)
     {
         SystemResourceBuilder.WithChildRelationship(resourceBuilder);
         ResourceBuilders.Add(resourceBuilder);
@@ -104,38 +111,22 @@ public abstract class SoftwareSystemContext(IDistributedApplicationBuilder build
     {
         return ResourceBuilders.FirstOrDefault(e => type.IsAssignableFrom(e.Resource.GetType())) as IResourceBuilder<TResource>; ;
     }
-    public static IDistributedApplicationBuilder Configure<TSystemContext>() where TSystemContext : SoftwareSystemContext
+    public static TSystemContextBuilder CreateBuilder<TSystemContextBuilder>() where TSystemContextBuilder : SoftwareSystemContextBuilder
     {
         var builder = DistributedApplication.CreateBuilder();
-        var system = (TSystemContext)Activator.CreateInstance(typeof(TSystemContext), builder)!;
-        system.Configure();
-        return builder;
+        var systemContextBuilder = (TSystemContextBuilder)Activator.CreateInstance(typeof(TSystemContextBuilder), builder)!;
+        return systemContextBuilder;
     }
-    private IEnumerable<Service> DiscoverServices()
+    private void ConfigureServices()
     {
-        var serviceTypes = GetType()
-            .Assembly
-            .GetTypes()
-            .Where(x =>
-                !x.IsAbstract &&
-                typeof(Service).IsAssignableFrom(x));
-
-        foreach (var serviceType in serviceTypes)
-        {
-            var service = (Service)Activator.CreateInstance(serviceType)!;
-            yield return service;
-        }
-    }
-    private void ConfigureServices(IEnumerable<Service> services)
-    {
-        foreach (var service in services)
+        foreach (var service in Services)
         {
             service.Configure(this);
         }
     }
-    private void ConfigureDependencies(IEnumerable<Service> services)
+    private void ConfigureDependencies()
     {
-        foreach (var service in services)
+        foreach (var service in Services)
         {
             var serviceResourceBuilderWithWaitSupport = GetResourceBuilder<IResourceWithWaitSupport>(service.Name);
             var serviceResourceBuilderWithEnvironment = GetResourceBuilder<IResourceWithEnvironment>(service.Name);
