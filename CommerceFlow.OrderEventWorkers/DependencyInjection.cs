@@ -1,5 +1,5 @@
 ﻿using CommerceFlow.Application;
-using CommerceFlow.Infrastructure;
+using CommerceFlow.Infrastructure.Kafka;
 using CommerceFlow.Orders;
 
 namespace Microsoft.Extensions.DependencyInjection;

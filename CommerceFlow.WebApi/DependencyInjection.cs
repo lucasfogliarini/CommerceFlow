@@ -1,8 +1,7 @@
 ﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
-using CommerceFlow.Infrastructure;
+using CommerceFlow.Infrastructure.Kafka;
 using CommerceFlow.Orders;
-using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;

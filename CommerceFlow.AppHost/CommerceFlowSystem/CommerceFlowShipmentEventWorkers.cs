@@ -1,4 +1,5 @@
 using Aspire.C4;
+using Aspire.Hosting.Azure;
 
 [DependsOn<PostgresDatabaseResource>]
 [DependsOn<KafkaServerResource>]

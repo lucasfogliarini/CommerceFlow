@@ -11,6 +11,7 @@
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
     <PackageReference Include="WolverineFx" Version="6.16.0" />
+    <PackageReference Include="WolverineFx.AzureServiceBus" Version="6.16.0" />
     <PackageReference Include="WolverineFx.Kafka" Version="6.16.0" />
     <PackageReference Include="WolverineFx.RuntimeCompilation" Version="6.16.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />

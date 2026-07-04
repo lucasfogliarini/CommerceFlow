@@ -1,6 +1,7 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
+using CommerceFlow.Infrastructure.Kafka;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
@@ -37,17 +37,7 @@ public static class DependencyInjection
     {
         builder.UseWolverine(opts =>
         {
-            opts.Policies
-                .OnException<Exception>()
-                .RetryWithCooldown(
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3))
-                .Then
-                .PublishToDeadLetterTopic();
-
-            var kafkaEndpoint = builder.Configuration.GetConnectionString("KafkaServer");
-            opts.UseKafka(kafkaEndpoint).AutoProvision();
+            opts.UseKafka(builder.Configuration);
 
             configure?.Invoke(opts);
 

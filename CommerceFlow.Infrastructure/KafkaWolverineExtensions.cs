@@ -1,12 +1,26 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 using Wolverine;
 using Wolverine.ErrorHandling;
 using Wolverine.Kafka;
 
-namespace CommerceFlow.Infrastructure;
+namespace CommerceFlow.Infrastructure.Kafka;
 
-public static class WolverineExtensions
+public static class KafkaWolverineExtensions
 {
+    public static void UseKafka(this WolverineOptions options, IConfiguration configuration)
+    {
+        options.Policies
+            .OnException<Exception>()
+            .RetryWithCooldown(
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(3))
+            .Then
+            .PublishToDeadLetterTopic();
+        var kafkaEndpoint = configuration.GetConnectionString("KafkaServer");
+        options.UseKafka(kafkaEndpoint).AutoProvision();
+    }
     public static WolverineOptions Subscribe<TMessage>(this WolverineOptions options, string groupId = "commerceflow")
     {
         var topic = ToTopic<TMessage>();
