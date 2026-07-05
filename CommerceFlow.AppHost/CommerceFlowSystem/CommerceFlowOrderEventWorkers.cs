@@ -1,8 +1,7 @@
 using Aspire.C4;
-using Aspire.Hosting.Azure;
 
 [DependsOn<PostgresDatabaseResource>]
-[DependsOn<KafkaServerResource>]
+[DependsOn<RabbitMQServerResource>]
 public class CommerceFlowOrderEventWorkers : Service
 {
     public override string Name => "OrderEventWorkers";

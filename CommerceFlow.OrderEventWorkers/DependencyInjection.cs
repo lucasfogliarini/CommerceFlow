@@ -1,5 +1,5 @@
 ﻿using CommerceFlow.Application;
-using CommerceFlow.Infrastructure.Kafka;
+using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 
 namespace Microsoft.Extensions.DependencyInjection;

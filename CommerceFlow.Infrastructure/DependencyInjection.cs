@@ -19,8 +19,8 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
-using Wolverine.ErrorHandling;
 using Wolverine.Kafka;
+using CommerceFlow.Infrastructure.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -37,7 +37,7 @@ public static class DependencyInjection
     {
         builder.UseWolverine(opts =>
         {
-            opts.UseKafka(builder.Configuration);
+            opts.UseRabbitMQ(builder.Configuration);
 
             configure?.Invoke(opts);
 

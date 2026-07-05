@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using Wolverine;
 using Wolverine.AzureServiceBus;
-using Wolverine.ErrorHandling;
 
 namespace CommerceFlow.Infrastructure.ServiceBus;
 

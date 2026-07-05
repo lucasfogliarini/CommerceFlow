@@ -1,6 +1,6 @@
 ﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
-using CommerceFlow.Infrastructure.Kafka;
+using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
 
