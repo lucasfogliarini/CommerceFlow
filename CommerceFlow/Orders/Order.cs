@@ -39,17 +39,25 @@ public class Order : AggregateRoot
         return order;
     }
 
+    public void ExpirePayment()
+    {
+        if (Status != OrderStatus.WaitingForPayment)
+            throw new InvalidOperationException("Order must be waiting for payment to expire payment.");
+
+        Status = OrderStatus.PaymentExpired;
+
+        AddDomainEvent(new PaymentExpired(Id));
+    }
     public void ReleaseInventory()
     {
-        if (Status != OrderStatus.PaymentRejected)
-            throw new InvalidOperationException("Order must be waiting for payment to release inventory.");
+        if (Status is not (OrderStatus.PaymentRejected or OrderStatus.PaymentExpired))
+            throw new InvalidOperationException("Order must be in a cancelled or expired state to release inventory.");
 
         foreach (var item in Items)
         {
             item.Product.Release(Id, item.Quantity);
         }
     }
-
     public void ReserveInventory()
     {
         if (Status != OrderStatus.Created)

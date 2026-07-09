@@ -19,8 +19,9 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
-using Wolverine.Kafka;
 using CommerceFlow.Infrastructure.RabbitMQ;
+using CommerceFlow.Application;
+using CommerceFlow.Infrastructure.Wolverine;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -44,6 +45,7 @@ public static class DependencyInjection
             opts.UseRuntimeCompilation();
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
+        builder.Services.AddScoped<IMessageDispatcher, WolverineMessageBus>();
     }
     public static void MapHealthChecks(this WebApplication app)
     {

@@ -11,8 +11,8 @@ internal sealed class RejectPaymentEndpoint : IEndpoint
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        var command = new RejectPayment(orderId, request.PaymentReference, request.Reason);
-        await bus.PublishAsync(command);
+        var message = new RejectPayment(orderId, request.PaymentReference, request.Reason);
+        await bus.PublishAsync(message);
 
         return Results.Ok();
     }

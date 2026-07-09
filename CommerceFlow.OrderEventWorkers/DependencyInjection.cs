@@ -12,10 +12,12 @@ public static class DependencyInjection
         builder.ConfigureMessageBus(opts =>
         {
             opts.Subscribe<OrderCreated>();
-            opts.ConfigurePublisher<OrderWaitingForPayment>();
+            opts.Subscribe<OrderWaitingForPayment>();
             opts.Subscribe<ApprovePayment>();
             opts.Subscribe<RejectPayment>();
             opts.Subscribe<PaymentApproved>();
+            opts.Subscribe<PaymentRejected>();
+            opts.Subscribe<PaymentExpired>();
             opts.ConfigurePublisher<OrderReadyForShipment>();
 
             opts.Subscribe<OrderCancelled>();
