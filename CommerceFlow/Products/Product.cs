@@ -38,14 +38,13 @@ public class Product : AggregateRoot
 
         AvailableQuantity -= quantity;
         ReservedQuantity += quantity;
-        return true;
 
-        AddDomainEvent(new InventoryReserved(orderId, Id, quantity));
+        return true;
     }
 
     public void Release(Guid orderId, int quantity)
     {
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
 
         AvailableQuantity += quantity;
         ReservedQuantity -= quantity;

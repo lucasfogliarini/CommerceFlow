@@ -13,9 +13,10 @@ public record Payment
         PaymentReference = paymentReference;
     }
 
-    public void Reject(string reason)
+    public void Reject(string paymentReference, string reason)
     {
         Status = PaymentStatus.Rejected;
+        PaymentReference = paymentReference;
         RejectedReason = reason;
     }
 

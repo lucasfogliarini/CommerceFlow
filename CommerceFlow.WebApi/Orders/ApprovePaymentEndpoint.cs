@@ -1,6 +1,5 @@
 using CommerceFlow.Application;
 using Wolverine;
-using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace CommerceFlow.WebApi.Endpoints;
 
@@ -20,7 +19,7 @@ internal sealed class ApprovePaymentEndpoint : IEndpoint
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPut($"{Routes.Orders}/{{orderId}}/approve", ApprovePaymentAsync)
+        return app.MapPut($"{Routes.Orders}/{{orderId}}/approve-payment", ApprovePaymentAsync)
            .WithTags(Routes.Orders)
            .Produces(StatusCodes.Status200OK)
            .WithSummary("Aprova um pagamento para o pedido.");

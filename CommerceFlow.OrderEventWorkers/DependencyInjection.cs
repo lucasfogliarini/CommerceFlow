@@ -14,6 +14,7 @@ public static class DependencyInjection
             opts.Subscribe<OrderCreated>();
             opts.ConfigurePublisher<OrderWaitingForPayment>();
             opts.Subscribe<ApprovePayment>();
+            opts.Subscribe<RejectPayment>();
             opts.Subscribe<PaymentApproved>();
             opts.ConfigurePublisher<OrderReadyForShipment>();
 

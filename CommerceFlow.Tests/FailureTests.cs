@@ -45,7 +45,7 @@ namespace CommerceFlow.Tests
             order.ReserveInventory();
 
             // Act
-            order.RejectPayment("Card declined");
+            order.RejectPayment("payment-1", "Card declined");
 
             // Assert
             Assert.Equal(OrderStatus.Cancelled, order.Status);

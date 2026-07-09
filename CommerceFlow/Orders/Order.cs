@@ -39,6 +39,17 @@ public class Order : AggregateRoot
         return order;
     }
 
+    public void ReleaseInventory()
+    {
+        if (Status != OrderStatus.PaymentRejected)
+            throw new InvalidOperationException("Order must be waiting for payment to release inventory.");
+
+        foreach (var item in Items)
+        {
+            item.Product.Release(Id, item.Quantity);
+        }
+    }
+
     public void ReserveInventory()
     {
         if (Status != OrderStatus.Created)
@@ -64,16 +75,15 @@ public class Order : AggregateRoot
         Status = OrderStatus.PaymentApproved;
         AddDomainEvent(new PaymentApproved(Id, paymentReference));
     }
-    public void RejectPayment(string reason)
+    public void RejectPayment(string paymentReference, string reason)
     {
         if (Status != OrderStatus.WaitingForPayment)
             throw new InvalidOperationException("Order must be waiting for payment.");
 
-        Payment.Reject(reason);
+        Payment.Reject(paymentReference, reason);
+        Status = OrderStatus.PaymentRejected;
 
         AddDomainEvent(new PaymentRejected(Id, reason));
-
-        Cancel(reason);
     }
     public void ReadyForShipment()
     {
