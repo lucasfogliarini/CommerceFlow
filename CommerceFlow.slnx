@@ -6,5 +6,9 @@
   <Project Path="CommerceFlow.ShipmentEventWorkers/CommerceFlow.ShipmentEventWorkers.csproj" />
   <Project Path="CommerceFlow.Tests/CommerceFlow.Tests.csproj" />
   <Project Path="CommerceFlow.WebApi/CommerceFlow.WebApi.csproj" Id="370642a7-6f8b-497d-9868-e64bce5da79c" />
+  <Project Path="CommerceFlow.WebApp/CommerceFlow.WebApp.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="CommerceFlow/CommerceFlow.csproj" />
 </Solution>

@@ -9,6 +9,7 @@ systemBuilder.AddService<CommerceFlowPostgresServer>();
 systemBuilder.AddService<CommerceFlowOrderEventWorkers>();
 systemBuilder.AddService<CommerceFlowShipmentEventWorkers>();
 systemBuilder.AddService<CommerceFlowWebApi>();
+systemBuilder.AddService<CommerceFlowWebApp>();
 
 var app = systemBuilder.Build();
 

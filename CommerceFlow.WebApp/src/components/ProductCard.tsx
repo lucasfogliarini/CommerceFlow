@@ -1,0 +1,61 @@
+"use client";
+
+import { Product } from "@/types";
+import { useCart } from "./CartProvider";
+import { useState } from "react";
+
+interface ProductCardProps {
+  product: Product;
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem, items } = useCart();
+  const [justAdded, setJustAdded] = useState(false);
+
+  const isInCart = items.some((item) => item.product.id === product.id);
+
+  const handleAdd = () => {
+    addItem(product);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1200);
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(price);
+  };
+
+  return (
+    <div className="product-card">
+      <div className="product-card-image">
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt={product.name} />
+        ) : (
+          <span className="product-card-placeholder">📦</span>
+        )}
+      </div>
+      <div className="product-card-body">
+        {product.slug && (
+          <div className="product-card-category">{product.slug}</div>
+        )}
+        <h3 className="product-card-name">{product.name}</h3>
+        {product.description && (
+          <p className="product-card-description">{product.description}</p>
+        )}
+        <div className="product-card-footer">
+          <span className="product-card-price">
+            {formatPrice(product.unitPrice)}
+          </span>
+          <button
+            className={`product-card-add-btn ${justAdded ? "added" : ""}`}
+            onClick={handleAdd}
+          >
+            {justAdded ? "✓ Adicionado" : isInCart ? "+ Mais 1" : "🛒 Adicionar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
