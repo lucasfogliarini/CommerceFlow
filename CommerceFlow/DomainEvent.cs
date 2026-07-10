@@ -7,12 +7,14 @@
 /// </summary>
 public interface IDomainEvent;
 
-public abstract class DomainEvent : IDomainEvent
+public abstract record DomainEvent : IDomainEvent
 {
-    public DateTime OccurredOn { get; protected set; } = DateTime.Now;
+    public abstract NotificationRequest Notification { get; }
 }
 
 public interface IDomainEventHandler<in TEvent> where TEvent : IDomainEvent
 {
     Task HandleAsync(TEvent domainEvent, CancellationToken cancellationToken);
 }
+
+public record NotificationRequest(Guid AggregateId, string Message);

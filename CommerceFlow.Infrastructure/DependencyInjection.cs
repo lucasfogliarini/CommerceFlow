@@ -1,7 +1,6 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.Repositories;
-using CommerceFlow.Infrastructure.Kafka;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +38,8 @@ public static class DependencyInjection
         builder.UseWolverine(opts =>
         {
             opts.UseRabbitMQ(builder.Configuration);
+
+            opts.Subscribe<NotificationRequest>();
 
             configure?.Invoke(opts);
 

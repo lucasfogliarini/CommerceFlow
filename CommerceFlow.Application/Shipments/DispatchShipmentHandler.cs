@@ -4,9 +4,7 @@ namespace CommerceFlow.Application.Shipments;
 
 public sealed class DispatchShipmentHandler(IShipmentRepository shipmentRepository) : IDomainEventHandler<PackingCompleted>
 {
-    public async Task HandleAsync(
-        PackingCompleted packingCompleted,
-        CancellationToken cancellationToken)
+    public async Task HandleAsync(PackingCompleted packingCompleted, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(packingCompleted);
 

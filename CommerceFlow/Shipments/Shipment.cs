@@ -57,7 +57,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.CarrierAssigned;
 
-        AddDomainEvent(new CarrierAssigned(Id, carrier.Id));
+        AddDomainEvent(new CarrierAssigned(Id, OrderId, Carrier.Name));
     }
 
     public void CompletePacking()
@@ -68,7 +68,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Packed;
 
-        AddDomainEvent(new PackingCompleted(Id));
+        AddDomainEvent(new PackingCompleted(Id, OrderId));
     }
 
     public void Dispatch()
@@ -106,6 +106,7 @@ public class Shipment : AggregateRoot
         AddDomainEvent(
             new TrackingUpdated(
                 Id,
+                OrderId,
                 description,
                 location));
     }
@@ -129,6 +130,6 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Cancelled;
 
-        AddDomainEvent(new ShipmentCancelled(Id));
+        AddDomainEvent(new ShipmentCancelled(Id, OrderId));
     }
 }

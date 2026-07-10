@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommerceFlow.Notifications;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Wolverine;
 
@@ -24,19 +25,47 @@ public sealed class CommerceFlowDbContext(IMessageBus bus, DbContextOptions opti
             .SelectMany(x => x.DomainEvents)
             .ToList();
 
+        await AddNotificationsAsync(domainEvents);
+
         var result = await base.SaveChangesAsync(cancellationToken);
 
+        ClearDomainEvents(aggregates);
+
+        await PublishDomainEventsAsync(domainEvents);
+
+        return result;
+    }
+
+    private async Task AddNotificationsAsync(IEnumerable<IDomainEvent> domainEvents)
+    {
+        foreach (var domainEvent in domainEvents.OfType<DomainEvent>())
+        {
+            if (domainEvent.Notification != null)
+            {
+                var notificationRequest = domainEvent.Notification;
+                var notification = new Notification { AggregateId = notificationRequest.AggregateId, Message = notificationRequest.Message };
+                await AddAsync(notification);
+            }
+        }
+    }
+
+    private void ClearDomainEvents(IEnumerable<AggregateRoot> aggregates)
+    {
         foreach (var aggregate in aggregates)
         {
             aggregate.ClearDomainEvents();
         }
+    }
 
+    private async Task PublishDomainEventsAsync(IEnumerable<IDomainEvent> domainEvents)
+    {
         foreach (var domainEvent in domainEvents)
         {
             await bus.PublishAsync(domainEvent);
-        }
 
-        return result;
+            if (domainEvent is DomainEvent { Notification: not null } domainEventNotificator)
+                await bus.PublishAsync(domainEventNotificator.Notification);
+        }
     }
 
     public int Commit()
