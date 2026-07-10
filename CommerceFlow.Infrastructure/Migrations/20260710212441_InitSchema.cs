@@ -24,6 +24,19 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AggregateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Order",
                 columns: table => new
                 {
@@ -55,10 +68,13 @@ namespace CommerceFlow.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     Weight = table.Column<decimal>(type: "numeric", nullable: false),
                     AvailableQuantity = table.Column<int>(type: "integer", nullable: false),
-                    ReservedQuantity = table.Column<int>(type: "integer", nullable: false)
+                    ReservedQuantity = table.Column<int>(type: "integer", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,6 +223,9 @@ namespace CommerceFlow.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Notification");
+
             migrationBuilder.DropTable(
                 name: "OrderItem");
 

@@ -13,7 +13,7 @@ namespace CommerceFlow.Tests
         {
             customerId ??= Guid.NewGuid();
             productId ??= Guid.NewGuid();
-            var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
+            var product = Product.Create(productId.Value, "product-teste", "Produto Teste", "Description", 5.00m, 10);
             var item = new OrderItem(product, quantity);
             var shippingAddress = new Address("Rua Teste", "123", "Cidade Teste", "Estado Teste", "12345-678", "Pais Teste");
             var order = Order.Create(customerId.Value, shippingAddress, [item]);
@@ -26,7 +26,7 @@ namespace CommerceFlow.Tests
             // Arrange
             var order = CreateOrderHelper();
             var productId = order.Items.First().Product.Id;
-            var product = Product.Create(productId, "Product1", 5m, 2);
+            var product = Product.Create(productId, "product1", "Product1", "Description", 5m, 2);
 
             // Act
             product.Reserve(order.Id, 3);

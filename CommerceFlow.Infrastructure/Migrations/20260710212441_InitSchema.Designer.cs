@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommerceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(CommerceFlowDbContext))]
-    [Migration("20260710175709_AddNotification")]
-    partial class AddNotification
+    [Migration("20260710212441_InitSchema")]
+    partial class InitSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -151,12 +151,24 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.Property<int>("AvailableQuantity")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ReservedQuantity")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("numeric");

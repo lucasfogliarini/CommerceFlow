@@ -13,7 +13,7 @@ namespace CommerceFlow.Tests
         {
             customerId ??= Guid.NewGuid();
             productId ??= Guid.NewGuid();
-            var product = Product.Create(productId.Value, "Produto Teste", 5.00m, 10);
+            var product = Product.Create(productId.Value, "produto-teste", "Produto Teste", "Description", 5.00m, 10);
             var item = new OrderItem(product, quantity);
             var address = new Address("Rua Teste","123", "Cidade Teste", "Estado Teste", "12345-678", "Pais Teste");
             var order = Order.Create(customerId.Value, address, [item]);

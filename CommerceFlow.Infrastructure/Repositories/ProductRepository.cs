@@ -18,8 +18,13 @@ public class ProductRepository(CommerceFlowDbContext dbContext) : Repository(dbC
         return await Set<Product>().Where(p => ids.Contains(p.Id)).ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Product>> GetProductsAsync(CancellationToken cancellationToken)
+    {
+        return await Set<Product>().ToListAsync(cancellationToken);
+    }
+
     public void Update(Product product)
     {
         dbContext.Update(product);
-    }
+    }    
 }

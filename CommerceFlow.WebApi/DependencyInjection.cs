@@ -3,6 +3,7 @@ using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.WebApi;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 
@@ -14,6 +15,11 @@ public static class DependencyInjection
     {
         builder.AddInfrastructure();
         builder.Services.AddEndpoints();
+        builder.Services.AddControllers().AddOData(opt =>
+        {
+            opt.EnableQueryFeatures(50);
+            opt.AddRouteComponentsUsingODataControllers();
+        }); ;
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
@@ -36,6 +42,7 @@ public static class DependencyInjection
     public static void UseApplication(this WebApplication app)
     {
         app.MapEndpoints();
+        app.MapControllers();
         app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
