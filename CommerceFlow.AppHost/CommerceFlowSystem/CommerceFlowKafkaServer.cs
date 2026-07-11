@@ -14,7 +14,7 @@ public class CommerceFlowKafkaServer : Service
                                    system.AddResourceBuilder(r);
                                })
                                .WithLifetime(ContainerLifetime.Persistent)
-                               .WithDataVolume("KafkaServer_data");
+                               .WithDataVolume(DataVolumeName);
 
         system.AddResourceBuilder(kafkaResourceBuilder);
     }

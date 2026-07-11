@@ -11,7 +11,7 @@ public class CommerceFlowRabbitMQServer : Service
         var serviceBusResourceBuilder = system.Builder.AddRabbitMQ(Name, user, password, port: system.GetNextPort())
                                         .WithManagementPlugin(system.GetNextPort())
                                         .WithLifetime(ContainerLifetime.Persistent)
-                                        .WithDataVolume($"{Name}_data");  
+                                        .WithDataVolume(DataVolumeName);
 
         system.AddResourceBuilder(serviceBusResourceBuilder);
     }

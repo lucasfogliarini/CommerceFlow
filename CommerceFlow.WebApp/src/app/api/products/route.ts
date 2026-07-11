@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:2008";
+const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
 
 export async function GET() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/odata/products`, {
+    try {
+      console.log(COMMERCEFLOW_API_URL);
+      const res = await fetch(`${COMMERCEFLOW_API_URL}/odata/products`, {
       cache: "no-store",
     });
 

@@ -13,7 +13,7 @@ public class CommerceFlowPostgresServer : Service
                                         pgAdminResourceBuilder.WithLifetime(ContainerLifetime.Persistent);
                                         system.AddResourceBuilder(pgAdminResourceBuilder);
                                     })
-                                    .WithDataVolume($"{nameof(CommerceFlowPostgresServer)}_data");
+                                    .WithDataVolume(DataVolumeName);
         var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlow");
 
         system.AddResourceBuilder(postgresServerResourceBuilder);

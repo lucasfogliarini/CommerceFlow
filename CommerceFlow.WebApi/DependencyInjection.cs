@@ -3,8 +3,10 @@ using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.WebApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -19,7 +21,8 @@ public static class DependencyInjection
         {
             opt.EnableQueryFeatures(50);
             opt.AddRouteComponentsUsingODataControllers();
-        }); ;
+        });
+        builder.AddJwtBearerAuthentication();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
@@ -44,6 +47,8 @@ public static class DependencyInjection
         app.MapEndpoints();
         app.MapControllers();
         app.MapHealthChecks();
+        app.UseAuthentication();
+        app.UseAuthorization();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -70,9 +75,36 @@ public static class DependencyInjection
 
         foreach (IEndpoint endpoint in endpoints)
         {
-            endpoint.MapEndpoint(app);
+            endpoint
+                .MapEndpoint(app)
+                .RequireAuthorization();
         }
 
         return app;
+    }
+    private static void AddJwtBearerAuthentication(this IHostApplicationBuilder builder)
+    {
+        var jwtConfiguration = GetConfiguration<JwtConfiguration>(builder.Configuration);
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+         {
+             options.Authority = jwtConfiguration.Authority;
+             options.Audience = jwtConfiguration.Audience;
+             options.RequireHttpsMetadata = false;
+             options.SaveToken = true;
+         });
+        builder.Services.AddAuthorization();
+    }
+    record JwtConfiguration(string Authority, string Audience);
+
+    static TConfiguration GetConfiguration<TConfiguration>(IConfiguration configuration)
+    {
+        var sectionName = typeof(TConfiguration).Name;
+        var section = configuration.GetRequiredSection(sectionName);
+        var config = section.Get<TConfiguration>();
+        return config is null
+            ? throw new InvalidOperationException($"Configuration section '{sectionName}' is missing or invalid.")
+            : config;
     }
 }

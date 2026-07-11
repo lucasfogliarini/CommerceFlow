@@ -6,6 +6,7 @@ var systemBuilder = SoftwareSystemContextBuilder.CreateBuilder<CommerceFlowSyste
 systemBuilder.AddService<CommerceFlowRabbitMQServer>();
 //systemBuilder.AddService<CommerceFlowServiceBusServer>();
 systemBuilder.AddService<CommerceFlowPostgresServer>();
+systemBuilder.AddService<CommerceFlowKeycloakServer>();
 systemBuilder.AddService<CommerceFlowOrderEventWorkers>();
 systemBuilder.AddService<CommerceFlowShipmentEventWorkers>();
 systemBuilder.AddService<CommerceFlowWebApi>();

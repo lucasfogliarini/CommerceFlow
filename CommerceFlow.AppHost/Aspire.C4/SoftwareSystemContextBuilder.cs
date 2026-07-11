@@ -107,9 +107,14 @@ public abstract class SoftwareSystemContextBuilder(IDistributedApplicationBuilde
     {
         return ResourceBuilders.FirstOrDefault(e => e.Resource.Name == name) as IResourceBuilder<TResource>;
     }
+    public IResourceBuilder<TResource> GetResourceBuilder<TResource>() where TResource : IResource
+    {
+        var type = typeof(TResource);
+        return GetResourceBuilder<TResource>(type)!;
+    }
     public IResourceBuilder<TResource>? GetResourceBuilder<TResource>(Type type) where TResource : IResource
     {
-        return ResourceBuilders.FirstOrDefault(e => type.IsAssignableFrom(e.Resource.GetType())) as IResourceBuilder<TResource>; ;
+        return ResourceBuilders.FirstOrDefault(e => type.IsAssignableFrom(e.Resource.GetType())) as IResourceBuilder<TResource>;
     }
     public static TSystemContextBuilder CreateBuilder<TSystemContextBuilder>() where TSystemContextBuilder : SoftwareSystemContextBuilder
     {

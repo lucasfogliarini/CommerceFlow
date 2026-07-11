@@ -9,4 +9,6 @@ public abstract class Service
 {
     public abstract string Name { get; }
     public abstract void Configure(SoftwareSystemContextBuilder system);
+
+    protected string DataVolumeName => $"{this.GetType().Name}_data";
 }
