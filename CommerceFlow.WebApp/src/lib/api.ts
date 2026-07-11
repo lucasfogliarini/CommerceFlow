@@ -29,3 +29,36 @@ export async function createOrder(order: CreateOrderRequest, token?: string): Pr
 
   return res;
 }
+
+export async function approvePayment(orderId: string, paymentReference: string, token?: string): Promise<Response> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/orders/${orderId}/approve-payment`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ paymentReference }),
+  });
+
+  return res;
+}
+
+export async function getMyAccount(token?: string) {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/account/me`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch account: ${res.status}`);
+  }
+
+  return await res.json();
+}

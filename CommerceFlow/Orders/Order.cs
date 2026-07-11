@@ -1,12 +1,9 @@
-using CommerceFlow.Customers;
-
 namespace CommerceFlow.Orders;
 
 public class Order : AggregateRoot
 {
     public string Number { get; private set; } = default!;
     public Guid CustomerId { get; private set; }
-    public Customer Customer { get; private set; }
     public OrderStatus Status { get; private set; }
     public List<OrderItem> Items { get; private set; }
     public decimal? TotalAmount => Items?.Sum(x => x.TotalAmount);
@@ -42,7 +39,7 @@ public class Order : AggregateRoot
     public void ExpirePayment()
     {
         if (Status != OrderStatus.WaitingForPayment)
-            throw new InvalidOperationException("Order must be waiting for payment to expire payment.");
+            return;
 
         Status = OrderStatus.PaymentExpired;
 

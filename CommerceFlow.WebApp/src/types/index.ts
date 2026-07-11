@@ -37,3 +37,24 @@ export interface CartItem {
   product: Product;
   quantity: number;
 }
+
+export interface Customer {
+  id: string;
+  email: string;
+  name: string;
+  address: Address;
+}
+
+export interface OrderSummary {
+  id: string;
+  number: string;
+  status: string;
+  totalAmount: number;
+  itemsCount: number;
+}
+
+export interface AccountResponse {
+  email: string;
+  customer: Customer | null;
+  orders: OrderSummary[];
+}

@@ -7,6 +7,9 @@ public class CustomerRepository(CommerceFlowDbContext dbContext) : Repository(db
 {
     public async Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await Set<Customer>().FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
+        return await Set<Customer>()
+                     .Include(c=>c.Orders)
+                     .ThenInclude(o=>o.Items)
+                     .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
     }
 }

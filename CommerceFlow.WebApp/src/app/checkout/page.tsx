@@ -92,9 +92,11 @@ export default function CheckoutPage() {
         const data = await res.json().catch(() => null);
         throw new Error(data?.error || `Erro ao criar pedido (${res.status})`);
       }
+      
+      const orderId = await res.json();
 
       clearCart();
-      router.push("/checkout/success");
+      router.push(`/payment/${orderId}`);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao processar o pedido."

@@ -6,7 +6,7 @@ public class OrderItem : Entity
     public Guid ProductId { get; private set; } = default!;
     public Product Product { get; private set; } = default!;
     public int Quantity { get; private set; }
-    public decimal TotalAmount => Quantity * Product.UnitPrice;
+    public decimal? TotalAmount => Quantity * Product?.UnitPrice;
 
     private OrderItem() { }
 
