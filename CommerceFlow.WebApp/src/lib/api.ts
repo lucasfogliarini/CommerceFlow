@@ -15,10 +15,15 @@ export async function fetchProducts(): Promise<Product[]> {
   return data.value ?? data;
 }
 
-export async function createOrder(order: CreateOrderRequest): Promise<Response> {
+export async function createOrder(order: CreateOrderRequest, token?: string): Promise<Response> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const res = await fetch(`${API_BASE}/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(order),
   });
 

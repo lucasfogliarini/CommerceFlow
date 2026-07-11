@@ -21,6 +21,7 @@ using Wolverine;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Application;
 using CommerceFlow.Infrastructure.Wolverine;
+using CommerceFlow.Customers;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -82,6 +83,7 @@ public static class DependencyInjection
     }
     private static void AddRepositories(this IServiceCollection services)
     {
+        services.AddTransient<ICustomerRepository, CustomerRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IShipmentRepository, ShipmentRepository>();
         services.AddTransient<IProductRepository, ProductRepository>();
@@ -95,7 +97,10 @@ public static class DependencyInjection
         db.Database.Migrate();
 
         if (await db.Set<Product>().AnyAsync()) return;
-        
+
+        var customer = Customer.Create("lucasfogliarini@gmail.com", "Lucas Fogliarini");
+        await db.AddAsync(customer);
+
         var products = CreateProducts();
 
         await db.AddRangeAsync(products);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
@@ -13,6 +13,29 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [keycloak, setKeycloak] = useState<any>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const isRun = useRef(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isRun.current) {
+      isRun.current = true;
+      import("keycloak-js").then(({ default: Keycloak }) => {
+        const kc = new Keycloak({
+          url: "http://localhost:2006/",
+          realm: "commerceflow",
+          clientId: "commerceflow",
+        });
+        kc.init({ onLoad: "login-required" })
+          .then((auth) => {
+            setKeycloak(kc);
+            setAuthenticated(auth);
+          })
+          .catch(() => console.error("Keycloak init failed"));
+      });
+    }
+  }, []);
+
   const [address, setAddress] = useState<Address>({
     street: "",
     number: "",
@@ -21,8 +44,6 @@ export default function CheckoutPage() {
     zipCode: "",
     country: "Brasil",
   });
-
-  const [customerId, setCustomerId] = useState("");
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -37,7 +58,7 @@ export default function CheckoutPage() {
 
   const isValid = () => {
     return (
-      customerId.trim() &&
+      address.street.trim() &&
       address.street.trim() &&
       address.number.trim() &&
       address.city.trim() &&
@@ -56,7 +77,6 @@ export default function CheckoutPage() {
     setError("");
 
     const orderRequest: CreateOrderRequest = {
-      customerId: customerId.trim(),
       shippingAddress: address,
       items: items.map((item) => ({
         productId: item.product.id,
@@ -65,7 +85,8 @@ export default function CheckoutPage() {
     };
 
     try {
-      const res = await createOrder(orderRequest);
+      const token = keycloak?.token;
+      const res = await createOrder(orderRequest, token);
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
@@ -102,6 +123,14 @@ export default function CheckoutPage() {
     );
   }
 
+  if (!authenticated) {
+    return (
+      <div className="checkout-page" style={{ padding: "40px", textAlign: "center" }}>
+        Autenticando...
+      </div>
+    );
+  }
+
   return (
     <div className="checkout-page">
       <div className="container">
@@ -115,24 +144,6 @@ export default function CheckoutPage() {
           <div className="checkout-layout">
             {/* Form */}
             <div>
-              {/* Customer ID */}
-              <div className="checkout-form" style={{ marginBottom: "20px" }}>
-                <h2>👤 Identificação</h2>
-                <div className="form-grid full-width">
-                  <div className="form-group">
-                    <label className="form-label">Customer ID (UUID)</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="ex: 550e8400-e29b-41d4-a716-446655440000"
-                      value={customerId}
-                      onChange={(e) => setCustomerId(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* Shipping Address */}
               <div className="checkout-form">
                 <h2>🚚 Endereço de Entrega</h2>

@@ -2,6 +2,7 @@ namespace CommerceFlow.Orders;
 
 public class OrderItem : Entity
 {
+    public Guid OrderId { get; private set; } = default!;
     public Guid ProductId { get; private set; } = default!;
     public Product Product { get; private set; } = default!;
     public int Quantity { get; private set; }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommerceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(CommerceFlowDbContext))]
-    [Migration("20260710212441_InitSchema")]
+    [Migration("20260711172513_InitSchema")]
     partial class InitSchema
     {
         /// <inheritdoc />
@@ -25,6 +25,25 @@ namespace CommerceFlow.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer");
+                });
 
             modelBuilder.Entity("CommerceFlow.Notifications.Notification", b =>
                 {
@@ -115,6 +134,8 @@ namespace CommerceFlow.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("Order");
                 });
 
@@ -124,7 +145,7 @@ namespace CommerceFlow.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("OrderId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
@@ -319,11 +340,24 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.ToTable("TrackingEvent");
                 });
 
+            modelBuilder.Entity("CommerceFlow.Orders.Order", b =>
+                {
+                    b.HasOne("CommerceFlow.Customers.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("CommerceFlow.Orders.OrderItem", b =>
                 {
                     b.HasOne("CommerceFlow.Orders.Order", null)
                         .WithMany("Items")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CommerceFlow.Product", "Product")
                         .WithMany()
@@ -361,6 +395,11 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.HasOne("CommerceFlow.Shipments.Tracking", null)
                         .WithMany("Events")
                         .HasForeignKey("TrackingId");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("CommerceFlow.Orders.Order", b =>

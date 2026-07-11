@@ -29,7 +29,6 @@ export interface CreateOrderItem {
 }
 
 export interface CreateOrderRequest {
-  customerId: string;
   shippingAddress: Address;
   items: CreateOrderItem[];
 }

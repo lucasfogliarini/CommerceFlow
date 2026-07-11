@@ -1,14 +1,15 @@
+using CommerceFlow.Customers;
+
 namespace CommerceFlow.Orders;
 
 public class Order : AggregateRoot
 {
-    private readonly List<OrderItem> _items = [];
-
     public string Number { get; private set; } = default!;
     public Guid CustomerId { get; private set; }
+    public Customer Customer { get; private set; }
     public OrderStatus Status { get; private set; }
-    public IReadOnlyCollection<OrderItem> Items => _items;
-    public decimal TotalAmount => _items.Sum(x => x.TotalAmount);
+    public List<OrderItem> Items { get; private set; }
+    public decimal? TotalAmount => Items?.Sum(x => x.TotalAmount);
     public OrderShipment? Shipment { get; private set; }
     public Payment Payment { get; private set; }
     
@@ -29,11 +30,10 @@ public class Order : AggregateRoot
             Number = DateTime.UtcNow.Ticks.ToString(),
             CustomerId = customerId,
             Status = OrderStatus.Created,
+            Items = [.. items],
             Shipment = OrderShipment.Create(shippingAddress)
         };
-        order.Payment = Payment.Create(order.TotalAmount);
-
-        order._items.AddRange(items);
+        order.Payment = Payment.Create(order.TotalAmount.GetValueOrDefault());
         order.AddDomainEvent(new OrderCreated(order.Id, customerId));
 
         return order;

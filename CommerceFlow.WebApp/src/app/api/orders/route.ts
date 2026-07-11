@@ -6,9 +6,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+      const authHeader = request.headers.get("Authorization");
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (authHeader) {
+          headers["Authorization"] = authHeader;
+      }
+
       const res = await fetch(`${COMMERCEFLOW_API_URL}/orders`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(body),
     });
 

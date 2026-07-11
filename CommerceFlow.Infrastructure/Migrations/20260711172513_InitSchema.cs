@@ -24,6 +24,19 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notification",
                 columns: table => new
                 {
@@ -34,32 +47,6 @@ namespace CommerceFlow.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notification", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Number = table.Column<string>(type: "text", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Payment_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Payment_PaymentReference = table.Column<string>(type: "text", nullable: true),
-                    Payment_RejectedReason = table.Column<string>(type: "text", nullable: true),
-                    Payment_Status = table.Column<int>(type: "integer", nullable: false),
-                    Shipment_Status = table.Column<int>(type: "integer", nullable: true),
-                    Shipment_TrackingCode = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_City = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Country = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Number = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_State = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Street = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_ZipCode = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,26 +81,33 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderItem",
+                name: "Order",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Number = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Payment_Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Payment_PaymentReference = table.Column<string>(type: "text", nullable: true),
+                    Payment_RejectedReason = table.Column<string>(type: "text", nullable: true),
+                    Payment_Status = table.Column<int>(type: "integer", nullable: false),
+                    Shipment_Status = table.Column<int>(type: "integer", nullable: true),
+                    Shipment_TrackingCode = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_City = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Country = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Number = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_State = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Street = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_ZipCode = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItem", x => x.Id);
+                    table.PrimaryKey("PK_Order", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderItem_Order_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Order",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_OrderItem_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
+                        name: "FK_Order_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -170,6 +164,32 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderItem",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItem_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItem_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShipmentItem",
                 columns: table => new
                 {
@@ -188,6 +208,11 @@ namespace CommerceFlow.Infrastructure.Migrations
                         principalTable: "Shipment",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_CustomerId",
+                table: "Order",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItem_OrderId",
@@ -243,6 +268,9 @@ namespace CommerceFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Shipment");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
 
             migrationBuilder.DropTable(
                 name: "Carrier");
