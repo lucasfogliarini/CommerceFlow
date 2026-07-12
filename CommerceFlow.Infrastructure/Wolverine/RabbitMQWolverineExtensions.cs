@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Wolverine;
 using Wolverine.RabbitMQ;
 
@@ -7,13 +6,6 @@ namespace CommerceFlow.Infrastructure.RabbitMQ;
 
 public static class RabbitMQWolverineExtensions
 {
-    public static void UseRabbitMQ(this WolverineOptions options, IConfiguration configuration)
-    {
-        var rabbitMqEndpoint = configuration.GetConnectionString("RabbitMQServer");
-
-        options.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
-    }
-
     public static WolverineOptions Subscribe<TMessage>(this WolverineOptions options)
     {
         var queue = ToQueue<TMessage>();

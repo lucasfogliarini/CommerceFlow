@@ -1,8 +1,13 @@
 ﻿using CommerceFlow;
+using CommerceFlow.Application;
+using CommerceFlow.Customers;
 using CommerceFlow.Infrastructure;
+using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Infrastructure.Repositories;
+using CommerceFlow.Infrastructure.Wolverine;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
+using Humanizer.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -14,14 +19,12 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using RabbitMQ.Client;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
-using CommerceFlow.Infrastructure.RabbitMQ;
-using CommerceFlow.Application;
-using CommerceFlow.Infrastructure.Wolverine;
-using CommerceFlow.Customers;
+using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -36,9 +39,11 @@ public static class DependencyInjection
     }
     public static void ConfigureMessageBus(this IHostApplicationBuilder builder, Action<WolverineOptions>? configure)
     {
+        var rabbitMqEndpoint = builder.Configuration.GetConnectionString("RabbitMQServer");
+
         builder.UseWolverine(opts =>
         {
-            opts.UseRabbitMQ(builder.Configuration);
+            opts.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
 
             opts.Subscribe<NotificationRequest>();
 
@@ -48,6 +53,18 @@ public static class DependencyInjection
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
         builder.Services.AddScoped<IMessageDispatcher, WolverineMessageBus>();
+        builder.Services
+            .AddSingleton(sp =>
+            {
+                var factory = new ConnectionFactory
+                {
+                    Uri = new Uri(rabbitMqEndpoint),
+                };
+                var connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
+                return connection;
+            })
+            .AddHealthChecks()
+            .AddRabbitMQ();
     }
     public static void MapHealthChecks(this WebApplication app)
     {
