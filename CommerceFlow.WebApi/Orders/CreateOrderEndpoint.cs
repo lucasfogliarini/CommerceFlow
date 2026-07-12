@@ -13,13 +13,15 @@ internal sealed class CreateOrderEndpoint : IEndpoint
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        var email = user.FindFirstValue(ClaimTypes.Email);
-        if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
+        if (user.Identity?.IsAuthenticated != true) return Results.Unauthorized();
 
-        var command = new CreateOrder(email, request.ShippingAddress, request.Items);
-        var guid = await bus.InvokeAsync<Guid>(command, cancellationToken);
+        var createCustomer = new CreateCustomerIfNotExist(user);
+        var customerGuid = await bus.InvokeAsync<Guid>(createCustomer, cancellationToken);        
 
-        return Results.Ok(guid);
+        var createOrder = new CreateOrder(customerGuid, request.ShippingAddress, request.Items);
+        var orderGuid = await bus.InvokeAsync<Guid>(createOrder, cancellationToken);
+
+        return Results.Ok(orderGuid);
     }
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)

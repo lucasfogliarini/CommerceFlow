@@ -7,7 +7,6 @@ using CommerceFlow.Infrastructure.Repositories;
 using CommerceFlow.Infrastructure.Wolverine;
 using CommerceFlow.Orders;
 using CommerceFlow.Shipments;
-using Humanizer.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -115,8 +114,6 @@ public static class DependencyInjection
 
         if (await db.Set<Product>().AnyAsync()) return;
 
-        var customer = Customer.Create("lucasfogliarini@gmail.com", "Lucas Fogliarini");
-        await db.AddAsync(customer);
 
         var products = CreateProducts();
 

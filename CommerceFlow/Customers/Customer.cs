@@ -1,20 +1,19 @@
+using CommerceFlow.Accounts;
 using CommerceFlow.Orders;
 
 namespace CommerceFlow.Customers;
 
-public class Customer : Entity
+public class Customer : Account
 {
-    public string Email { get; private set; } = default!;
-    public string Name { get; private set; } = default!;
-    public List<Order> Orders { get; private set; }
-
     private Customer() { }
 
-    public static Customer Create(string email, string name)
+    public List<Order> Orders { get; private set; }
+    
+    public static Customer Create(Guid id, string email, string name)
     {
         return new Customer
         {
-            Id = Guid.NewGuid(),
+            Id = id,
             Email = email,
             Name = name
         };

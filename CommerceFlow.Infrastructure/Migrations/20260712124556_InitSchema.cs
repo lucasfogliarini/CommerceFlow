@@ -12,6 +12,19 @@ namespace CommerceFlow.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Account",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Account", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Carrier",
                 columns: table => new
                 {
@@ -21,19 +34,6 @@ namespace CommerceFlow.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Carrier", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,33 +81,18 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
+                name: "Customer",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Number = table.Column<string>(type: "text", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Payment_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Payment_PaymentReference = table.Column<string>(type: "text", nullable: true),
-                    Payment_RejectedReason = table.Column<string>(type: "text", nullable: true),
-                    Payment_Status = table.Column<int>(type: "integer", nullable: false),
-                    Shipment_Status = table.Column<int>(type: "integer", nullable: true),
-                    Shipment_TrackingCode = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_City = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Country = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Number = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_State = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_Street = table.Column<string>(type: "text", nullable: true),
-                    Shipment_Address_ZipCode = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.PrimaryKey("PK_Customer", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Order_Customer_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customer",
+                        name: "FK_Customer_Account_Id",
+                        column: x => x.Id,
+                        principalTable: "Account",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -164,6 +149,58 @@ namespace CommerceFlow.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Number = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Payment_Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Payment_PaymentReference = table.Column<string>(type: "text", nullable: true),
+                    Payment_RejectedReason = table.Column<string>(type: "text", nullable: true),
+                    Payment_Status = table.Column<int>(type: "integer", nullable: false),
+                    Shipment_Status = table.Column<int>(type: "integer", nullable: true),
+                    Shipment_TrackingCode = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_City = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Country = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Number = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_State = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_Street = table.Column<string>(type: "text", nullable: true),
+                    Shipment_Address_ZipCode = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShipmentItem",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Weight = table.Column<decimal>(type: "numeric", nullable: false),
+                    ShipmentId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShipmentItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShipmentItem_Shipment_ShipmentId",
+                        column: x => x.ShipmentId,
+                        principalTable: "Shipment",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -189,25 +226,11 @@ namespace CommerceFlow.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ShipmentItem",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    Weight = table.Column<decimal>(type: "numeric", nullable: false),
-                    ShipmentId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShipmentItem", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ShipmentItem_Shipment_ShipmentId",
-                        column: x => x.ShipmentId,
-                        principalTable: "Shipment",
-                        principalColumn: "Id");
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_Email",
+                table: "Account",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_CustomerId",
@@ -277,6 +300,9 @@ namespace CommerceFlow.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tracking");
+
+            migrationBuilder.DropTable(
+                name: "Account");
         }
     }
 }

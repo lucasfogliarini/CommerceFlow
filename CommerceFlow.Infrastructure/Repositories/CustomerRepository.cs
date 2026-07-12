@@ -12,4 +12,9 @@ public class CustomerRepository(CommerceFlowDbContext dbContext) : Repository(db
                      .ThenInclude(o=>o.Items)
                      .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
     }
+
+    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
+    {
+        await dbContext.AddAsync(customer, cancellationToken);
+    }
 }

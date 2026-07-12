@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommerceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(CommerceFlowDbContext))]
-    [Migration("20260711172513_InitSchema")]
+    [Migration("20260712124556_InitSchema")]
     partial class InitSchema
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace CommerceFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
+            modelBuilder.Entity("CommerceFlow.Accounts.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,12 @@ namespace CommerceFlow.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customer");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Account");
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("CommerceFlow.Notifications.Notification", b =>
@@ -340,15 +345,20 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.ToTable("TrackingEvent");
                 });
 
+            modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
+                {
+                    b.HasBaseType("CommerceFlow.Accounts.Account");
+
+                    b.ToTable("Customer", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Orders.Order", b =>
                 {
-                    b.HasOne("CommerceFlow.Customers.Customer", "Customer")
+                    b.HasOne("CommerceFlow.Customers.Customer", null)
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CommerceFlow.Orders.OrderItem", b =>
@@ -399,7 +409,11 @@ namespace CommerceFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
                 {
-                    b.Navigation("Orders");
+                    b.HasOne("CommerceFlow.Accounts.Account", null)
+                        .WithOne()
+                        .HasForeignKey("CommerceFlow.Customers.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CommerceFlow.Orders.Order", b =>
@@ -415,6 +429,11 @@ namespace CommerceFlow.Infrastructure.Migrations
             modelBuilder.Entity("CommerceFlow.Shipments.Tracking", b =>
                 {
                     b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Customers.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

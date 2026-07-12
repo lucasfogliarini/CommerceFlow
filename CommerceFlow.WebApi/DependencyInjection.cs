@@ -6,7 +6,6 @@ using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 
 namespace Microsoft.Extensions.DependencyInjection;

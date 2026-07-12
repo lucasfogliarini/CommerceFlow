@@ -1,18 +1,18 @@
+using CommerceFlow.Accounts;
 using CommerceFlow.Customers;
 using CommerceFlow.Orders;
 
 namespace CommerceFlow.Application;
 
-public class CreateOrderHandler(IOrderRepository orderRepository, ICustomerRepository customerRepository, IProductRepository productRepository)
+public class CreateOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository)
 {
     public async Task<Guid> HandleAsync(CreateOrder createOrder, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(createOrder);
 
-        var customer = await customerRepository.GetByEmailAsync(createOrder.CustomerEmail, cancellationToken);
         var products = await productRepository.GetProductsByIds(createOrder.Items.Select(i=>i.ProductId).ToArray(), cancellationToken);
         var orderItems = createOrder.Items.Select(i => new OrderItem(products.FirstOrDefault(p => p.Id == i.ProductId), i.Quantity));
-        var order = Order.Create(customer.Id, createOrder.ShipmentAddress, orderItems);
+        var order = Order.Create(createOrder.CustomerId, createOrder.ShipmentAddress, orderItems);
 
         await orderRepository.AddAsync(order, cancellationToken);
 
@@ -22,5 +22,5 @@ public class CreateOrderHandler(IOrderRepository orderRepository, ICustomerRepos
     }
 }
 
-public record CreateOrder(string CustomerEmail, Address ShipmentAddress, List<CreateOrderItem> Items);
+public record CreateOrder(Guid CustomerId, Address ShipmentAddress, List<CreateOrderItem> Items);
 public record CreateOrderItem(int Quantity, Guid ProductId);
