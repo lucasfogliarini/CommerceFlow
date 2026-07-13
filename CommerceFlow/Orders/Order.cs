@@ -3,6 +3,7 @@ namespace CommerceFlow.Orders;
 public class Order : AggregateRoot
 {
     public string Number { get; private set; } = default!;
+    public DateTime CreatedAt { get; private set; }
     public Guid CustomerId { get; private set; }
     public OrderStatus Status { get; private set; }
     public List<OrderItem> Items { get; private set; }
@@ -25,6 +26,7 @@ public class Order : AggregateRoot
         {
             Id = Guid.NewGuid(),
             Number = DateTime.UtcNow.Ticks.ToString(),
+            CreatedAt = DateTime.UtcNow,
             CustomerId = customerId,
             Status = OrderStatus.Created,
             Items = [.. items],

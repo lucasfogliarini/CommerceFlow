@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
 
+export async function GET(request: NextRequest) {
+  try {
+    const headers: Record<string, string> = {};
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader) headers.Authorization = authHeader;
+
+    const res = await fetch(`${COMMERCEFLOW_API_URL}/customers/me/orders`, { headers });
+    const contentType = res.headers.get("Content-Type") ?? "application/json";
+    return new NextResponse(await res.text(), {
+      status: res.status,
+      headers: { "Content-Type": contentType },
+    });
+  } catch {
+    return NextResponse.json({ error: "Backend service unavailable" }, { status: 503 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

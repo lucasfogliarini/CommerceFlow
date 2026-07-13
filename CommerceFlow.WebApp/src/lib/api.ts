@@ -15,6 +15,15 @@ export async function fetchProducts(): Promise<Product[]> {
   return data.value ?? data;
 }
 
+export async function getCustomerOrders(token?: string) {
+  const res = await fetch(`${API_BASE}/orders`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
+  return res.json();
+}
+
 export async function createOrder(order: CreateOrderRequest, token?: string): Promise<Response> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (token) {

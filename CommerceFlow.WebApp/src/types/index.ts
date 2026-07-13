@@ -52,6 +52,7 @@ export interface OrderSummary {
   status: string;
   totalAmount: number;
   itemsCount: number;
+  createdAt: string;
 }
 
 export interface AccountResponse {

@@ -10,6 +10,7 @@ public class CustomerRepository(CommerceFlowDbContext dbContext) : Repository(db
         return await Set<Customer>()
                      .Include(c=>c.Orders)
                      .ThenInclude(o=>o.Items)
+                     .ThenInclude(i=>i.Product)
                      .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
     }
 

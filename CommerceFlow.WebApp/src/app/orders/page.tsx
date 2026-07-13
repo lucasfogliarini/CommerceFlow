@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { getMyAccount } from "@/lib/api";
-import { AccountResponse } from "@/types";
+import { getCustomerOrders } from "@/lib/api";
+import { OrderSummary } from "@/types";
 
 export default function OrdersPage() {
   const router = useRouter();
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
-  const [account, setAccount] = useState<AccountResponse | null>(null);
+  const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -17,12 +17,13 @@ export default function OrdersPage() {
     if (initialized && !authenticated && !authError) {
       void login();
     }
+
   }, [authenticated, authError, initialized, login]);
 
   useEffect(() => {
     if (authenticated && keycloak?.token) {
-      getMyAccount(keycloak.token)
-        .then(setAccount)
+      getCustomerOrders(keycloak.token)
+        .then(setOrders)
         .catch((reason: Error) => setError(reason.message || "Erro ao carregar os pedidos."))
         .finally(() => setLoading(false));
     }
@@ -36,6 +37,10 @@ export default function OrdersPage() {
     return <div className="checkout-page account-status-message"><span className="spinner" /> Carregando pedidos...</div>;
   }
 
+  const latestOrders = [...orders].sort(
+    (first, second) => new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime()
+  );
+
   return (
     <div className="account-page">
       <div className="account-container container">
@@ -44,11 +49,12 @@ export default function OrdersPage() {
         {error && <div className="account-error">⚠️ {error}</div>}
 
         <section className="orders-list" aria-label="Lista de pedidos">
-          {account?.orders.length ? account.orders.map((order) => (
+          {latestOrders.length ? latestOrders.map((order) => (
             <article className="order-summary-card" key={order.id}>
               <div>
                 <p className="order-summary-number">Pedido #{order.number}</p>
                 <p>{order.itemsCount} {order.itemsCount === 1 ? "item" : "itens"}</p>
+                <p>Comprado em {formatOrderDate(order.createdAt)}</p>
               </div>
               <div className="order-summary-action">
                 <span>{getStatusLabel(order.status)}</span>
@@ -63,6 +69,10 @@ export default function OrdersPage() {
       </div>
     </div>
   );
+}
+
+function formatOrderDate(value: string) {
+  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
 }
 
 function formatPrice(price: number) {
