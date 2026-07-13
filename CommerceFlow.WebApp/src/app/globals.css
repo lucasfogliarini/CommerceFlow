@@ -1030,6 +1030,11 @@ img {
   color: var(--text-muted);
 }
 
+select.form-input option {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
 .form-error {
   font-size: 0.8rem;
   color: var(--accent-rose);

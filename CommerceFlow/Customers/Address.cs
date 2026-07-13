@@ -26,4 +26,14 @@ public class Address : Entity
             Country = country
         };
     }
+
+    public void Update(string street, string number, string city, string state, string zipCode, string country)
+    {
+        Street = street;
+        Number = number;
+        City = city;
+        State = state;
+        ZipCode = zipCode;
+        Country = country;
+    }
 }

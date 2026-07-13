@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { createOrder } from "@/lib/api";
+import { createAddress, createOrder, getAddresses } from "@/lib/api";
 import { Address, CreateOrderRequest } from "@/types";
 
 export default function CheckoutPage() {
@@ -14,12 +14,21 @@ export default function CheckoutPage() {
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
 
   useEffect(() => {
     if (initialized && !authenticated && !authError) {
       void login();
     }
   }, [authenticated, authError, initialized, login]);
+
+  useEffect(() => {
+    if (authenticated && keycloak?.token) {
+      getAddresses(keycloak.token)
+        .then(setSavedAddresses)
+        .catch(() => setSavedAddresses([]));
+    }
+  }, [authenticated, keycloak]);
 
   const [address, setAddress] = useState<Address>({
     street: "",
@@ -38,7 +47,7 @@ export default function CheckoutPage() {
   };
 
   const handleInputChange = (field: keyof Address, value: string) => {
-    setAddress((prev) => ({ ...prev, [field]: value }));
+    setAddress((prev) => ({ ...prev, id: undefined, [field]: value }));
   };
 
   const isValid = () => {
@@ -62,7 +71,7 @@ export default function CheckoutPage() {
     setError("");
 
     const orderRequest: CreateOrderRequest = {
-      shippingAddress: address,
+      shippingAddress: { street: address.street, number: address.number, city: address.city, state: address.state, zipCode: address.zipCode, country: address.country },
       items: items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
@@ -71,6 +80,9 @@ export default function CheckoutPage() {
 
     try {
       const token = keycloak?.token;
+      if (!address.id) {
+        await createAddress(address, token);
+      }
       const res = await createOrder(orderRequest, token);
 
       if (!res.ok) {
@@ -134,6 +146,27 @@ export default function CheckoutPage() {
               {/* Shipping Address */}
               <div className="checkout-form">
                 <h2>🚚 Endereço de Entrega</h2>
+                {savedAddresses.length > 0 && (
+                  <div className="form-group" style={{ marginBottom: "20px" }}>
+                    <label className="form-label" htmlFor="saved-address">Endereços salvos</label>
+                    <select
+                      id="saved-address"
+                      className="form-input"
+                      defaultValue=""
+                      onChange={(event) => {
+                        const selected = savedAddresses.find((savedAddress) => savedAddress.id === event.target.value);
+                        if (selected) setAddress(selected);
+                      }}
+                    >
+                      <option value="">Selecione um endereço ou preencha manualmente</option>
+                      {savedAddresses.map((savedAddress) => (
+                        <option key={savedAddress.id} value={savedAddress.id}>
+                          {savedAddress.street}, {savedAddress.number} — {savedAddress.city}/{savedAddress.state}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div className="form-grid">
                   <div className="form-group span-2">
                     <label className="form-label">Rua</label>

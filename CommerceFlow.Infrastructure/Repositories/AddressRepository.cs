@@ -14,10 +14,16 @@ public class AddressRepository(CommerceFlowDbContext dbContext) : Repository(dbC
     {
         dbContext.Update(address);
     }
-    public async Task RemoveAsync(Guid Id, CancellationToken cancellationToken = default)
+
+    public async Task<Address?> GetByIdAsync(Guid addressId, Guid customerId, CancellationToken cancellationToken = default)
     {
-        var address = await Set<Address>().FirstOrDefaultAsync(a => a.Id == Id, cancellationToken);
-        if (address != null)
-            dbContext.Remove(address);
+        return await Set<Address>()
+            .FirstOrDefaultAsync(a => a.Id == addressId && a.CustomerId == customerId, cancellationToken);
+    }
+
+    public Task RemoveAsync(Address address, CancellationToken cancellationToken = default)
+    {
+        dbContext.Remove(address);
+        return Task.CompletedTask;
     }
 }

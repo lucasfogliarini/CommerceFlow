@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { createAddress, getAddresses, getMyAccount } from "@/lib/api";
+import { createAddress, getAddresses, getMyAccount, removeAddress, updateAddress } from "@/lib/api";
 import { AccountResponse, Address } from "@/types";
 
 const emptyAddress: Address = {
@@ -58,11 +58,11 @@ export default function AddressesPage() {
     event.preventDefault();
     try {
       if (editingIndex === null) {
-        const address = await createAddress(draft, keycloak?.token);
-        setAddresses((current) => [...current, address]);
+        await createAddress(draft, keycloak?.token);
       } else {
-        setAddresses((current) => current.map((address, index) => index === editingIndex ? draft : address));
+        await updateAddress(draft, keycloak?.token);
       }
+      setAddresses(await getAddresses(keycloak?.token));
       setEditingIndex(null);
       setDraft(emptyAddress);
       setFormOpen(false);
@@ -71,8 +71,19 @@ export default function AddressesPage() {
     }
   }
 
-  function deleteAddress(index: number) {
-    setAddresses((current) => current.filter((_, addressIndex) => addressIndex !== index));
+  async function deleteAddress(index: number) {
+    if (!window.confirm("Este endereço será excluído permanentemente e não poderá ser recuperado. Deseja continuar?")) {
+      return;
+    }
+
+    try {
+      const address = addresses[index];
+      if (!address.id) throw new Error("Endereço inválido.");
+      await removeAddress(address.id, keycloak?.token);
+      setAddresses(await getAddresses(keycloak?.token));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Erro ao excluir o endereço.");
+    }
   }
 
   if (!initialized || !authenticated) {

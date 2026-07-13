@@ -69,6 +69,17 @@ export async function getAddresses(token?: string): Promise<Address[]> {
   return res.json();
 }
 
+export async function updateAddress(address: Address, token?: string) {
+  if (!address.id) throw new Error("Address ID is required");
+  const res = await fetch(`${API_BASE}/addresses/${address.id}`, { method: "PUT", headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(address) });
+  if (!res.ok) throw new Error(`Failed to update address: ${res.status}`);
+}
+
+export async function removeAddress(addressId: string, token?: string) {
+  const res = await fetch(`${API_BASE}/addresses/${addressId}`, { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!res.ok) throw new Error(`Failed to remove address: ${res.status}`);
+}
+
 export async function createAddress(address: Address, token?: string): Promise<Address> {
   const res = await fetch(`${API_BASE}/addresses`, {
     method: "POST",
