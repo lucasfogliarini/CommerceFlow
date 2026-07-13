@@ -51,8 +51,14 @@ export interface OrderSummary {
   number: string;
   status: string;
   totalAmount: number;
-  itemsCount: number;
   createdAt: string;
+  items: OrderItemSummary[];
+}
+
+export interface OrderItemSummary {
+  productName: string;
+  unitPrice: number;
+  quantity: number;
 }
 
 export interface AccountResponse {

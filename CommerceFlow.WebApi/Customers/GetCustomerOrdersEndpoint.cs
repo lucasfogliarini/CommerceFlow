@@ -12,11 +12,20 @@ internal sealed class GetCustomerOrdersEndpoint : IEndpoint
         if (string.IsNullOrWhiteSpace(email)) return Results.Unauthorized();
 
         var customer = await customerRepository.GetByEmailAsync(email, cancellationToken);
-        if (customer is null) return Results.Ok(Array.Empty<OrderSummary>());
+        if (customer is null) return Results.Ok(Array.Empty<CustomerOrderResponse>());
 
         var orders = customer.Orders
             .OrderByDescending(order => order.CreatedAt)
-            .Select(o => new OrderSummary(o.Id, o.CreatedAt, o.Number, o.Status, o.TotalAmount.GetValueOrDefault(), o.Items.Count));
+            .Select(o => new CustomerOrderResponse
+                            (
+                                o.Id,
+                                o.Number,
+                                o.Status,
+                                o.TotalAmount.GetValueOrDefault(),
+                                o.CreatedAt, 
+                                o.Items.Select(i=> new CustomerOrderItemResponse(i.Product.Name, i.Product.UnitPrice, i.Quantity))
+                            )
+                    );
 
         return Results.Ok(orders);
     }
@@ -25,9 +34,10 @@ internal sealed class GetCustomerOrdersEndpoint : IEndpoint
     {
         return app.MapGet($"{Routes.Customers}/me/orders", GetCustomerOrdersAsync)
             .WithTags(Routes.Customers)
-            .Produces<IEnumerable<OrderSummary>>(StatusCodes.Status200OK)
+            .Produces<IEnumerable<CustomerOrderResponse>>(StatusCodes.Status200OK)
             .WithSummary("Recupera os pedidos do cliente autenticado.");
     }
-}
 
-public record OrderSummary(Guid Id, DateTime CreatedAt, string Number, OrderStatus Status, decimal TotalAmount, int ItemsCount);
+    public record CustomerOrderResponse(Guid Id, string Number, OrderStatus Status, decimal TotalAmount, DateTime CreatedAt, IEnumerable<CustomerOrderItemResponse> Items);
+    public record CustomerOrderItemResponse(string ProductName, decimal UnitPrice, int Quantity);
+}

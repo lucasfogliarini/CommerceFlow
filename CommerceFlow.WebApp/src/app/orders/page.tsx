@@ -12,6 +12,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialized && !authenticated && !authError) {
@@ -53,16 +54,30 @@ export default function OrdersPage() {
             <article className="order-summary-card" key={order.id}>
               <div>
                 <p className="order-summary-number">Pedido #{order.number}</p>
-                <p>{order.itemsCount} {order.itemsCount === 1 ? "item" : "itens"}</p>
+                <p>{order.items.length} {order.items.length === 1 ? "item" : "itens"}</p>
                 <p>Comprado em {formatOrderDate(order.createdAt)}</p>
+                <button className="order-items-toggle" type="button" onClick={() => setExpandedOrderId((current) => current === order.id ? null : order.id)} aria-expanded={expandedOrderId === order.id}>
+                  {expandedOrderId === order.id ? "Ocultar itens" : "Ver itens"}
+                </button>
               </div>
               <div className="order-summary-action">
-                <span>{getStatusLabel(order.status)}</span>
+                <span className={`order-status order-status-${order.status.toLowerCase()}`}>{getStatusLabel(order.status)}</span>
                 <strong>{formatPrice(order.totalAmount)}</strong>
                 {(order.status === "Created" || order.status === "WaitingForPayment") && (
                   <button className="btn btn-primary" onClick={() => router.push(`/payment/${order.id}`)}>Pagar</button>
                 )}
               </div>
+              {expandedOrderId === order.id && (
+                <div className="order-items-details">
+                  {order.items.map((item) => (
+                    <div key={`${order.id}-${item.productName}`} className="order-item-detail">
+                      <span>{item.productName}</span>
+                      <span>{item.quantity} × {formatPrice(item.unitPrice)}</span>
+                      <strong>{formatPrice(item.quantity * item.unitPrice)}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
             </article>
           )) : <div className="account-empty-state"><h2>Você ainda não possui pedidos</h2><p>Seus pedidos aparecerão aqui após a compra.</p></div>}
         </section>

@@ -43,6 +43,21 @@
   --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.order-items-toggle {
+  margin-left: 10px;
+  padding: 0;
+  color: var(--accent-cyan);
+  background: transparent;
+  font-size: inherit;
+  font-weight: 700;
+}
+
+.order-items-toggle:hover,
+.order-items-toggle:focus-visible {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
 /* ===== Reset & Base ===== */
 *,
 *::before,
@@ -1422,6 +1437,7 @@ select.form-input option {
 
 .order-summary-card {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
@@ -1450,6 +1466,59 @@ select.form-input option {
 .order-summary-action strong {
   color: var(--accent-cyan);
 }
+
+.order-status {
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: var(--text-primary);
+  background: var(--bg-glass-strong);
+  font-weight: 700;
+}
+
+.order-summary-action .order-status-created,
+.order-summary-action .order-status-waitingforpayment,
+.order-summary-action .order-status-paymentexpired {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.order-summary-action .order-status-paymentapproved,
+.order-summary-action .order-status-readyforshipment,
+.order-summary-action .order-status-delivered {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.order-summary-action .order-status-dispatched {
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.15);
+}
+
+.order-summary-action .order-status-cancelled,
+.order-summary-action .order-status-paymentrejected {
+  color: var(--accent-rose);
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.order-items-details {
+  display: grid;
+  flex-basis: 100%;
+  width: 100%;
+  width: 100%;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-glass);
+}
+
+.order-item-detail {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 18px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.order-item-detail strong { color: var(--text-primary); }
 
 .address-add-card {
   display: grid;
