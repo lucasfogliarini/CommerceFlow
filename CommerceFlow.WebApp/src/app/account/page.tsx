@@ -59,30 +59,13 @@ export default function AccountPage() {
 
         <section className="account-profile-card" aria-labelledby="account-profile-title">
           <div className="account-profile-avatar" aria-hidden="true">
-            {(account?.customer?.name || account?.email || "C").charAt(0).toUpperCase()}
+            {(account?.customer?.name || keycloak?.tokenParsed?.name || keycloak?.tokenParsed?.preferred_username || account?.email || "C").charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="account-breadcrumb">Perfil</p>
-            <h2 id="account-profile-title">{account?.customer?.name || "Sua conta CommerceFlow"}</h2>
-            <p>{account?.customer?.email || account?.email}</p>
+            <p className="account-breadcrumb">Perfil e dados da conta</p>
+            <h2 id="account-profile-title">{account?.customer?.name || keycloak?.tokenParsed?.name || keycloak?.tokenParsed?.preferred_username || "Minha Conta"}</h2>
+            <p><strong>E-mail:</strong> {account?.customer?.email || account?.email}</p>
           </div>
-        </section>
-
-        <section className="account-details-card" aria-labelledby="account-details-title">
-          <h2 id="account-details-title">Dados da conta</h2>
-          {account?.customer ? (
-            <div>
-              <p><strong>Nome:</strong> {account.customer.name}</p>
-              <p><strong>E-mail:</strong> {account.customer.email}</p>
-            </div>
-          ) : (
-            <div>
-              <p><strong>E-mail de Login:</strong> {account?.email}</p>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "8px" }}>
-                Perfil completo não encontrado. Ele será criado ou sincronizado automaticamente em sua primeira compra.
-              </p>
-            </div>
-          )}
         </section>
 
         <section className="account-feature-grid" aria-label="Recursos da conta">

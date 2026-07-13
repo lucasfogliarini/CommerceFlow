@@ -23,8 +23,8 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-inner">
         <Link href="/" className="navbar-logo">
-          <span className="navbar-logo-icon">⚡</span>
-          <span>CommerceFlow</span>
+          <span className="navbar-logo-icon" aria-hidden="true">CF</span>
+          <span className="navbar-logo-text"><span>Commerce</span>Flow</span>
         </Link>
 
         <button

@@ -2,8 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { createAddress, getAddresses, getMyAccount, removeAddress, updateAddress } from "@/lib/api";
-import { AccountResponse, Address } from "@/types";
+import { createAddress, getAddresses, removeAddress, updateAddress } from "@/lib/api";
+import { Address } from "@/types";
 
 const emptyAddress: Address = {
   street: "",
@@ -16,7 +16,6 @@ const emptyAddress: Address = {
 
 export default function AddressesPage() {
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
-  const [account, setAccount] = useState<AccountResponse | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,11 +31,8 @@ export default function AddressesPage() {
 
   useEffect(() => {
     if (authenticated && keycloak?.token) {
-      Promise.all([getMyAccount(keycloak.token), getAddresses(keycloak.token)])
-        .then(([accountData, addressData]) => {
-          setAccount(accountData);
-          setAddresses(addressData);
-        })
+      getAddresses(keycloak.token)
+        .then(setAddresses)
         .catch((reason: Error) => setError(reason.message || "Erro ao carregar os endereços."))
         .finally(() => setLoading(false));
     }
@@ -109,7 +105,7 @@ export default function AddressesPage() {
           {addresses.map((address, index) => (
             <article className="address-card" key={`${address.street}-${address.number}-${index}`}>
               {index === 0 && <span className="address-default">Endereço padrão</span>}
-              <h2>{account?.customer?.name || "Meu endereço"}</h2>
+               <h2>{keycloak?.tokenParsed?.name || keycloak?.tokenParsed?.preferred_username || "Meu endereço"}</h2>
               <address>
                 {address.street}, {address.number}<br />
                 {address.city}, {address.state} {address.zipCode}<br />

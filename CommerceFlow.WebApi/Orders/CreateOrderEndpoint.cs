@@ -1,6 +1,5 @@
 using CommerceFlow.Application;
 using Wolverine;
-using IResult = Microsoft.AspNetCore.Http.IResult;
 using System.Security.Claims;
 
 namespace CommerceFlow.WebApi.Endpoints;
@@ -9,16 +8,14 @@ internal sealed class CreateOrderEndpoint : IEndpoint
 {
     public async Task<IResult> CreateOrderAsync(
         CreateOrderRequest request,
-        ClaimsPrincipal user,
+        ClaimsPrincipal User,
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        if (user.Identity?.IsAuthenticated != true) return Results.Unauthorized();
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(id, out var customerId)) return Results.Unauthorized();    
 
-        var createCustomer = new CreateCustomerIfNotExist(user);
-        var customerGuid = await bus.InvokeAsync<Guid>(createCustomer, cancellationToken);        
-
-        var createOrder = new CreateOrder(customerGuid, request.ShippingAddress, request.Items);
+        var createOrder = new CreateOrder(customerId, request.ShippingAddress, request.Items);
         var orderGuid = await bus.InvokeAsync<Guid>(createOrder, cancellationToken);
 
         return Results.Ok(orderGuid);
