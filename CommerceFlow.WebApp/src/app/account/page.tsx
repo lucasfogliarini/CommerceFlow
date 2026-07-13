@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useKeycloak } from "@/components/KeycloakProvider";
 import { getMyAccount } from "@/lib/api";
 import { AccountResponse } from "@/types";
 
 export default function AccountPage() {
-  const router = useRouter();
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [account, setAccount] = useState<AccountResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,28 +33,6 @@ export default function AccountPage() {
     }
   }, [authenticated, keycloak]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
-  };
-
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      "Created": "Criado",
-      "WaitingForPayment": "Aguardando Pagamento",
-      "PaymentApproved": "Pagamento Aprovado",
-      "PaymentRejected": "Pagamento Rejeitado",
-      "PaymentExpired": "Pagamento Expirado",
-      "ReadyForShipment": "Pronto para Envio",
-      "Dispatched": "Enviado",
-      "Delivered": "Entregue",
-      "Cancelled": "Cancelado"
-    };
-    return labels[status] || status;
-  };
-
   if (!initialized || !authenticated) {
     return (
       <div className="checkout-page" style={{ padding: "40px", textAlign: "center" }}>
@@ -73,20 +50,26 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="checkout-page">
-      <div className="container" style={{ maxWidth: "800px", margin: "0 auto", paddingTop: "40px" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "32px", fontWeight: 800 }}>
-          👤 <span className="text-gradient">Minha Conta</span>
-        </h1>
+    <div className="account-page">
+      <div className="account-container container">
+        <p className="account-breadcrumb">Minha conta</p>
+        <h1 className="account-title">Minha Conta</h1>
 
-        {error && (
-          <div style={{ marginBottom: "20px", color: "var(--accent-rose)", padding: "16px", background: "rgba(244, 63, 94, 0.1)", borderRadius: "var(--radius-md)" }}>
-            ⚠️ {error}
+        {error && <div className="account-error">⚠️ {error}</div>}
+
+        <section className="account-profile-card" aria-labelledby="account-profile-title">
+          <div className="account-profile-avatar" aria-hidden="true">
+            {(account?.customer?.name || account?.email || "C").charAt(0).toUpperCase()}
           </div>
-        )}
+          <div>
+            <p className="account-breadcrumb">Perfil</p>
+            <h2 id="account-profile-title">{account?.customer?.name || "Sua conta CommerceFlow"}</h2>
+            <p>{account?.customer?.email || account?.email}</p>
+          </div>
+        </section>
 
-        <div style={{ marginBottom: "40px", background: "var(--bg-card)", padding: "24px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-color)" }}>
-          <h2 style={{ fontSize: "1.2rem", marginBottom: "16px" }}>Dados Pessoais</h2>
+        <section className="account-details-card" aria-labelledby="account-details-title">
+          <h2 id="account-details-title">Dados da conta</h2>
           {account?.customer ? (
             <div>
               <p><strong>Nome:</strong> {account.customer.name}</p>
@@ -100,45 +83,14 @@ export default function AccountPage() {
               </p>
             </div>
           )}
-        </div>
+        </section>
 
-        <div>
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "20px" }}>Meus Pedidos</h2>
-          
-          {account?.orders && account.orders.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              {account.orders.map((order) => (
-                <div key={order.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-card)", padding: "20px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-color)" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Pedido #{order.number}</h3>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "4px" }}>
-                      Status: <strong style={{ color: "var(--text-primary)" }}>{getStatusLabel(order.status)}</strong>
-                    </p>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-                      {order.itemsCount} {order.itemsCount === 1 ? 'item' : 'itens'} | {formatPrice(order.totalAmount)}
-                    </p>
-                  </div>
-                  <div>
-                    {order.status === "WaitingForPayment" || order.status === "Created" ? (
-                      <button 
-                        onClick={() => router.push(`/payment/${order.id}`)}
-                        className="btn btn-primary"
-                      >
-                        💳 Pagar
-                      </button>
-                    ) : (
-                      <span style={{ padding: "8px 16px", background: "var(--bg-secondary)", borderRadius: "var(--radius-md)", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                        {getStatusLabel(order.status)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ color: "var(--text-secondary)" }}>Você ainda não possui pedidos.</p>
-          )}
-        </div>
+        <section className="account-feature-grid" aria-label="Recursos da conta">
+          <Link href="/orders"><span aria-hidden="true">▤</span><strong>Pedidos</strong><small>Acompanhe e consulte seus pedidos.</small></Link>
+          <a id="payments" href="#payments"><span aria-hidden="true">▣</span><strong>Pagamentos</strong><small>Formas de pagamento e transações.</small></a>
+          <a id="refunds" href="#refunds"><span aria-hidden="true">↺</span><strong>Reembolsos</strong><small>Acompanhe seus reembolsos.</small></a>
+          <a id="wishlist" href="#wishlist"><span aria-hidden="true">♡</span><strong>Lista de desejos</strong><small>Produtos salvos para depois.</small></a>
+        </section>
 
       </div>
     </div>
