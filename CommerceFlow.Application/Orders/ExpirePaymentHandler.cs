@@ -9,7 +9,7 @@ public class ExpirePaymentHandler(IOrderRepository orderRepository)
         ArgumentNullException.ThrowIfNull(expirePayment);
 
         var order = await orderRepository.GetByIdAsync(expirePayment.OrderId, cancellationToken);
-        if (order is null) return;
+        if (order is null || !order.CanExpirePayment()) return;
 
         order.ExpirePayment();
 

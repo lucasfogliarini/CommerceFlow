@@ -36,6 +36,14 @@ public class Order : AggregateRoot
         return order;
     }
 
+    public bool CanExpirePayment()
+    {
+        if (Status != OrderStatus.WaitingForPayment)
+            return false;
+
+        return true;
+    }
+
     public void ExpirePayment()
     {
         if (Status != OrderStatus.WaitingForPayment)
