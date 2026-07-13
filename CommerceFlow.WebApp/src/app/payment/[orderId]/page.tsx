@@ -1,37 +1,23 @@
 "use client";
 
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
+import { useKeycloak } from "@/components/KeycloakProvider";
 import { approvePayment } from "@/lib/api";
 
 export default function PaymentPage({ params }: { params: Promise<{ orderId: string }> }) {
   const router = useRouter();
   const { orderId } = use(params);
 
-  const [keycloak, setKeycloak] = useState<any>(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const isRun = useRef(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !isRun.current) {
-      isRun.current = true;
-      import("keycloak-js").then(({ default: Keycloak }) => {
-        const kc = new Keycloak({
-          url: "http://localhost:2006/",
-          realm: "commerceflow",
-          clientId: "commerceflow",
-        });
-        kc.init({ onLoad: "login-required" })
-          .then((auth) => {
-            setKeycloak(kc);
-            setAuthenticated(auth);
-          })
-          .catch(() => console.error("Keycloak init failed"));
-      });
+    if (initialized && !authenticated && !authError) {
+      void login();
     }
-  }, []);
+  }, [authenticated, authError, initialized, login]);
 
   const handlePayment = async () => {
     setLoading(true);
@@ -57,10 +43,10 @@ export default function PaymentPage({ params }: { params: Promise<{ orderId: str
     }
   };
 
-  if (!authenticated) {
+  if (!initialized || !authenticated) {
     return (
       <div className="checkout-page" style={{ padding: "40px", textAlign: "center" }}>
-        Autenticando...
+        {authError ? "Não foi possível autenticar." : "Autenticando..."}
       </div>
     );
   }

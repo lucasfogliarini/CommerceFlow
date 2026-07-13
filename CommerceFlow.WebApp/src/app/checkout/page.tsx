@@ -1,40 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
+import { useKeycloak } from "@/components/KeycloakProvider";
 import { createOrder } from "@/lib/api";
 import { Address, CreateOrderRequest } from "@/types";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCart();
+  const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [keycloak, setKeycloak] = useState<any>(null);
-  const [authenticated, setAuthenticated] = useState(false);
-  const isRun = useRef(false);
-
   useEffect(() => {
-    if (typeof window !== "undefined" && !isRun.current) {
-      isRun.current = true;
-      import("keycloak-js").then(({ default: Keycloak }) => {
-        const kc = new Keycloak({
-          url: "http://localhost:2006/",
-          realm: "commerceflow",
-          clientId: "commerceflow",
-        });
-        kc.init({ onLoad: "login-required" })
-          .then((auth) => {
-            setKeycloak(kc);
-            setAuthenticated(auth);
-          })
-          .catch(() => console.error("Keycloak init failed"));
-      });
+    if (initialized && !authenticated && !authError) {
+      void login();
     }
-  }, []);
+  }, [authenticated, authError, initialized, login]);
 
   const [address, setAddress] = useState<Address>({
     street: "",
@@ -125,10 +110,10 @@ export default function CheckoutPage() {
     );
   }
 
-  if (!authenticated) {
+  if (!initialized || !authenticated) {
     return (
       <div className="checkout-page" style={{ padding: "40px", textAlign: "center" }}>
-        Autenticando...
+        {authError ? "Não foi possível autenticar." : "Autenticando..."}
       </div>
     );
   }
