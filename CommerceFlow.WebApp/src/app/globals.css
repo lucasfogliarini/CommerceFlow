@@ -43,6 +43,20 @@
   --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.order-id-copy {
+  margin-left: 8px;
+  color: var(--text-secondary);
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.order-id-copy:hover,
+.order-id-copy:focus-visible {
+  color: var(--accent-cyan);
+}
+
 .order-items-toggle {
   margin-left: 10px;
   padding: 0;

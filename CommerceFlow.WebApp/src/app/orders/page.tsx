@@ -53,7 +53,18 @@ export default function OrdersPage() {
           {latestOrders.length ? latestOrders.map((order) => (
             <article className="order-summary-card" key={order.id}>
               <div>
-                <p className="order-summary-number">Pedido #{order.number}</p>
+                <p className="order-summary-number">
+                  Pedido #{order.number}
+                  <button
+                    type="button"
+                    className="order-id-copy"
+                    aria-label="Copiar ID do pedido"
+                    title="Copiar ID do pedido"
+                    onClick={() => void navigator.clipboard.writeText(order.id)}
+                  >
+                    ⧉
+                  </button>
+                </p>
                 <p>{order.items.length} {order.items.length === 1 ? "item" : "itens"}</p>
                 <p>Comprado em {formatOrderDate(order.createdAt)}</p>
                 <button className="order-items-toggle" type="button" onClick={() => setExpandedOrderId((current) => current === order.id ? null : order.id)} aria-expanded={expandedOrderId === order.id}>
