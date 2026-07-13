@@ -4,7 +4,7 @@ public record OrderShipment
 {
     public ShipmentStatus Status { get; private set; }
     public string? TrackingCode { get; private set; }
-    public Address? Address { get; set; }
+    public ShippingAddress? Address { get; set; }
 
     public void Request()
     {
@@ -22,7 +22,7 @@ public record OrderShipment
         Status = ShipmentStatus.Delivered;
     }
 
-    public static OrderShipment Create(Address shippingAddress)
+    public static OrderShipment Create(ShippingAddress shippingAddress)
     {
         var shipment = new OrderShipment
         {

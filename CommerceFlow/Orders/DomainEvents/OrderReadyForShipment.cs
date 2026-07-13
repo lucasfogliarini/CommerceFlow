@@ -1,6 +1,6 @@
 namespace CommerceFlow.Orders;
 
-public record OrderReadyForShipment(Guid OrderId, Address ShipmentAddress, IEnumerable<OrderReadyForShipmentItem> Items) : DomainEvent
+public record OrderReadyForShipment(Guid OrderId, ShippingAddress ShipmentAddress, IEnumerable<OrderReadyForShipmentItem> Items) : DomainEvent
 {
     public override NotificationRequest Notification => new(AggregateId: OrderId, "O pedido está pronto para envio.");
 }

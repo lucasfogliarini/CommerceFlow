@@ -13,7 +13,7 @@ public class Order : AggregateRoot
 
     private Order() { }
 
-    public static Order Create(Guid customerId, Address shippingAddress, IEnumerable<OrderItem> items)
+    public static Order Create(Guid customerId, ShippingAddress shippingAddress, IEnumerable<OrderItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
         ArgumentNullException.ThrowIfNull(shippingAddress);

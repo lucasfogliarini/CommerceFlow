@@ -1,5 +1,3 @@
-using CommerceFlow.Accounts;
-using CommerceFlow.Customers;
 using CommerceFlow.Orders;
 
 namespace CommerceFlow.Application;
@@ -22,5 +20,5 @@ public class CreateOrderHandler(IOrderRepository orderRepository, IProductReposi
     }
 }
 
-public record CreateOrder(Guid CustomerId, Address ShipmentAddress, List<CreateOrderItem> Items);
+public record CreateOrder(Guid CustomerId, ShippingAddress ShipmentAddress, List<CreateOrderItem> Items);
 public record CreateOrderItem(int Quantity, Guid ProductId);

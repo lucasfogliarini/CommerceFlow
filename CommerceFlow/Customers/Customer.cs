@@ -8,6 +8,7 @@ public class Customer : Account
     private Customer() { }
 
     public List<Order> Orders { get; private set; }
+    public List<Address> Addresses { get; private set; } = [];
     
     public static Customer Create(Guid id, string email, string name)
     {

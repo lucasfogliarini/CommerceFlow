@@ -100,6 +100,7 @@ public static class DependencyInjection
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<IAddressRepository, AddressRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IShipmentRepository, ShipmentRepository>();
         services.AddTransient<IProductRepository, ProductRepository>();

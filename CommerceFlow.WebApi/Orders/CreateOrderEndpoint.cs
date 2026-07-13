@@ -33,4 +33,4 @@ internal sealed class CreateOrderEndpoint : IEndpoint
     }
 }
 
-internal sealed record CreateOrderRequest(Address ShippingAddress, List<CreateOrderItem> Items);
+internal sealed record CreateOrderRequest(ShippingAddress ShippingAddress, List<CreateOrderItem> Items);

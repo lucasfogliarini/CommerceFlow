@@ -14,7 +14,7 @@ public class Shipment : AggregateRoot
 
     public ShipmentStatus Status { get; private set; }
 
-    public Address Address { get; private set; }
+    public ShippingAddress Address { get; private set; }
 
     public Carrier? Carrier { get; private set; }
 
@@ -24,7 +24,7 @@ public class Shipment : AggregateRoot
 
     public static Shipment Create(
         Guid orderId,
-        Address shipmentAddress,
+        ShippingAddress shipmentAddress,
         IEnumerable<ShipmentItem> items)
     {
         var shipment = new Shipment

@@ -87,6 +87,7 @@ export default function AccountPage() {
 
         <section className="account-feature-grid" aria-label="Recursos da conta">
           <Link href="/orders"><span aria-hidden="true">▤</span><strong>Pedidos</strong><small>Acompanhe e consulte seus pedidos.</small></Link>
+          <Link href="/addresses"><span aria-hidden="true">⌂</span><strong>Endereços</strong><small>Gerencie seus endereços de entrega.</small></Link>
           <a id="payments" href="#payments"><span aria-hidden="true">▣</span><strong>Pagamentos</strong><small>Formas de pagamento e transações.</small></a>
           <a id="refunds" href="#refunds"><span aria-hidden="true">↺</span><strong>Reembolsos</strong><small>Acompanhe seus reembolsos.</small></a>
           <a id="wishlist" href="#wishlist"><span aria-hidden="true">♡</span><strong>Lista de desejos</strong><small>Produtos salvos para depois.</small></a>

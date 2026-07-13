@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function Navbar() {
   const pathname = usePathname();
   const { totalItems } = useCart();
-  const { keycloak, authenticated, initialized, login } = useKeycloak();
+  const { keycloak, authenticated, initialized, login, logout } = useKeycloak();
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountName = keycloak?.tokenParsed?.preferred_username || keycloak?.tokenParsed?.name || "Minha conta";
@@ -86,6 +86,7 @@ export default function Navbar() {
                     <li role="none"><Link href="/account#payments" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Pagamentos</Link></li>
                     <li role="none"><Link href="/account#refunds" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Reembolsos</Link></li>
                     <li role="none"><Link href="/account#wishlist" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Lista de desejos</Link></li>
+                    <li role="none"><button type="button" className="navbar-account-logout" role="menuitem" onClick={() => void logout()}>Sair</button></li>
                   </ul>
                 )}
               </>

@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { getMyAccount } from "@/lib/api";
+import { createAddress, getAddresses, getMyAccount } from "@/lib/api";
 import { AccountResponse, Address } from "@/types";
 
 const emptyAddress: Address = {
@@ -32,10 +32,10 @@ export default function AddressesPage() {
 
   useEffect(() => {
     if (authenticated && keycloak?.token) {
-      getMyAccount(keycloak.token)
-        .then((data) => {
-          setAccount(data);
-          if (data.customer?.address) setAddresses([data.customer.address]);
+      Promise.all([getMyAccount(keycloak.token), getAddresses(keycloak.token)])
+        .then(([accountData, addressData]) => {
+          setAccount(accountData);
+          setAddresses(addressData);
         })
         .catch((reason: Error) => setError(reason.message || "Erro ao carregar os endereços."))
         .finally(() => setLoading(false));
@@ -54,14 +54,21 @@ export default function AddressesPage() {
     setFormOpen(true);
   }
 
-  function saveAddress(event: FormEvent<HTMLFormElement>) {
+  async function saveAddress(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setAddresses((current) => editingIndex === null
-      ? [...current, draft]
-      : current.map((address, index) => index === editingIndex ? draft : address));
-    setEditingIndex(null);
-    setDraft(emptyAddress);
-    setFormOpen(false);
+    try {
+      if (editingIndex === null) {
+        const address = await createAddress(draft, keycloak?.token);
+        setAddresses((current) => [...current, address]);
+      } else {
+        setAddresses((current) => current.map((address, index) => index === editingIndex ? draft : address));
+      }
+      setEditingIndex(null);
+      setDraft(emptyAddress);
+      setFormOpen(false);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Erro ao salvar o endereço.");
+    }
   }
 
   function deleteAddress(index: number) {

@@ -322,6 +322,22 @@ img {
   background: var(--bg-glass-strong);
 }
 
+.navbar-account-logout {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--accent-rose);
+  background: transparent;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.navbar-account-logout:hover,
+.navbar-account-logout:focus-visible {
+  background: rgba(244, 63, 94, 0.12);
+}
+
 /* Mobile hamburger */
 .navbar-hamburger {
   display: none;

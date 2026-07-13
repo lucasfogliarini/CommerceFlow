@@ -19,8 +19,27 @@ public class CustomerRepository(CommerceFlowDbContext dbContext) : Repository(db
                      .AnyAsync(c => c.Id == customerId, cancellationToken);
     }
 
+    public async Task<Customer?> GetByIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await Set<Customer>()
+            .Include(customer => customer.Addresses)
+            .FirstOrDefaultAsync(customer => customer.Id == customerId, cancellationToken);
+    }
+
+    public async Task<List<Address>> GetAddressesAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await Set<Address>()
+            .Where(address => address.CustomerId == customerId)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         await dbContext.AddAsync(customer, cancellationToken);
+    }
+
+    public void Update(Customer customer)
+    {
+        dbContext.Update(customer);
     }
 }

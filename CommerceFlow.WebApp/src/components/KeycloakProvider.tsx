@@ -16,6 +16,7 @@ interface KeycloakContextValue {
   initialized: boolean;
   error: Error | null;
   login: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const KeycloakContext = createContext<KeycloakContextValue | undefined>(undefined);
@@ -64,9 +65,14 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
     await keycloak.login();
   }, [keycloak]);
 
+  const logout = useCallback(async () => {
+    if (!keycloak) throw new Error("Keycloak is not initialized");
+    await keycloak.logout({ redirectUri: window.location.origin });
+  }, [keycloak]);
+
   const value = useMemo(
-    () => ({ keycloak, authenticated, initialized, error, login }),
-    [keycloak, authenticated, initialized, error, login]
+    () => ({ keycloak, authenticated, initialized, error, login, logout }),
+    [keycloak, authenticated, initialized, error, login, logout]
   );
 
   return <KeycloakContext.Provider value={value}>{children}</KeycloakContext.Provider>;

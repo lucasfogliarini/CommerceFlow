@@ -1,4 +1,4 @@
-import { Product, ODataResponse, CreateOrderRequest } from "@/types";
+import { Address, Product, ODataResponse, CreateOrderRequest } from "@/types";
 
 const API_BASE = "/api";
 
@@ -61,4 +61,20 @@ export async function getMyAccount(token?: string) {
   }
 
   return await res.json();
+}
+
+export async function getAddresses(token?: string): Promise<Address[]> {
+  const res = await fetch(`${API_BASE}/addresses`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!res.ok) throw new Error(`Failed to fetch addresses: ${res.status}`);
+  return res.json();
+}
+
+export async function createAddress(address: Address, token?: string): Promise<Address> {
+  const res = await fetch(`${API_BASE}/addresses`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify(address),
+  });
+  if (!res.ok) throw new Error(`Failed to create address: ${res.status}`);
+  return res.json();
 }
