@@ -14,7 +14,7 @@ public class CommerceFlowPostgresServer : Service
                                         system.AddResourceBuilder(pgAdminResourceBuilder);
                                     })
                                     .WithDataVolume(DataVolumeName);
-        var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlow");
+        var postgresDatabaseResourceBuilder = postgresServerResourceBuilder.AddDatabase("CommerceFlowDb");
 
         system.AddResourceBuilder(postgresServerResourceBuilder);
         system.AddResourceBuilder(postgresDatabaseResourceBuilder);

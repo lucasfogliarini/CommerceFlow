@@ -8,7 +8,7 @@ public class CommerceFlowWebApp : Service
     {
         #pragma warning disable ASPIREJAVASCRIPT001
         var webApiResourceBuilder = system.Builder
-                                           .AddNextJsApp("webapp", "../CommerceFlow.WebApp")
+                                           .AddNextJsApp("CommerceFlow", "../CommerceFlow.WebApp")
                                            .WithEnvironment("COMMERCEFLOW_API_URL", "http://localhost:2009")
                                            .WithHttpEndpoint(system.GetNextPort());
         #pragma warning restore ASPIREJAVASCRIPT001

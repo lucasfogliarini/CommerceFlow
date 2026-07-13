@@ -127,7 +127,7 @@ public static class DependencyInjection
         await db.AddAsync(c2);
         await db.CommitAsync();
     }
-    private static void AddDbContext(this IHostApplicationBuilder builder, string connectionStringKey = "CommerceFlow")
+    private static void AddDbContext(this IHostApplicationBuilder builder, string connectionStringKey = "CommerceFlowDb")
     {
         var connectionString = builder.Configuration.GetConnectionString(connectionStringKey);
         void BuilderOptions(DbContextOptionsBuilder options)

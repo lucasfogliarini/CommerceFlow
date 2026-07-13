@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommerceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(CommerceFlowDbContext))]
-    [Migration("20260713154704_AddOrderCreatedAt")]
-    partial class AddOrderCreatedAt
+    [Migration("20260713163507_InitSchema")]
+    partial class InitSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
