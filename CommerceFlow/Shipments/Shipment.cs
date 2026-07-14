@@ -7,8 +7,7 @@ public class Shipment : AggregateRoot
     private Shipment()
     {
     }
-
-    public Guid Id { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
     public Guid OrderId { get; private set; }
 
@@ -30,6 +29,7 @@ public class Shipment : AggregateRoot
         var shipment = new Shipment
         {
             Id = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
             OrderId = orderId,
             Address = shipmentAddress,
             Status = ShipmentStatus.Created

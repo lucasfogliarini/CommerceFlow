@@ -1477,6 +1477,18 @@ select.form-input option {
   gap: 14px;
 }
 
+.orders-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.orders-header .account-title {
+  margin-bottom: 28px;
+}
+
 .order-summary-card {
   display: flex;
   flex-wrap: wrap;
@@ -1667,6 +1679,11 @@ select.form-input option {
 @media (max-width: 600px) {
   .account-page {
     padding: 96px 16px 40px;
+  }
+
+  .orders-header .btn {
+    width: 100%;
+    margin-bottom: 20px;
   }
 
   .account-feature-grid,

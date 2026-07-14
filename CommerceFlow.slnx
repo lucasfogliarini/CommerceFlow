@@ -13,5 +13,9 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="CommerceFlow.ShipmentsWebApp/CommerceFlow.ShipmentsWebApp.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="CommerceFlow/CommerceFlow.csproj" />
 </Solution>

@@ -18,6 +18,15 @@ public class ShipmentRepository(CommerceFlowDbContext dbContext) : Repository(db
                 .ThenInclude(t=>t.Events)
                 .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
+    public async Task<IEnumerable<Shipment>> GetShipmentsAsync(CancellationToken cancellationToken = default)
+    {
+        return await Set<Shipment>()
+                .Include(s => s.Carrier)
+                .Include(s => s.Tracking)
+                .ThenInclude(t => t.Events)
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync(cancellationToken);
+    }
 
     public Task<Shipment?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {

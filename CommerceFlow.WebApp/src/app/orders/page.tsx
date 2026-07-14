@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useKeycloak } from "@/components/KeycloakProvider";
 import { getCustomerOrders } from "@/lib/api";
@@ -11,6 +11,7 @@ export default function OrdersPage() {
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
@@ -21,14 +22,37 @@ export default function OrdersPage() {
 
   }, [authenticated, authError, initialized, login]);
 
+  const loadOrders = useCallback(async (isRefresh = false) => {
+    if (!keycloak?.token) {
+      return;
+    }
+
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+
+    setError("");
+
+    try {
+      setOrders(await getCustomerOrders(keycloak.token));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message || "Erro ao carregar os pedidos." : "Erro ao carregar os pedidos.");
+    } finally {
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
+    }
+  }, [keycloak?.token]);
+
   useEffect(() => {
     if (authenticated && keycloak?.token) {
-      getCustomerOrders(keycloak.token)
-        .then(setOrders)
-        .catch((reason: Error) => setError(reason.message || "Erro ao carregar os pedidos."))
-        .finally(() => setLoading(false));
+      void loadOrders();
     }
-  }, [authenticated, keycloak]);
+  }, [authenticated, keycloak?.token, loadOrders]);
 
   if (!initialized || !authenticated) {
     return <div className="checkout-page account-status-message">{authError ? "Não foi possível autenticar." : "Autenticando..."}</div>;
@@ -46,7 +70,12 @@ export default function OrdersPage() {
     <div className="account-page">
       <div className="account-container container">
         <p className="account-breadcrumb">Minha conta / Pedidos</p>
-        <h1 className="account-title">Meus Pedidos</h1>
+        <div className="orders-header">
+          <h1 className="account-title">Meus Pedidos</h1>
+          <button className="btn btn-secondary" type="button" onClick={() => void loadOrders(true)} disabled={refreshing}>
+            {refreshing ? "Atualizando..." : "Atualizar pedidos"}
+          </button>
+        </div>
         {error && <div className="account-error">⚠️ {error}</div>}
 
         <section className="orders-list" aria-label="Lista de pedidos">

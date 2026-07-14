@@ -11,6 +11,7 @@ systemBuilder.AddService<CommerceFlowOrderEventWorkers>();
 systemBuilder.AddService<CommerceFlowShipmentEventWorkers>();
 systemBuilder.AddService<CommerceFlowWebApi>();
 systemBuilder.AddService<CommerceFlowWebApp>();
+systemBuilder.AddService<CommerceFlowShipmentsWebApp>();
 
 var app = systemBuilder.Build();
 
