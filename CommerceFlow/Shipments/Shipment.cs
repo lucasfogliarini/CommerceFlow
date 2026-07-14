@@ -9,7 +9,7 @@ public class Shipment : AggregateRoot
     }
     public DateTime CreatedAt { get; private set; }
 
-    public Guid OrderId { get; private set; }
+    public string OrderNumber { get; private set; }
 
     public ShipmentStatus Status { get; private set; }
 
@@ -22,7 +22,7 @@ public class Shipment : AggregateRoot
     public IReadOnlyCollection<ShipmentItem> Items => _items;
 
     public static Shipment Create(
-        Guid orderId,
+        string orderNumber,
         ShippingAddress shipmentAddress,
         IEnumerable<ShipmentItem> items)
     {
@@ -30,7 +30,7 @@ public class Shipment : AggregateRoot
         {
             Id = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
-            OrderId = orderId,
+            OrderNumber = orderNumber,
             Address = shipmentAddress,
             Status = ShipmentStatus.Created
         };
@@ -40,7 +40,7 @@ public class Shipment : AggregateRoot
         shipment.AddDomainEvent(
             new ShipmentCreated(
                 shipment.Id,
-                shipment.OrderId));
+                shipment.OrderNumber));
 
         return shipment;
     }
@@ -57,7 +57,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.CarrierAssigned;
 
-        AddDomainEvent(new CarrierAssigned(Id, OrderId, Carrier.Name));
+        AddDomainEvent(new CarrierAssigned(Id, OrderNumber, Carrier.Name));
     }
 
     public void CompletePacking()
@@ -68,7 +68,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Packed;
 
-        AddDomainEvent(new PackingCompleted(Id, OrderId));
+        AddDomainEvent(new PackingCompleted(Id, OrderNumber));
     }
 
     public void Dispatch()
@@ -86,7 +86,7 @@ public class Shipment : AggregateRoot
         AddDomainEvent(
             new ShipmentDispatched(
                 Id,
-                OrderId,
+                OrderNumber,
                 Tracking.TrackingCode));
     }
 
@@ -106,7 +106,7 @@ public class Shipment : AggregateRoot
         AddDomainEvent(
             new TrackingUpdated(
                 Id,
-                OrderId,
+                OrderNumber,
                 description,
                 location));
     }
@@ -119,7 +119,7 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Delivered;
 
-        AddDomainEvent(new ShipmentDelivered(Id, OrderId));
+        AddDomainEvent(new ShipmentDelivered(Id, OrderNumber));
     }
 
     public void Cancel()
@@ -130,6 +130,6 @@ public class Shipment : AggregateRoot
 
         Status = ShipmentStatus.Cancelled;
 
-        AddDomainEvent(new ShipmentCancelled(Id, OrderId));
+        AddDomainEvent(new ShipmentCancelled(Id, OrderNumber));
     }
 }

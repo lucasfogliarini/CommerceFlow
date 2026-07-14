@@ -8,7 +8,7 @@ public class ReserveInventoryHandler(IOrderRepository orderRepository) : IDomain
     {
         ArgumentNullException.ThrowIfNull(orderCreated);
 
-        var order = await orderRepository.GetByIdAsync(orderCreated.OrderId, cancellationToken);
+        var order = await orderRepository.GetByNumberAsync(orderCreated.OrderNumber, cancellationToken);
         if (order is null) return;
 
         order.ReserveInventory();

@@ -8,7 +8,7 @@ public class ScheduleExpirePaymentHandler(IMessageDispatcher bus) : IDomainEvent
     {
         ArgumentNullException.ThrowIfNull(orderWaitingForPayment);
 
-        var expirePayment = new ExpirePayment(orderWaitingForPayment.OrderId);
+        var expirePayment = new ExpirePayment(orderWaitingForPayment.OrderNumber);
 
         await bus.ScheduleAsync(expirePayment, TimeSpan.FromMinutes(1));
     }

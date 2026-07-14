@@ -1,3 +1,3 @@
 ﻿namespace CommerceFlow.Shipments;
 
-public sealed record PackingCompleted(Guid ShipmentId, Guid OrderId) : IDomainEvent;
+public sealed record PackingCompleted(Guid ShipmentId, string OrderNumber) : IDomainEvent;

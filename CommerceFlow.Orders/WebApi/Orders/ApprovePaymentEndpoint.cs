@@ -6,12 +6,12 @@ namespace CommerceFlow.WebApi.Endpoints;
 internal sealed class ApprovePaymentEndpoint : IEndpoint
 {
     public async Task<IResult> ApprovePaymentAsync(
-        Guid orderId,
+        string orderNumber,
         ApprovePaymentRequest request,
         IMessageBus bus,
         CancellationToken cancellationToken = default)
     {
-        var command = new ApprovePayment(orderId, request.PaymentReference);
+        var command = new ApprovePayment(orderNumber, request.PaymentReference);
         await bus.PublishAsync(command);
 
         return Results.Ok();
@@ -19,7 +19,7 @@ internal sealed class ApprovePaymentEndpoint : IEndpoint
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPut($"{Routes.Orders}/{{orderId}}/approve-payment", ApprovePaymentAsync)
+        return app.MapPut($"{Routes.Orders}/{{orderNumber}}/approve-payment", ApprovePaymentAsync)
            .WithTags(Routes.Orders)
            .Produces(StatusCodes.Status200OK)
            .WithSummary("Aprova um pagamento para o pedido.");

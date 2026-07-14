@@ -8,7 +8,7 @@ public class ExpirePaymentHandler(IOrderRepository orderRepository)
     {
         ArgumentNullException.ThrowIfNull(expirePayment);
 
-        var order = await orderRepository.GetByIdAsync(expirePayment.OrderId, cancellationToken);
+        var order = await orderRepository.GetByNumberAsync(expirePayment.OrderNumber, cancellationToken);
         if (order is null || !order.CanExpirePayment()) return;
 
         order.ExpirePayment();
@@ -18,4 +18,4 @@ public class ExpirePaymentHandler(IOrderRepository orderRepository)
     }
 }
 
-public record ExpirePayment(Guid OrderId);
+public record ExpirePayment(string OrderNumber);

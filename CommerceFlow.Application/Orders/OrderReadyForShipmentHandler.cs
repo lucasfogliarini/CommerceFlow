@@ -8,7 +8,7 @@ public class OrderReadyForShipmentHandler(IOrderRepository orderRepository) : ID
     {
         ArgumentNullException.ThrowIfNull(paymentApproved);
 
-        var order = await orderRepository.GetByIdAsync(paymentApproved.OrderId, cancellationToken);
+        var order = await orderRepository.GetByNumberAsync(paymentApproved.OrderNumber, cancellationToken);
         if (order is null) return;
 
         order.ReadyForShipment();

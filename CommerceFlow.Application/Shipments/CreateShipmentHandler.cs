@@ -18,7 +18,7 @@ public class CreateShipmentHandler(IShipmentRepository shipmentRepository, IProd
                 : new ShipmentItem(product.Id, i.Quantity, product.Weight);
         }).ToList();
 
-        var shipment = Shipment.Create(orderReadyForShipment.OrderId, orderReadyForShipment.ShipmentAddress, shipmentItems);
+        var shipment = Shipment.Create(orderReadyForShipment.OrderNumber, orderReadyForShipment.ShipmentAddress, shipmentItems);
 
         await shipmentRepository.AddAsync(shipment, cancellationToken);
         await shipmentRepository.CommitScope.CommitAsync(cancellationToken);

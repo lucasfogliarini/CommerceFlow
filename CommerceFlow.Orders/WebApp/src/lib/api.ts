@@ -39,13 +39,13 @@ export async function createOrder(order: CreateOrderRequest, token?: string): Pr
   return res;
 }
 
-export async function approvePayment(orderId: string, paymentReference: string, token?: string): Promise<Response> {
+export async function approvePayment(orderNumber: string, paymentReference: string, token?: string): Promise<Response> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}/orders/${orderId}/approve-payment`, {
+  const res = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderNumber)}/approve-payment`, {
     method: "PUT",
     headers,
     body: JSON.stringify({ paymentReference }),

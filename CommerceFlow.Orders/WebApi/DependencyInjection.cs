@@ -1,10 +1,10 @@
-﻿using CommerceFlow.Application;
+﻿using CommerceFlow;
+using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
@@ -40,6 +40,7 @@ public static class DependencyInjection
         });
         builder.ConfigureMessageBus(opts =>
         {
+            opts.Subscribe<NotificationRequest>();
             opts.ConfigurePublisher<OrderCreated>();
             opts.ConfigurePublisher<ApprovePayment>();
 

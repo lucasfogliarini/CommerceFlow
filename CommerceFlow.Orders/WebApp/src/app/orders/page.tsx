@@ -12,7 +12,7 @@ export default function OrdersPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
-  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
+  const [payingOrderNumber, setPayingOrderNumber] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialized && !authenticated && !authError) {
@@ -47,17 +47,17 @@ export default function OrdersPage() {
     }
   }, [keycloak?.token]);
 
-  const handlePayment = async (orderId: string) => {
-    setPayingOrderId(orderId);
+  const handlePayment = async (orderNumber: string) => {
+    setPayingOrderNumber(orderNumber);
     setError("");
     try {
-      const response = await approvePayment(orderId, crypto.randomUUID(), keycloak?.token);
+      const response = await approvePayment(orderNumber, crypto.randomUUID(), keycloak?.token);
       if (!response.ok) throw new Error(`Erro ao aprovar pagamento (${response.status})`);
       await loadOrders(true);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Erro ao processar o pagamento.");
     } finally {
-      setPayingOrderId(null);
+      setPayingOrderNumber(null);
     }
   };
 
@@ -117,7 +117,7 @@ export default function OrdersPage() {
                 <span className={`order-status order-status-${order.status.toLowerCase()}`}>{getStatusLabel(order.status)}</span>
                 <strong>{formatPrice(order.totalAmount)}</strong>
                 {(order.status === "Created" || order.status === "WaitingForPayment") && (
-                  <button className="btn btn-primary" disabled={payingOrderId === order.id} onClick={() => void handlePayment(order.id)}>{payingOrderId === order.id ? "Pagando..." : "Pagar"}</button>
+                  <button className="btn btn-primary" disabled={payingOrderNumber === order.number} onClick={() => void handlePayment(order.number)}>{payingOrderNumber === order.number ? "Pagando..." : "Pagar"}</button>
                 )}
               </div>
               {expandedOrderId === order.id && (

@@ -8,7 +8,7 @@ public class RejectPaymentHandler(IOrderRepository orderRepository)
     {
         ArgumentNullException.ThrowIfNull(rejectPayment);
 
-        var order = await orderRepository.GetByIdAsync(rejectPayment.OrderId, cancellationToken);
+        var order = await orderRepository.GetByNumberAsync(rejectPayment.OrderNumber, cancellationToken);
         if (order is null) return;
 
         order.RejectPayment(rejectPayment.PaymentReference, rejectPayment.Reason);
@@ -18,4 +18,4 @@ public class RejectPaymentHandler(IOrderRepository orderRepository)
     }
 }
 
-public record RejectPayment(Guid OrderId, string PaymentReference, string Reason);
+public record RejectPayment(string OrderNumber, string PaymentReference, string Reason);

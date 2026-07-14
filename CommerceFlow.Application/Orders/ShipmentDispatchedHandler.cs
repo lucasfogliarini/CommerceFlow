@@ -9,7 +9,7 @@ public class ShipmentDispatchedHandler(IOrderRepository orderRepository)
     {
         ArgumentNullException.ThrowIfNull(shipmentDispatched);
 
-        var order = await orderRepository.GetByIdAsync(shipmentDispatched.OrderId, cancellationToken);
+        var order = await orderRepository.GetByNumberAsync(shipmentDispatched.OrderNumber, cancellationToken);
         if (order is null) return;
 
         order.DispatchShipment(shipmentDispatched.TrackingCode);

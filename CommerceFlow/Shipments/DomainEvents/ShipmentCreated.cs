@@ -1,7 +1,7 @@
 ﻿
 namespace CommerceFlow.Shipments;
 
-public sealed record ShipmentCreated(Guid ShipmentId, Guid OrderId) : DomainEvent
+public sealed record ShipmentCreated(Guid ShipmentId, string OrderNumber) : DomainEvent
 {
-    public override NotificationRequest Notification => new(AggregateId: ShipmentId, $"O envio do pedido {OrderId} foi criado.");
+    public override NotificationRequest Notification => new(AggregateId: ShipmentId, $"O envio do pedido {OrderNumber} foi criado.");
 }
