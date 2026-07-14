@@ -3,6 +3,7 @@
 import { Product } from "@/types";
 import { useCart } from "./CartProvider";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem, items } = useCart();
+  const router = useRouter();
   const [justAdded, setJustAdded] = useState(false);
 
   const isInCart = items.some((item) => item.product.id === product.id);
@@ -18,6 +20,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     addItem(product);
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1200);
+  };
+
+  const handleBuyNow = () => {
+    addItem(product);
+    router.push("/checkout");
   };
 
   const formatPrice = (price: number) => {
@@ -48,12 +55,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="product-card-price">
             {formatPrice(product.unitPrice)}
           </span>
-          <button
-            className={`product-card-add-btn ${justAdded ? "added" : ""}`}
-            onClick={handleAdd}
-          >
-            {justAdded ? "✓ Adicionado" : isInCart ? "+ Mais 1" : "🛒 Adicionar"}
-          </button>
+          <div className="product-card-actions">
+            <button
+              className={`product-card-add-btn ${justAdded ? "added" : ""}`}
+              onClick={handleAdd}
+            >
+              {justAdded ? "✓ Adicionado" : isInCart ? "+ Mais 1" : "🛒 Adicionar"}
+            </button>
+            <button className="product-card-buy-now-btn" onClick={handleBuyNow}>
+              Comprar em 1 clique
+            </button>
+          </div>
         </div>
       </div>
     </div>

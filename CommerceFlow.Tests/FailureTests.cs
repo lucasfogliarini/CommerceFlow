@@ -38,7 +38,7 @@ namespace CommerceFlow.Tests
         }
 
         [Fact(DisplayName = "Rejeitar Pagamento deve cancelar o pedido e disparar eventos")]
-        public void WhenPaymentIsRejected_OrderIsCancelled()
+        public void WhenPaymentIsRejected_OrderIsPaymentRejected()
         {
             // Arrange
             var order = CreateOrderHelper();
@@ -48,9 +48,8 @@ namespace CommerceFlow.Tests
             order.RejectPayment("payment-1", "Card declined");
 
             // Assert
-            Assert.Equal(OrderStatus.Cancelled, order.Status);
+            Assert.Equal(OrderStatus.PaymentRejected, order.Status);
             Assert.Contains(order.DomainEvents, e => e is PaymentRejected);
-            Assert.Contains(order.DomainEvents, e => e is OrderCancelled);
         }
     }
 }

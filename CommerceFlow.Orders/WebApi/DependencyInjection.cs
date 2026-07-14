@@ -1,5 +1,4 @@
 ﻿using CommerceFlow.Application;
-using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.WebApi;
@@ -30,9 +29,6 @@ public static class DependencyInjection
         {
             opts.ConfigurePublisher<OrderCreated>();
             opts.ConfigurePublisher<ApprovePayment>();
-            opts.ConfigurePublisher<CompletePacking>();
-            opts.ConfigurePublisher<DeliverShipment>();
-            opts.ConfigurePublisher<RegisterTrackingEvent>();
 
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });
