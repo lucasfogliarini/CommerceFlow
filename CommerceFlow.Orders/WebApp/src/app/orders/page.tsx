@@ -1,19 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useKeycloak } from "@/components/KeycloakProvider";
-import { getCustomerOrders } from "@/lib/api";
+import { approvePayment, getCustomerOrders } from "@/lib/api";
 import { OrderSummary } from "@/types";
 
 export default function OrdersPage() {
-  const router = useRouter();
   const { keycloak, authenticated, initialized, error: authError, login } = useKeycloak();
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialized && !authenticated && !authError) {
@@ -47,6 +46,20 @@ export default function OrdersPage() {
       }
     }
   }, [keycloak?.token]);
+
+  const handlePayment = async (orderId: string) => {
+    setPayingOrderId(orderId);
+    setError("");
+    try {
+      const response = await approvePayment(orderId, crypto.randomUUID(), keycloak?.token);
+      if (!response.ok) throw new Error(`Erro ao aprovar pagamento (${response.status})`);
+      await loadOrders(true);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Erro ao processar o pagamento.");
+    } finally {
+      setPayingOrderId(null);
+    }
+  };
 
   useEffect(() => {
     if (authenticated && keycloak?.token) {
@@ -104,7 +117,7 @@ export default function OrdersPage() {
                 <span className={`order-status order-status-${order.status.toLowerCase()}`}>{getStatusLabel(order.status)}</span>
                 <strong>{formatPrice(order.totalAmount)}</strong>
                 {(order.status === "Created" || order.status === "WaitingForPayment") && (
-                  <button className="btn btn-primary" onClick={() => router.push(`/payment/${order.id}`)}>Pagar</button>
+                  <button className="btn btn-primary" disabled={payingOrderId === order.id} onClick={() => void handlePayment(order.id)}>{payingOrderId === order.id ? "Pagando..." : "Pagar"}</button>
                 )}
               </div>
               {expandedOrderId === order.id && (

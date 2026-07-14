@@ -23,7 +23,7 @@ public class Product : AggregateRoot
 
         Id = id;
         Slug = slug;
-        ImageUrl = $"/images/{slug}.png";
+        ImageUrl = $"/images/{slug}.svg";
         Name = name;
         Description = description;
         UnitPrice = unitPrice;

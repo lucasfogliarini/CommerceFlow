@@ -37,11 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="product-card">
       <div className="product-card-image">
-        {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.name} />
-        ) : (
-          <span className="product-card-placeholder">📦</span>
-        )}
+        <img src={`/images/${product.slug}.svg`} alt={product.name} />
       </div>
       <div className="product-card-body">
         {product.slug && (
