@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "./CartProvider";
 import { useKeycloak } from "./KeycloakProvider";
+import NotificationBell from "./NotificationBell";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -48,6 +49,9 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
+          <li>
+            <NotificationBell />
+          </li>
           <li>
             <Link
               href="/cart"

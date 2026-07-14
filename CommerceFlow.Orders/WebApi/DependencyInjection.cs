@@ -1,8 +1,10 @@
 ﻿using CommerceFlow.Application;
+using CommerceFlow.Application.Notifications;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
@@ -24,7 +26,18 @@ public static class DependencyInjection
         builder.AddJwtBearerAuthentication();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
-
+        builder.Services.AddSignalR();
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:2009")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
         builder.ConfigureMessageBus(opts =>
         {
             opts.ConfigurePublisher<OrderCreated>();
@@ -40,11 +53,13 @@ public static class DependencyInjection
     }
     public static void UseApplication(this WebApplication app)
     {
-        app.MapEndpoints();
-        app.MapControllers();
-        app.MapHealthChecks();
+        app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapEndpoints();
+        app.MapControllers();
+        app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
+        app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

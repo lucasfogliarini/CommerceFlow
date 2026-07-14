@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN dotnet publish "CommerceFlow.OrderEventWorkers/CommerceFlow.OrderEventWorkers.csproj" -c Release -o /app/publish
+RUN dotnet publish "CommerceFlow.Orders/EventWorkers/CommerceFlow.Orders.EventWorkers.csproj" -c Release -o /app/publish
 
 # Etapa final com imagem de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:${ASPNET_VERSION} AS runtime
