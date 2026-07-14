@@ -7,11 +7,12 @@ systemBuilder.AddService<CommerceFlowRabbitMQServer>();
 //systemBuilder.AddService<CommerceFlowServiceBusServer>();
 systemBuilder.AddService<CommerceFlowPostgresServer>();
 systemBuilder.AddService<CommerceFlowKeycloakServer>();
-systemBuilder.AddService<CommerceFlowOrderEventWorkers>();
-systemBuilder.AddService<CommerceFlowShipmentEventWorkers>();
-systemBuilder.AddService<CommerceFlowWebApi>();
-systemBuilder.AddService<CommerceFlowWebApp>();
-systemBuilder.AddService<CommerceFlowShipmentsWebApp>();
+systemBuilder.AddService<OrdersEventWorkers>();
+systemBuilder.AddService<OrdersWebApi>();
+systemBuilder.AddService<OrdersWebApp>();
+systemBuilder.AddService<ShipmentsEventWorkers>();
+systemBuilder.AddService<ShipmentsWebApi>();
+systemBuilder.AddService<ShipmentsWebApp>();
 
 var app = systemBuilder.Build();
 

@@ -5,16 +5,16 @@
       "clientId": "commerceflow",
       "name": "CommerceFlow",
       "description": "",
-      "rootUrl": "http://localhost:2010",
-      "adminUrl": "http://localhost:2010",
-      "baseUrl": "http://localhost:2010",
+      "rootUrl": "http://localhost:2009",
+      "adminUrl": "http://localhost:2009",
+      "baseUrl": "http://localhost:2009",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": true,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:2010/*",
-        "http://localhost:2011/*",
+        "http://localhost:2009/*",
+        "http://localhost:2012/*",
         "https://oauth.pstmn.io/v1/callback"
       ],
       "webOrigins": [

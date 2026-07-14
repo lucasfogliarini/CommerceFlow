@@ -16,9 +16,10 @@
     <PackageReference Include="Keycloak.AuthServices.Aspire.Hosting" Version="0.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommerceFlow.OrderEventWorkers\CommerceFlow.OrderEventWorkers.csproj" />
-    <ProjectReference Include="..\CommerceFlow.ShipmentEventWorkers\CommerceFlow.ShipmentEventWorkers.csproj" />
-    <ProjectReference Include="..\CommerceFlow.WebApi\CommerceFlow.WebApi.csproj" />
+    <ProjectReference Include="..\CommerceFlow.Orders\EventWorkers\CommerceFlow.Orders.EventWorkers.csproj" />
+    <ProjectReference Include="..\CommerceFlow.Orders\WebApi\CommerceFlow.Orders.WebApi.csproj" />
+    <ProjectReference Include="..\CommerceFlow.Shipments\EventWorkers\CommerceFlow.Shipments.EventWorkers.csproj" />
+    <ProjectReference Include="..\CommerceFlow.Shipments\WebApi\CommerceFlow.Shipments.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

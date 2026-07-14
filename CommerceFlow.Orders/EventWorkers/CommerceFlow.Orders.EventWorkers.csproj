@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommerceFlow.Application\CommerceFlow.Application.csproj" />
-    <ProjectReference Include="..\CommerceFlow.Infrastructure\CommerceFlow.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\CommerceFlow.Application\CommerceFlow.Application.csproj" />
+    <ProjectReference Include="..\..\CommerceFlow.Infrastructure\CommerceFlow.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
