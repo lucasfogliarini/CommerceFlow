@@ -52,6 +52,7 @@ export interface OrderSummary {
   status: string;
   totalAmount: number;
   createdAt: string;
+  trackingCode?: string;
   items: OrderItemSummary[];
 }
 

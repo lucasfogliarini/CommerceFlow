@@ -109,6 +109,7 @@ export default function OrdersPage() {
                 </p>
                 <p>{order.items.length} {order.items.length === 1 ? "item" : "itens"}</p>
                 <p>Comprado em {formatOrderDate(order.createdAt)}</p>
+                 {order.trackingCode && <p>Código de rastreio: {order.trackingCode}</p>}
                 <button className="order-items-toggle" type="button" onClick={() => setExpandedOrderId((current) => current === order.id ? null : order.id)} aria-expanded={expandedOrderId === order.id}>
                   {expandedOrderId === order.id ? "Ocultar itens" : "Ver itens"}
                 </button>

@@ -23,6 +23,7 @@ internal sealed class GetCustomerOrdersEndpoint : IEndpoint
                                 o.Status,
                                 o.TotalAmount.GetValueOrDefault(),
                                 o.CreatedAt, 
+                                o.Shipment?.TrackingCode,
                                 o.Items.Select(i=> new CustomerOrderItemResponse(i.Product.Name, i.Product.UnitPrice, i.Quantity))
                             )
                     );
@@ -38,6 +39,6 @@ internal sealed class GetCustomerOrdersEndpoint : IEndpoint
             .WithSummary("Recupera os pedidos do cliente autenticado.");
     }
 
-    public record CustomerOrderResponse(Guid Id, string Number, OrderStatus Status, decimal TotalAmount, DateTime CreatedAt, IEnumerable<CustomerOrderItemResponse> Items);
+    public record CustomerOrderResponse(Guid Id, string Number, OrderStatus Status, decimal TotalAmount, DateTime CreatedAt, string? TrackingCode, IEnumerable<CustomerOrderItemResponse> Items);
     public record CustomerOrderItemResponse(string ProductName, decimal UnitPrice, int Quantity);
 }

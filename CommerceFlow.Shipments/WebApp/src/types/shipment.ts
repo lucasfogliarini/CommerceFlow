@@ -8,7 +8,7 @@ export type ShipmentStatus =
 
 export interface Shipment {
   id: string;
-  orderId: string;
+  orderNumber: string;
   createdAt: string;
   status: ShipmentStatus;
   address?: {
