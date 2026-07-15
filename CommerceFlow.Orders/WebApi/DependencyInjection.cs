@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -40,7 +41,7 @@ public static class DependencyInjection
         });
         builder.ConfigureMessageBus(opts =>
         {
-            opts.Subscribe<NotificationRequest>();
+            opts.ListenToRabbitQueue("orders.notification");
             opts.ConfigurePublisher<OrderCreated>();
             opts.ConfigurePublisher<ApprovePayment>();
 

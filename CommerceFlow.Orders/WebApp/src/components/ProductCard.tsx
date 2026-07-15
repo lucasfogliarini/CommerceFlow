@@ -52,14 +52,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             {formatPrice(product.unitPrice)}
           </span>
           <div className="product-card-actions">
+            <button className="product-card-buy-now-btn" onClick={handleBuyNow}>
+              Comprar em 1 clique
+            </button>
             <button
               className={`product-card-add-btn ${justAdded ? "added" : ""}`}
               onClick={handleAdd}
             >
               {justAdded ? "✓ Adicionado" : isInCart ? "+ Mais 1" : "🛒 Adicionar"}
-            </button>
-            <button className="product-card-buy-now-btn" onClick={handleBuyNow}>
-              Comprar em 1 clique
             </button>
           </div>
         </div>

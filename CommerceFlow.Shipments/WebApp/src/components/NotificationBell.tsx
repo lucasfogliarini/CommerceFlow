@@ -8,7 +8,7 @@ type Notification = { aggregateId: string; message: string };
 
 export default function NotificationBell() {
   const { keycloak, authenticated } = useKeycloak();
-  const notificationsEnabled = false;
+  const notificationsEnabled = true;
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);

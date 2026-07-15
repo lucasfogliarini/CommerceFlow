@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -44,7 +45,7 @@ public static class DependencyInjection
         {
             opts.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
 
-            opts.ConfigurePublisher<NotificationRequest>();
+            opts.ConfigureExchangePublisher<NotificationRequest>("orders.notification", "shipments.notification");
 
             configure?.Invoke(opts);
 

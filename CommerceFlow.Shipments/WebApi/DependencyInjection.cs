@@ -1,4 +1,5 @@
-﻿using CommerceFlow.Application;
+﻿using CommerceFlow;
+using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
 using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +22,7 @@ public static class DependencyInjection
         builder.AddJwtBearerAuthentication();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
-        //builder.Services.AddSignalR();
+        builder.Services.AddSignalR();
         builder.Services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
@@ -34,6 +36,7 @@ public static class DependencyInjection
         });
         builder.ConfigureMessageBus(opts =>
         {
+            opts.ListenToRabbitQueue("shipments.notification");
             opts.ConfigurePublisher<CompletePacking>();
             opts.ConfigurePublisher<DeliverShipment>();
             opts.ConfigurePublisher<RegisterTrackingEvent>();
@@ -52,7 +55,7 @@ public static class DependencyInjection
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapEndpoints();
-        //app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
+        app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
         app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
