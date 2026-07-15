@@ -1,8 +1,6 @@
-﻿using ImTools;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Wolverine;
 using Wolverine.RabbitMQ;
-using Wolverine.RabbitMQ.Internal;
 
 namespace CommerceFlow.Infrastructure.RabbitMQ;
 
@@ -35,7 +33,7 @@ public static class RabbitMQWolverineExtensions
                  ex.BindQueue(queue);
          });
 
-        options.PublishMessage<NotificationRequest>()
+        options.PublishMessage<TMessage>()
             .ToRabbitExchange(exchange);
 
         return options;

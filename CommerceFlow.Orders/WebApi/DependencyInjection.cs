@@ -41,7 +41,7 @@ public static class DependencyInjection
         });
         builder.ConfigureMessageBus(opts =>
         {
-            opts.ListenToRabbitQueue("orders.notification");
+            opts.Subscribe<OrdersNotification>();
             opts.ConfigurePublisher<OrderCreated>();
             opts.ConfigurePublisher<ApprovePayment>();
 

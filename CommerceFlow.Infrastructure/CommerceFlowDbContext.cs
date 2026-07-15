@@ -38,15 +38,15 @@ public sealed class CommerceFlowDbContext(IMessageBus bus, DbContextOptions opti
 
     private async Task AddNotificationsAsync(IEnumerable<IDomainEvent> domainEvents)
     {
-        foreach (var domainEvent in domainEvents.OfType<DomainEvent>())
-        {
-            if (domainEvent.Notification != null)
-            {
-                var notificationRequest = domainEvent.Notification;
-                var notification = new Notification { AggregateId = notificationRequest.AggregateId, Message = notificationRequest.Message };
-                await AddAsync(notification);
-            }
-        }
+        //foreach (var domainEvent in domainEvents.OfType<DomainEvent>())
+        //{
+        //    if (domainEvent.Notifications != null)
+        //    {
+        //        var notificationRequest = domainEvent.Notifications;
+        //        var notification = new Notification { AggregateId = notificationRequest.AggregateId, Message = notificationRequest.Message };
+        //        await AddAsync(notification);
+        //    }
+        //}
     }
 
     private void ClearDomainEvents(IEnumerable<AggregateRoot> aggregates)
@@ -63,8 +63,11 @@ public sealed class CommerceFlowDbContext(IMessageBus bus, DbContextOptions opti
         {
             await bus.PublishAsync(domainEvent);
 
-            if (domainEvent is DomainEvent { Notification: not null } domainEventNotificator)
-                await bus.PublishAsync(domainEventNotificator.Notification);
+            if (domainEvent is DomainEvent { Notifications: not null } domainEventNotificator)
+            {
+                foreach (var notification in domainEventNotificator.Notifications)
+                    await bus.PublishAsync(notification);
+            }
         }
     }
 

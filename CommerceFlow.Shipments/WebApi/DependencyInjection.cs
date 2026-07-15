@@ -3,6 +3,7 @@ using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
 using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
+using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
@@ -36,7 +37,7 @@ public static class DependencyInjection
         });
         builder.ConfigureMessageBus(opts =>
         {
-            opts.ListenToRabbitQueue("shipments.notification");
+            opts.Subscribe<ShipmentsNotification>();
             opts.ConfigurePublisher<CompletePacking>();
             opts.ConfigurePublisher<DeliverShipment>();
             opts.ConfigurePublisher<RegisterTrackingEvent>();

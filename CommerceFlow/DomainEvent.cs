@@ -6,15 +6,14 @@
 /// Cor no EventStorming: <b>Laranja</b>.
 /// </summary>
 public interface IDomainEvent;
+public interface INotification;
 
 public abstract record DomainEvent : IDomainEvent
 {
-    public abstract NotificationRequest Notification { get; }
+    public abstract INotification[] Notifications { get; }
 }
 
 public interface IDomainEventHandler<in TEvent> where TEvent : IDomainEvent
 {
     Task HandleAsync(TEvent domainEvent, CancellationToken cancellationToken);
 }
-
-public record NotificationRequest(Guid AggregateId, string Message);

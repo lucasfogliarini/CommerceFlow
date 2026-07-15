@@ -45,7 +45,8 @@ public static class DependencyInjection
         {
             opts.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
 
-            opts.ConfigureExchangePublisher<NotificationRequest>("orders.notification", "shipments.notification");
+            opts.ConfigurePublisher<OrdersNotification>();
+            opts.ConfigurePublisher<ShipmentsNotification>();
 
             configure?.Invoke(opts);
 
