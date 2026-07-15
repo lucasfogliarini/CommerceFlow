@@ -7,6 +7,6 @@ public sealed record ShipmentDelivered(Guid ShipmentId, string OrderNumber) : Do
 {
     public override INotification[] Notifications => [
             new ShipmentsNotification(ShipmentId: ShipmentId, $"O envio do pedido {OrderNumber} foi entregue com sucesso."),
-            new OrdersNotification(OrderId: ShipmentId, $"O envio do pedido {OrderNumber} foi entregue com sucesso.")
+            new OrdersNotification(OrderNumber: OrderNumber, $"O envio do pedido {OrderNumber} foi entregue com sucesso.")
         ];
 }

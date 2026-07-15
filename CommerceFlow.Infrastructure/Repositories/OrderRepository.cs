@@ -5,6 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 public class OrderRepository(CommerceFlowDbContext dbContext) : Repository(dbContext), IOrderRepository
 {
+    public async Task<Guid?> GetCustomerIdAsync(string number, CancellationToken cancellationToken = default)
+    {
+        var order = await Set<Order>()
+            .FirstOrDefaultAsync(o => o.Number == number, cancellationToken);
+        return order?.CustomerId;
+    }
     public async Task<List<Order>> GetOrdersAsync(CancellationToken cancellationToken = default)
     {
         return await Set<Order>()

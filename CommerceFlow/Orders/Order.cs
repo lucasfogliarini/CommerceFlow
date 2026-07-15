@@ -53,7 +53,7 @@ public class Order : AggregateRoot
 
         Status = OrderStatus.PaymentExpired;
 
-        AddDomainEvent(new PaymentExpired(Id, Number));
+        AddDomainEvent(new PaymentExpired(Number));
     }
     public void ReleaseInventory()
     {
@@ -78,7 +78,7 @@ public class Order : AggregateRoot
         Status = OrderStatus.WaitingForPayment;
 
         AddDomainEvent(new OrderInventoryReserved(Id));
-        AddDomainEvent(new OrderWaitingForPayment(Id, Number));
+        AddDomainEvent(new OrderWaitingForPayment(Number));
     }
     public void ApprovePayment(string paymentReference)
     {
@@ -88,7 +88,7 @@ public class Order : AggregateRoot
         Payment.Approve(paymentReference);
 
         Status = OrderStatus.PaymentApproved;
-        AddDomainEvent(new PaymentApproved(Id, Number, paymentReference));
+        AddDomainEvent(new PaymentApproved(Number, paymentReference));
     }
     public void RejectPayment(string paymentReference, string reason)
     {
@@ -98,7 +98,7 @@ public class Order : AggregateRoot
         Payment.Reject(paymentReference, reason);
         Status = OrderStatus.PaymentRejected;
 
-        AddDomainEvent(new PaymentRejected(Id, Number, reason));
+        AddDomainEvent(new PaymentRejected(Number, reason));
     }
     public void ReadyForShipment()
     {
@@ -109,7 +109,7 @@ public class Order : AggregateRoot
 
         Shipment!.Request();
         Status = OrderStatus.ReadyForShipment;
-        AddDomainEvent(new OrderReadyForShipment(Id, Number, Shipment.Address, items));
+        AddDomainEvent(new OrderReadyForShipment(Number, Shipment.Address, items));
     }
     public void DispatchShipment(string trackingCode)
     {
@@ -134,6 +134,6 @@ public class Order : AggregateRoot
             throw new InvalidOperationException("Delivered orders cannot be cancelled.");
 
         Status = OrderStatus.Cancelled;
-        AddDomainEvent(new OrderCancelled(Id, reason));
+        AddDomainEvent(new OrderCancelled(Number, reason));
     }
 }

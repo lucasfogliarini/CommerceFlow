@@ -1,6 +1,6 @@
 namespace CommerceFlow.Orders;
 
-public record OrderCancelled(Guid OrderId, string Reason) : DomainEvent
+public record OrderCancelled(string OrderNumber, string Reason) : DomainEvent
 {
-    public override INotification[] Notifications => [ new OrdersNotification(OrderId: OrderId, $"O pedido {OrderId} foi cancelado. Motivo: {Reason}.") ];
+    public override INotification[] Notifications => [ new OrdersNotification(OrderNumber, $"O pedido {OrderNumber} foi cancelado. Motivo: {Reason}.") ];
 }

@@ -7,6 +7,6 @@ public sealed record TrackingUpdated(Guid ShipmentId, string OrderNumber, string
 {
     public override INotification[] Notifications => [
         new ShipmentsNotification(ShipmentId: ShipmentId, $"Rastreamento do pedido {OrderNumber}: {Description}, Localização: {Location}."),
-        new OrdersNotification(OrderId: ShipmentId, $"Rastreamento do pedido {OrderNumber}: {Description}, Localização: {Location}.")
+        new OrdersNotification(OrderNumber: OrderNumber, $"Rastreamento do pedido {OrderNumber}: {Description}, Localização: {Location}.")
 ];
 }

@@ -1,3 +1,3 @@
 ﻿namespace CommerceFlow.Orders;
 
-public record OrdersNotification(Guid OrderId, string Message) : INotification;
+public record OrdersNotification(string OrderNumber, string Message) : INotification;
