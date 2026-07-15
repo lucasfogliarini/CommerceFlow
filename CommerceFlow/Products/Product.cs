@@ -7,8 +7,8 @@ public class Product : AggregateRoot
     public string Description { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal Weight { get; private set; }
-    public int AvailableQuantity { get; set; }
-    public int ReservedQuantity { get; set; }
+    public int AvailableQuantity { get; private set; }
+    public int ReservedQuantity { get; private set; }
     public string ImageUrl { get; set; }
 
     private Product() { }

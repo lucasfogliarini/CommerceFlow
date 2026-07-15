@@ -3,7 +3,7 @@ namespace CommerceFlow.Orders;
 public record OrderShipment
 {
     public ShipmentStatus Status { get; private set; }
-    public string? TrackingCode { get; private set; }
+    public string? TrackingCode { get; set; }
     public ShippingAddress? Address { get; set; }
 
     public void Request()

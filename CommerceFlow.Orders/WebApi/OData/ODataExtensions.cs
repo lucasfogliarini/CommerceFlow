@@ -1,4 +1,7 @@
-﻿using CommerceFlow.WebApi.OData;
+﻿using CommerceFlow;
+using CommerceFlow.WebApi;
+using CommerceFlow.WebApi.OData;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 using System.Reflection;
@@ -19,19 +22,13 @@ namespace Microsoft.AspNetCore.OData
             var odataControllers = Assembly.GetExecutingAssembly().GetTypes().Where(e => e.BaseType?.Name == typeof(ODataController<>).Name);
             foreach (var odataController in odataControllers)
             {
-                var entityType = odataController.BaseType?.GenericTypeArguments.FirstOrDefault();
-                EntitySet(builder, entityType, odataController.Name);
+                var responseType = odataController.BaseType?.GenericTypeArguments.FirstOrDefault();
+                var entityType = builder.AddEntityType(responseType);
+                var entitySetName = odataController.Name.Replace("Controller", "");
+                builder.AddEntitySet(entitySetName, entityType);
             }
             var edmModel = builder.GetEdmModel();
             return edmModel;
-        }
-
-        static void EntitySet(ODataConventionModelBuilder builder, Type? entitySetType, string controllerName)
-        {
-            var entitySetName = controllerName.Replace("Controller", "");
-            typeof(ODataConventionModelBuilder)
-                .GetMethod(nameof(ODataConventionModelBuilder.EntitySet))
-                .MakeGenericMethod(entitySetType).Invoke(builder, [entitySetName]);
         }
     }
 }

@@ -2,14 +2,14 @@ namespace CommerceFlow.Orders;
 
 public class Order : AggregateRoot
 {
-    public string Number { get; private set; } = default!;
+    public string Number { get; set; } = default!;
     public DateTime CreatedAt { get; private set; }
     public Guid CustomerId { get; private set; }
-    public OrderStatus Status { get; private set; }
+    public OrderStatus Status { get; set; }
     public List<OrderItem> Items { get; private set; }
     public decimal? TotalAmount => Items?.Sum(x => x.TotalAmount);
-    public OrderShipment? Shipment { get; private set; }
-    public Payment Payment { get; private set; }
+    public OrderShipment? Shipment { get; set; }
+    public Payment Payment { get; set; }
     
 
     private Order() { }

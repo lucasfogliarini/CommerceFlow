@@ -7,18 +7,8 @@ namespace CommerceFlow.WebApi;
 public class ProductsController(CommerceFlowDbContext dbContext) : ODataController<Product>
 {
     [EnableQuery]
-    public IQueryable<ProductResponse> Get()
+    public IQueryable<Product> Get()
     {
-        return dbContext.Set<Product>().Select(p => new ProductResponse(
-            Id: p.Id,
-            Slug: p.Slug,
-            Name: p.Name,
-            Description: p.Description,
-            UnitPrice: p.UnitPrice,
-            AvailableQuantity: p.AvailableQuantity,
-            ImageUrl: p.ImageUrl
-        ));
+        return dbContext.Set<Product>();
     }
 }
-
-public record ProductResponse(Guid Id, string Slug, string Name, string Description, decimal UnitPrice, int AvailableQuantity, string ImageUrl);
