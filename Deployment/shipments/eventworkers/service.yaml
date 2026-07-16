@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: commerceflow-shipmenteventworkers
+  name: shipments-eventworkers
   namespace: commerceflow
 spec:
   selector:
-    app: commerceflow-shipmenteventworkers
+    app: shipments-eventworkers
   type: ClusterIP
   ports:
     - port: 2003

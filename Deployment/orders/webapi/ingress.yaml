@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-webapi
+  namespace: commerceflow
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: commerceflow.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-webapi
+                port:
+                  number: 2001
+  # Descomente a seção abaixo se desejar adicionar TLS/HTTPS
+  # tls:
+  #  - hosts:
+  #       - commerceflow.local
+  #     secretName: webapi-tls

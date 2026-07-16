@@ -6,20 +6,28 @@ echo ===== Aplicando infraestrutura base do commerceflow =====
 echo 1. Aplicando namespace e secrets...
 kubectl apply -f "namespace.yaml"
 kubectl apply -f "commerceflow-secrets.yaml"
+kubectl create configmap keycloak-realm --namespace commerceflow --from-file=commerceflow-realm.json="..\commerce-flow-realm-export.json" --dry-run=client -o yaml | kubectl apply -f -
 
 echo.
 call :apply_app "postgres"
 
 echo.
+call :apply_app "keycloak"
+
+echo.
 call :apply_app "kafka"
+
+echo.
+call :apply_app "rabbitmq"
 
 echo.
 call :apply_app "kafka-ui"
 
 echo.
-call :apply_app "webapi"
-call :apply_app "ordereventworkers"
-call :apply_app "shipmenteventworkers"
+call :apply_app "orders/eventworkers"
+call :apply_app "orders/webapi"
+call :apply_app "shipments/eventworkers"
+call :apply_app "shipments/webapi"
 
 echo.
 echo ===== Services =====

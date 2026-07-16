@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: commerceflow-webapi
+  name: shipments-webapi
   namespace: commerceflow
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: commerceflow-webapi
+                name: shipments-webapi
                 port:
                   number: 2001
   # Descomente a seção abaixo se desejar adicionar TLS/HTTPS

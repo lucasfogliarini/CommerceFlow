@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: commerceflow-webapi
+  name: shipments-webapi
   namespace: commerceflow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: commerceflow-webapi
+      app: shipments-webapi
   template:
     metadata:
       labels:
-        app: commerceflow-webapi
+        app: shipments-webapi
     spec:
       nodeSelector:
         kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
       containers:
-        - name: commerceflow-webapi
-          image: lucasfogliarini/commerceflow-webapi:latest
+        - name: shipments-webapi
+          image: lucasfogliarini/shipments-webapi:latest
           ports:
             - containerPort: 8080
           resources:

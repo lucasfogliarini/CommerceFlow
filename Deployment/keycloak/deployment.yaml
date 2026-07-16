@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: commerceflow
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: keycloak
+
+  template:
+    metadata:
+      labels:
+        app: keycloak
+
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.4.2
+          args:
+            - start-dev
+            - --import-realm
+
+          ports:
+            - containerPort: 8080
+            - containerPort: 9000
+
+          env:
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: admin
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: commerceflow-secrets
+                  key: Keycloak__BootstrapAdminPassword
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/commerceflow
+            - name: KC_DB_USERNAME
+              value: commerceflow
+            - name: KC_DB_PASSWORD
+              value: commerceflow!123
+            - name: KC_DB_SCHEMA
+              value: keycloak
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          volumeMounts:
+            - name: keycloak-realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+
+      volumes:
+        - name: keycloak-realm
+          configMap:
+            name: keycloak-realm

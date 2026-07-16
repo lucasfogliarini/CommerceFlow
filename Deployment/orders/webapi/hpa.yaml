@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: commerceflow-ordereventworkers
+  name: orders-webapi
   namespace: commerceflow
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: commerceflow-ordereventworkers
+    name: orders-webapi
   minReplicas: 1
   maxReplicas: 3
   metrics:
@@ -16,4 +16,4 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 70
+          averageUtilization: 80

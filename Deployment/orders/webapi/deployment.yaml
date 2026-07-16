@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-webapi
+  namespace: commerceflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-webapi
+  template:
+    metadata:
+      labels:
+        app: orders-webapi
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
+      containers:
+        - name: orders-webapi
+          image: lucasfogliarini/orders-webapi:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "0.4"
+              memory: "0.5Gi"
+            limits:
+              cpu: "0.8"
+              memory: "1Gi"
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+          envFrom:
+            - secretRef:
+                name: commerceflow-secrets
+          livenessProbe: # LivenessProbe verifica se o Pod está vivo e reinicia se necessário
+            httpGet:
+              path: /health/live
+              port: 8080
+            failureThreshold: 1 # Reinicia o Pod imediatamente ao detectar falha
+            readinessProbe: # ReadinessProbe verifica se o Pod está pronto para receber tráfego.
+            httpGet:
+              path: /health/ready
+              port: 8080
+            periodSeconds: 20 # Intervalo entre as verificações
+            timeoutSeconds: 5 # Tempo de espera para a resposta do probe
+            failureThreshold: 1 # Pod continua rodando, mas é removido dos endpoints do Service
+            successThreshold: 1 # Número de sucessos necessários para considerar o Pod pronto para tráfego novamente
+            initialDelaySeconds: 2 # Tempo de espera antes de iniciar as verificações

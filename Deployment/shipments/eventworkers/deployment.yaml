@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: commerceflow-shipmenteventworkers
+  name: shipments-eventworkers
   namespace: commerceflow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: commerceflow-shipmenteventworkers
+      app: shipments-eventworkers
   template:
     metadata:
       labels:
-        app: commerceflow-shipmenteventworkers
+        app: shipments-eventworkers
     spec:
       nodeSelector:
         kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no n� espec�fico
       containers:
-        - name: commerceflow-shipmenteventworkers
-          image: lucasfogliarini/commerceflow-shipmenteventworkers:latest
+        - name: shipments-eventworkers
+          image: lucasfogliarini/shipments-eventworkers:latest
           ports:
             - containerPort: 8080
           resources:
