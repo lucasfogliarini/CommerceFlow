@@ -1,7 +1,7 @@
 using Aspire.C4;
 
-[DependsOn<PostgresDatabaseResource>]
-[DependsOn<RabbitMQServerResource>]
+[WithReference<PostgresDatabaseResource>]
+[WithReference<RabbitMQServerResource>]
 public class ShipmentsEventWorkers : Service
 {
     public override string Name => "ShipmentEventWorkers";

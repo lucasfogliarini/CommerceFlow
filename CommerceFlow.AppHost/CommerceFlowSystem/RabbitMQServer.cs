@@ -1,8 +1,8 @@
 using Aspire.C4;
 
-public class CommerceFlowRabbitMQServer : Service
+public class RabbitMQServer : Service
 {
-    public override string Name => "RabbitMQServer";
+    public override string Name => nameof(RabbitMQServer);
 
     public override void Configure(SoftwareSystemContextBuilder system)
     {

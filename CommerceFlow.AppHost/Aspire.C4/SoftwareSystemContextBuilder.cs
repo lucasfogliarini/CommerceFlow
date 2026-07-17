@@ -136,19 +136,30 @@ public abstract class SoftwareSystemContextBuilder(IDistributedApplicationBuilde
             var serviceResourceBuilderWithWaitSupport = GetResourceBuilder<IResourceWithWaitSupport>(service.Name);
             var serviceResourceBuilderWithEnvironment = GetResourceBuilder<IResourceWithEnvironment>(service.Name);
 
-            var dependencies = service.GetType()
+            var references = service.GetType()
                                 .GetCustomAttributes()
                                 .Where(a =>
                                     a.GetType().IsGenericType &&
-                                    a.GetType().GetGenericTypeDefinition() == typeof(DependsOnAttribute<>))
+                                    a.GetType().GetGenericTypeDefinition() == typeof(WithReferenceAttribute<>))
                                 .Select(a => a.GetType().GetGenericArguments()[0]);
 
-            foreach (var dependencyType in dependencies)
+            foreach (var referenceType in references)
             {
-                var dependencyResource = GetResourceBuilder<IResourceWithConnectionString>(dependencyType);
+                var referenceResource = GetResourceBuilder<IResourceWithConnectionString>(referenceType);
+
+                serviceResourceBuilderWithWaitSupport.WaitFor(referenceResource);
+                serviceResourceBuilderWithEnvironment.WithReference(referenceResource);
+            }
+
+            var waitForAttribute = service.GetType().GetCustomAttribute<WaitForAttribute>()!;
+            if(waitForAttribute is null)
+                continue;
+
+            foreach (var dependency in waitForAttribute.Dependencies)
+            {
+                var dependencyResource = GetResourceBuilder<IResource>(dependency);
 
                 serviceResourceBuilderWithWaitSupport.WaitFor(dependencyResource);
-                serviceResourceBuilderWithEnvironment.WithReference(dependencyResource);
             }
         }
     }

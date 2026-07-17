@@ -1,7 +1,7 @@
 using Aspire.C4;
-public class CommerceFlowServiceBusServer : Service
+public class ServiceBusServer : Service
 {
-    public override string Name => "ServiceBusServer";
+    public override string Name => nameof(ServiceBusServer);
 
     public override void Configure(SoftwareSystemContextBuilder system)
     {

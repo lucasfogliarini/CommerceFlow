@@ -1,9 +1,9 @@
 using Aspire.C4;
 
-[DependsOn<PostgresServerResource>]
-public class CommerceFlowKeycloakServer : Service
+[WithReference<PostgresServerResource>]
+public class KeycloakServer : Service
 {
-    public override string Name => "KeycloakServer";
+    public override string Name => nameof(KeycloakServer);
 
     public override void Configure(SoftwareSystemContextBuilder system)
     {
