@@ -1138,7 +1138,7 @@
       "displayName": "Logar com o Google",
       "internalId": "84e59f62-9312-4362-906e-3ec98d0a6105",
       "providerId": "google",
-      "enabled": true,
+      "enabled": false,
       "updateProfileFirstLoginMode": "on",
       "trustEmail": false,
       "storeToken": false,
