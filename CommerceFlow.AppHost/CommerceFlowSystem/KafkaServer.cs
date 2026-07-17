@@ -1,8 +1,8 @@
 using Aspire.C4;
 
-public class CommerceFlowKafkaServer : Service
+public class KafkaServer : Service
 {
-    public override string Name => "KafkaServer";
+    public override string Name => nameof(KafkaServer);
 
     public override void Configure(SoftwareSystemContextBuilder system)
     {

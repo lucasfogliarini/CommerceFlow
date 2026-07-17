@@ -1,4 +1,5 @@
 using CommerceFlow.Application;
+using CommerceFlow.Customers;
 using System.Security.Claims;
 using Wolverine;
 
@@ -6,10 +7,12 @@ namespace CommerceFlow.WebApi.Endpoints;
 
 internal sealed class CreateCustomerAddressEndpoint : IEndpoint
 {
-    public async Task<IResult> CreateCustomerAddressAsync(CreateCustomerAddressRequest request, ClaimsPrincipal user, IMessageBus bus, CancellationToken cancellationToken = default)
+    public async Task<IResult> CreateCustomerAddressAsync(CreateCustomerAddressRequest request, ClaimsPrincipal User, IMessageBus bus, CancellationToken cancellationToken = default)
     {
-        if (!Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var customerId)) return Results.Unauthorized();
-        var address = await bus.InvokeAsync<Address?>(new CreateCustomerAddress(customerId, request.Street, request.Number, request.City, request.State, request.ZipCode, request.Country), cancellationToken);
+        var getOrCreateCustomer = new GetOrCreateCustomer(User);
+        var customer = await bus.InvokeAsync<Customer>(getOrCreateCustomer);
+
+        var address = await bus.InvokeAsync<Address?>(new CreateCustomerAddress(customer.Id, request.Street, request.Number, request.City, request.State, request.ZipCode, request.Country), cancellationToken);
         return address is null ? Results.NotFound() : Results.Created($"{Routes.Customers}/me/addresses/{address.Id}", address);
     }
 

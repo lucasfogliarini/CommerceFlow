@@ -1,5 +1,6 @@
 using Aspire.C4;
 
+[WaitFor(nameof(OrdersWebApi), nameof(KeycloakServer))]
 public class OrdersWebApp : Service
 {
     public override string Name => nameof(OrdersWebApp);
