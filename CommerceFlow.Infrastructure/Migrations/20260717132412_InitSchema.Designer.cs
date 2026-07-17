@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommerceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(CommerceFlowDbContext))]
-    [Migration("20260714175606_InitSchema")]
+    [Migration("20260717132412_InitSchema")]
     partial class InitSchema
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace CommerceFlow.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -88,24 +88,6 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Address");
-                });
-
-            modelBuilder.Entity("CommerceFlow.Notifications.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AggregateId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("CommerceFlow.Orders.Order", b =>
@@ -183,6 +165,9 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Order");
                 });
@@ -277,8 +262,9 @@ namespace CommerceFlow.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

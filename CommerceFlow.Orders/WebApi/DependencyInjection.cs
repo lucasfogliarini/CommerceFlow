@@ -106,12 +106,6 @@ public static class DependencyInjection
              options.Audience = jwtConfiguration.Audience;
              options.RequireHttpsMetadata = false;
              options.SaveToken = true;
-             options.Events.OnTokenValidated = async (tokenValidatedContext) =>
-             {
-                 var bus = tokenValidatedContext.HttpContext.RequestServices.GetRequiredService<IMessageBus>();
-                 var createCustomer = new GetOrCreateCustomer(tokenValidatedContext.Principal);
-                 await bus.InvokeAsync<Guid>(createCustomer);
-             };
          });
         builder.Services.AddAuthorization();
     }

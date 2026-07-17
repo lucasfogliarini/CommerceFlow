@@ -7,11 +7,11 @@ public class OrdersWebApp : Service
     public override void Configure(SoftwareSystemContextBuilder system)
     {
         #pragma warning disable ASPIREJAVASCRIPT001
-        var webApiResourceBuilder = system.Builder
+        var webAppResourceBuilder = system.Builder
                                            .AddNextJsApp("OrdersWebApp", "../CommerceFlow.Orders/WebApp")
                                            .WithEnvironment("COMMERCEFLOW_API_URL", "http://localhost:2008")
                                            .WithHttpEndpoint(system.GetNextPort());
         #pragma warning restore ASPIREJAVASCRIPT001
-        system.AddResourceBuilder(webApiResourceBuilder);
+        system.AddResourceBuilder(webAppResourceBuilder);
     }
 }
