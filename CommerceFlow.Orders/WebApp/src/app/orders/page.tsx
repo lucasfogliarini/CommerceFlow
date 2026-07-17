@@ -100,9 +100,9 @@ export default function OrdersPage() {
                   <button
                     type="button"
                     className="order-id-copy"
-                    aria-label="Copiar ID do pedido"
-                    title="Copiar ID do pedido"
-                    onClick={() => void navigator.clipboard.writeText(order.id)}
+                      aria-label="Copiar número do pedido"
+                      title="Copiar número do pedido"
+                      onClick={() => void navigator.clipboard.writeText(order.number)}
                   >
                     ⧉
                   </button>

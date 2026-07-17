@@ -87,9 +87,6 @@ export default function Navbar() {
                     <li role="none"><Link href="/account" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Minha Conta</Link></li>
                     <li role="none"><Link href="/orders" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Pedidos</Link></li>
                     <li role="none"><Link href="/addresses" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Endereços</Link></li>
-                    <li role="none"><Link href="/account#payments" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Pagamentos</Link></li>
-                    <li role="none"><Link href="/account#refunds" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Reembolsos</Link></li>
-                    <li role="none"><Link href="/account#wishlist" role="menuitem" onClick={() => setAccountMenuOpen(false)}>Lista de desejos</Link></li>
                     <li role="none"><button type="button" className="navbar-account-logout" role="menuitem" onClick={() => void logout()}>Sair</button></li>
                   </ul>
                 )}
