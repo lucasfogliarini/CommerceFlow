@@ -40,9 +40,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         <img src={`/images/${product.slug}.svg`} alt={product.name} />
       </div>
       <div className="product-card-body">
-        {product.slug && (
-          <div className="product-card-category">{product.slug}</div>
-        )}
         <h3 className="product-card-name">{product.name}</h3>
         {product.description && (
           <p className="product-card-description">{product.description}</p>

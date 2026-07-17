@@ -1,9 +1,55 @@
 import { Address, Product, ODataResponse, CreateOrderRequest } from "@/types";
 
 const API_BASE = "/api";
+export const PRODUCTS_PER_PAGE = 10;
 
-export async function fetchProducts(): Promise<Product[]> {
-  const res = await fetch(`${API_BASE}/products`, {
+export interface ProductFilters {
+  search?: string;
+  minimumPrice?: number;
+  maximumPrice?: number;
+  priceOrder?: "asc" | "desc";
+}
+
+export interface ProductPage {
+  products: Product[];
+  total: number;
+}
+
+export async function fetchProducts(filters: ProductFilters = {}): Promise<Product[]> {
+  const page = await fetchProductPage(filters);
+  return page.products;
+}
+
+export async function fetchProductPage(filters: ProductFilters = {}, pageNumber = 1): Promise<ProductPage> {
+  const clauses: string[] = [];
+  const search = filters.search?.trim();
+
+  if (search) {
+    const escapedSearch = search.replaceAll("'", "''").toLowerCase();
+    clauses.push(`contains(tolower(Name),'${escapedSearch}') or contains(tolower(Description),'${escapedSearch}')`);
+  }
+
+  if (filters.minimumPrice !== undefined) {
+    clauses.push(`UnitPrice ge ${filters.minimumPrice}`);
+  }
+
+  if (filters.maximumPrice !== undefined) {
+    clauses.push(`UnitPrice le ${filters.maximumPrice}`);
+  }
+
+  const query = new URLSearchParams();
+  if (clauses.length > 0) {
+    query.set("$filter", clauses.join(" and "));
+  }
+  if (filters.priceOrder) {
+    query.set("$orderby", `UnitPrice ${filters.priceOrder}`);
+  }
+  query.set("$top", PRODUCTS_PER_PAGE.toString());
+  query.set("$skip", ((pageNumber - 1) * PRODUCTS_PER_PAGE).toString());
+  query.set("$count", "true");
+
+  const queryString = query.toString();
+  const res = await fetch(`${API_BASE}/products${queryString ? `?${queryString}` : ""}`, {
     cache: "no-store",
   });
 
@@ -11,8 +57,13 @@ export async function fetchProducts(): Promise<Product[]> {
     throw new Error(`Failed to fetch products: ${res.status}`);
   }
 
-  const data: ODataResponse<Product> = await res.json();
-  return data.value ?? data;
+  const data: ODataResponse<Product> | Product[] = await res.json();
+  const products = Array.isArray(data) ? data : data.value;
+
+  return {
+    products,
+    total: Array.isArray(data) ? products.length : data["@odata.count"] ?? products.length,
+  };
 }
 
 export async function getCustomerOrders(token?: string) {

@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 
 const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
 
-export async function GET() {
-    try {
-      console.log(COMMERCEFLOW_API_URL);
-      const res = await fetch(`${COMMERCEFLOW_API_URL}/odata/products`, {
+export async function GET(request: Request) {
+  try {
+      const query = new URL(request.url).search;
+      const res = await fetch(`${COMMERCEFLOW_API_URL}/odata/products${query}`, {
       cache: "no-store",
     });
 
