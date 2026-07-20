@@ -95,10 +95,10 @@ public static class DependencyInjection
     private static void AddCors(this IHostApplicationBuilder builder)
     {
         var corsSettings = builder.Configuration
-            .GetSection(nameof(CorsSettings))
-            .Get<CorsSettings>()
+            .GetSection(nameof(CorsConfiguration))
+            .Get<CorsConfiguration>()
             ?? throw new InvalidOperationException(
-                $"As configurações de CORS ({nameof(CorsSettings)}) não foram encontradas."
+                $"As configurações de CORS ({nameof(CorsConfiguration)}) não foram encontradas."
             );
 
         builder.Services.AddCors(options =>
@@ -112,8 +112,8 @@ public static class DependencyInjection
             });
         });
     }
-    record CorsSettings(string[] AllowedOrigins);    
-    record JwtConfiguration(string Authority, string Audience);
+    public record CorsConfiguration(string[] AllowedOrigins);
+    public record JwtConfiguration(string Authority, string Audience);
 
     static TConfiguration GetConfiguration<TConfiguration>(IConfiguration configuration)
     {
