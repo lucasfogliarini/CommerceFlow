@@ -24,7 +24,7 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
     import("keycloak-js")
       .then(async ({ default: KeycloakClient }) => {
         const client = new KeycloakClient({
-          url: "http://localhost:2006/",
+          url: process.env.NEXT_PUBLIC_KEYCLOAK_URL || "http://localhost:2006/",
           realm: "commerceflow",
           clientId: "commerceflow",
         });

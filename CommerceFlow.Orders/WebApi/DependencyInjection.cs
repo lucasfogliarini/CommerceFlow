@@ -1,5 +1,4 @@
-﻿using CommerceFlow;
-using CommerceFlow.Application;
+﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using Wolverine;
-using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -28,17 +26,7 @@ public static class DependencyInjection
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
         builder.Services.AddSignalR();
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy
-                    .WithOrigins("http://localhost:2009")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
-        });
+        builder.AddCors();
         builder.ConfigureMessageBus(opts =>
         {
             opts.Subscribe<OrdersNotification>();
@@ -109,6 +97,27 @@ public static class DependencyInjection
          });
         builder.Services.AddAuthorization();
     }
+    private static void AddCors(this IHostApplicationBuilder builder)
+    {
+        var corsSettings = builder.Configuration
+            .GetSection(nameof(CorsSettings))
+            .Get<CorsSettings>()
+            ?? throw new InvalidOperationException(
+                $"As configurações de CORS ({nameof(CorsSettings)}) não foram encontradas."
+            );
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins(corsSettings.AllowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials();
+            });
+        });
+    }
+    record CorsSettings(string[] AllowedOrigins);
     record JwtConfiguration(string Authority, string Audience);
 
     static TConfiguration GetConfiguration<TConfiguration>(IConfiguration configuration)

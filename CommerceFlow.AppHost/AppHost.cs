@@ -3,8 +3,9 @@ using Aspire.C4;
 var systemBuilder = SoftwareSystemContextBuilder.CreateBuilder<CommerceFlowSystemBuilder>();
 
 //systemBuilder.AddService<KafkaServer>();
-systemBuilder.AddService<RabbitMQServer>();
 //systemBuilder.AddService<ServiceBusServer>();
+
+systemBuilder.AddService<RabbitMQServer>();
 systemBuilder.AddService<PostgresServer>();
 systemBuilder.AddService<KeycloakServer>();
 systemBuilder.AddService<OrdersEventWorkers>();

@@ -1,16 +1,13 @@
-﻿using CommerceFlow;
-using CommerceFlow.Application;
+﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
 using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using Wolverine;
-using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,17 +21,7 @@ public static class DependencyInjection
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
         builder.Services.AddSignalR();
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy
-                    .WithOrigins("http://localhost:2012")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
-        });
+        builder.AddCors();
         builder.ConfigureMessageBus(opts =>
         {
             opts.Subscribe<ShipmentsNotification>();
@@ -90,7 +77,7 @@ public static class DependencyInjection
         }
 
         return app;
-    }
+    }    
     private static void AddJwtBearerAuthentication(this IHostApplicationBuilder builder)
     {
         var jwtConfiguration = GetConfiguration<JwtConfiguration>(builder.Configuration);
@@ -105,6 +92,27 @@ public static class DependencyInjection
          });
         builder.Services.AddAuthorization();
     }
+    private static void AddCors(this IHostApplicationBuilder builder)
+    {
+        var corsSettings = builder.Configuration
+            .GetSection(nameof(CorsSettings))
+            .Get<CorsSettings>()
+            ?? throw new InvalidOperationException(
+                $"As configurações de CORS ({nameof(CorsSettings)}) não foram encontradas."
+            );
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins(corsSettings.AllowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials();
+            });
+        });
+    }
+    record CorsSettings(string[] AllowedOrigins);    
     record JwtConfiguration(string Authority, string Audience);
 
     static TConfiguration GetConfiguration<TConfiguration>(IConfiguration configuration)
