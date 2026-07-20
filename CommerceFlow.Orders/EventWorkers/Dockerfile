@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "CommerceFlow.OrderEventWorkers.dll"]
+ENTRYPOINT ["dotnet", "CommerceFlow.Orders.EventWorkers.dll"]

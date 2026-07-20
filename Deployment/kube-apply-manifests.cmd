@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-echo ===== Aplicando infraestrutura base do commerceflow =====
+echo ===== Aplicando infraestrutura do commerceflow =====
 
 echo 1. Aplicando namespace e secrets...
 kubectl apply -f "namespace.yaml"
@@ -15,13 +15,10 @@ echo.
 call :apply_app "keycloak"
 
 echo.
-call :apply_app "kafka"
+REM call :apply_app "kafka"
 
 echo.
 call :apply_app "rabbitmq"
-
-echo.
-call :apply_app "kafka-ui"
 
 echo.
 call :apply_app "orders/eventworkers"

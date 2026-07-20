@@ -1,0 +1,37 @@
+name: Shipments EventWorkers Push Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Tag da imagem Docker"
+        default: "v{YYYY_MM_DD_HH_mm_ss}"
+
+env:
+  FOLDER: CommerceFlow.Shipments/EventWorkers
+  IMAGE_NAME: shipments-eventworkers
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ env.FOLDER }}/Dockerfile
+          push: true
+          tags: |
+            lucasfogliarini/${{ env.IMAGE_NAME }}:${{ inputs.version || 'latest' }}

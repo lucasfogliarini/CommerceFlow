@@ -8,10 +8,10 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: commerceflow.local
+    - host: localhost
       http:
         paths:
-          - path: /
+          - path: /shipments-api
             pathType: Prefix
             backend:
               service:

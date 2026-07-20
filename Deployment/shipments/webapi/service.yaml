@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     app: shipments-webapi
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 2001 # Porta exposta pelo Service
       targetPort: 8080 # Porta onde o container está ouvindo

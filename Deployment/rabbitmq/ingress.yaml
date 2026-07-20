@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: orders-webapi
+  name: rabbitmq
   namespace: commerceflow
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
@@ -11,10 +11,10 @@ spec:
     - host: localhost
       http:
         paths:
-          - path: /orders-api
+          - path: /rabbitmq
             pathType: Prefix
             backend:
               service:
-                name: orders-webapi
+                name: rabbitmq
                 port:
-                  number: 2001
+                  number: 15672
