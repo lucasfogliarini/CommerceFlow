@@ -7,6 +7,5 @@ spec:
   selector:
     app: keycloak
   ports:
-    - name: http
-      port: 2006
+    - port: 80
       targetPort: 8080

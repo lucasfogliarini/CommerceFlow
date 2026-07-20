@@ -8,16 +8,16 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: localhost
+    - host: shipments.commerceflow
       http:
         paths:
-          - path: /shipments-api
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: shipments-webapi
                 port:
-                  number: 2001
+                  number: 80
   # Descomente a seção abaixo se desejar adicionar TLS/HTTPS
   # tls:
   #  - hosts:

@@ -8,10 +8,10 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: localhost
+    - host: rabbitmq.commerceflow
       http:
         paths:
-          - path: /rabbitmq
+          - path: /
             pathType: Prefix
             backend:
               service:

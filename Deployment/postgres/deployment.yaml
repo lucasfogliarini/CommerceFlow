@@ -13,8 +13,6 @@ spec:
       labels:
         app: postgres
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
       containers:
         - name: postgres
           image: postgres:13

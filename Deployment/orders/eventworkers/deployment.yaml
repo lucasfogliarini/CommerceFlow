@@ -13,8 +13,6 @@ spec:
       labels:
         app: orders-eventworkers
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
       containers:
         - name: orders-eventworkers
           image: lucasfogliarini/orders-eventworkers:latest

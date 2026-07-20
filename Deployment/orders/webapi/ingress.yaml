@@ -8,13 +8,14 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: localhost
+    - host: orders.commerceflow
       http:
         paths:
-          - path: /orders-api
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: orders-webapi
                 port:
-                  number: 2001
+                  number: 80
+  

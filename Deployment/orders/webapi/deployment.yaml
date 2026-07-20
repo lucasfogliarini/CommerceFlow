@@ -13,8 +13,6 @@ spec:
       labels:
         app: orders-webapi
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: minikube # Garante que o Pod seja agendado no nó específico
       containers:
         - name: orders-webapi
           image: lucasfogliarini/orders-webapi:latest

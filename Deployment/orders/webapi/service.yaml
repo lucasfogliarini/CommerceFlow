@@ -8,6 +8,6 @@ spec:
     app: orders-webapi
   type: ClusterIP
   ports:
-    - port: 2001 # Porta exposta pelo Service
+    - port: 80 # Porta exposta pelo Service
       targetPort: 8080 # Porta onde o container está ouvindo
       # nodePort: 30001 # Porta no nó para acessar o serviço externamente (opcional, pode ser omitida para alocação automática)
