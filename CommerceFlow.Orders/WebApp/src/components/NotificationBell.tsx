@@ -5,20 +5,50 @@ import { useEffect, useState } from "react";
 import { useKeycloak } from "./KeycloakProvider";
 
 type Notification = { orderId: string; message: string };
+type RuntimeConfig = { notificationHubUrl: string };
 
 export default function NotificationBell() {
   const { keycloak, authenticated } = useKeycloak();
-    const notificationsEnabled = true;
+  const notificationsEnabled = true;
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!notificationsEnabled || !authenticated || !keycloak?.token) return;
-      const connection = new HubConnectionBuilder().withUrl(process.env.NEXT_PUBLIC_NOTIFICATION_HUB_URL!, { accessTokenFactory: () => keycloak.token ?? "" }).withAutomaticReconnect().configureLogging(LogLevel.Warning).build();
-    connection.on("ReceiveNotification", (notification: Notification) => { setNotifications((current) => [notification, ...current].slice(0, 20)); setUnreadCount((current) => current + 1); });
-    void connection.start();
-    return () => { void connection.stop(); };
+
+    let connection: ReturnType<HubConnectionBuilder["build"]> | null = null;
+
+    const startConnection = async () => {
+      const runtimeConfigResponse = await fetch("/api/runtime-config", { cache: "no-store" });
+      if (!runtimeConfigResponse.ok) {
+        return;
+      }
+
+      const runtimeConfig = (await runtimeConfigResponse.json()) as RuntimeConfig;
+      connection = new HubConnectionBuilder()
+        .withUrl(runtimeConfig.notificationHubUrl, {
+          accessTokenFactory: () => keycloak.token ?? "",
+        })
+        .withAutomaticReconnect()
+        .configureLogging(LogLevel.Warning)
+        .build();
+
+      connection.on("ReceiveNotification", (notification: Notification) => {
+        setNotifications((current) => [notification, ...current].slice(0, 20));
+        setUnreadCount((current) => current + 1);
+      });
+
+      await connection.start();
+    };
+
+    void startConnection();
+
+    return () => {
+      if (connection) {
+        void connection.stop();
+      }
+    };
   }, [authenticated, keycloak, notificationsEnabled]);
 
   if (!notificationsEnabled || !authenticated) return null;

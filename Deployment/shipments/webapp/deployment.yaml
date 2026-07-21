@@ -28,6 +28,7 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
-          envFrom:
-            - secretRef:
-                name: commerceflow-secrets
+            - name: SHIPMENTS_API_URL
+              value: "http://shipments.commerceflow"
+            - name: KEYCLOAK_URL
+              value: "http://keycloak.commerceflow"

@@ -21,6 +21,10 @@ interface KeycloakContextValue {
 
 const KeycloakContext = createContext<KeycloakContextValue | undefined>(undefined);
 
+type RuntimeConfig = {
+  keycloakUrl: string;
+};
+
 export function KeycloakProvider({ children }: { children: React.ReactNode }) {
   const [keycloak, setKeycloak] = useState<Keycloak | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
@@ -32,8 +36,15 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
 
     import("keycloak-js")
       .then(async ({ default: KeycloakClient }) => {
+        const runtimeConfigResponse = await fetch("/api/runtime-config", { cache: "no-store" });
+        if (!runtimeConfigResponse.ok) {
+          throw new Error("Failed to load runtime config");
+        }
+
+        const runtimeConfig = (await runtimeConfigResponse.json()) as RuntimeConfig;
+
         const client = new KeycloakClient({
-          url: process.env.NEXT_PUBLIC_KEYCLOAK_URL!,
+          url: runtimeConfig.keycloakUrl,
           realm: "commerceflow",
           clientId: "commerceflow",
         });
