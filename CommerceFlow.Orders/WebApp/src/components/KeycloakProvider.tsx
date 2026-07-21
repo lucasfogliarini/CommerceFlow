@@ -36,7 +36,7 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
 
     import("keycloak-js")
       .then(async ({ default: KeycloakClient }) => {
-        const runtimeConfigResponse = await fetch("/api/runtime-config", { cache: "no-store" });
+        const runtimeConfigResponse = await fetch("/api/config", { cache: "no-store" });
         if (!runtimeConfigResponse.ok) {
           throw new Error("Failed to load runtime config");
         }
@@ -70,14 +70,17 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async () => {
     if (!keycloak) {
-      throw new Error("Keycloak is not initialized");
+      return;
     }
 
     await keycloak.login();
   }, [keycloak]);
 
   const logout = useCallback(async () => {
-    if (!keycloak) throw new Error("Keycloak is not initialized");
+    if (!keycloak) {
+      return;
+    }
+
     await keycloak.logout({ redirectUri: window.location.origin });
   }, [keycloak]);
 

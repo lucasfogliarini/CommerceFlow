@@ -20,7 +20,7 @@ export default function NotificationBell() {
     let connection: ReturnType<HubConnectionBuilder["build"]> | null = null;
 
     const startConnection = async () => {
-      const runtimeConfigResponse = await fetch("/api/runtime-config", { cache: "no-store" });
+      const runtimeConfigResponse = await fetch("/api/config", { cache: "no-store" });
       if (!runtimeConfigResponse.ok) {
         return;
       }
