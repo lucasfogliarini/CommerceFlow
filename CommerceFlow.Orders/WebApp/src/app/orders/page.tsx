@@ -118,7 +118,7 @@ export default function OrdersPage() {
                 <span className={`order-status order-status-${order.status.toLowerCase()}`}>{getStatusLabel(order.status)}</span>
                 <strong>{formatPrice(order.totalAmount)}</strong>
                 {(order.status === "Created" || order.status === "WaitingForPayment") && (
-                  <button className="btn btn-primary" disabled={payingOrderNumber === order.number} onClick={() => void handlePayment(order.number)}>{payingOrderNumber === order.number ? "Pagando..." : "Pagar"}</button>
+                  <button className="btn btn-primary" disabled={order.status === "Created" || payingOrderNumber === order.number} onClick={() => void handlePayment(order.number)}>{payingOrderNumber === order.number ? "Pagando..." : "Pagar"}</button>
                 )}
               </div>
               {expandedOrderId === order.id && (

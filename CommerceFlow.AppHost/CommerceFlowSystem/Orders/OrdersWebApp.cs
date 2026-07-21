@@ -14,7 +14,7 @@ public class OrdersWebApp : Service
         var webAppResourceBuilder = system.Builder
                                            .AddNextJsApp("OrdersWebApp", "../CommerceFlow.Orders/WebApp")
                                            .WithEnvironment("ORDERS_API_URL", ordersApiUrl)
-                                           .WithEnvironment("NEXT_PUBLIC_KEYCLOAK_URL", keycloakUrl)
+                                           .WithEnvironment("KEYCLOAK_URL", keycloakUrl)
                                            .WithHttpEndpoint(system.GetNextPort());
         #pragma warning restore ASPIREJAVASCRIPT001
         system.AddResourceBuilder(webAppResourceBuilder);

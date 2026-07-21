@@ -80,10 +80,7 @@ export default function HomePage() {
           ) : (
             <div style={{ textAlign: "center", padding: "60px 0" }}>
               <p style={{ fontSize: "1.1rem", color: "var(--text-secondary)" }}>
-                Nenhum produto encontrado. Verifique se a API está rodando em{" "}
-                <code style={{ color: "var(--accent-cyan)" }}>
-                  localhost:2008
-                </code>
+                Nenhum produto encontrado.
               </p>
             </div>
           )}

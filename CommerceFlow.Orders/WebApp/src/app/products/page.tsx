@@ -188,12 +188,6 @@ export default function ProductsPage() {
                 📦
               </div>
               <h2 style={{ marginBottom: "8px" }}>Nenhum produto encontrado</h2>
-              <p style={{ color: "var(--text-secondary)" }}>
-                Verifique se a API está rodando em{" "}
-                <code style={{ color: "var(--accent-cyan)" }}>
-                  localhost:2008
-                </code>
-              </p>
             </div>
           )}
         </div>
