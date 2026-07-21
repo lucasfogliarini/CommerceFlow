@@ -96,13 +96,10 @@ public static class DependencyInjection
              options.RequireHttpsMetadata = false;
              options.SaveToken = true;
 
-             if (builder.Environment.IsDevelopment())
+             options.BackchannelHttpHandler = new HttpClientHandler
              {
-                 options.BackchannelHttpHandler = new HttpClientHandler
-                 {
-                     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                 };
-             }
+                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+             };
          });
         builder.Services.AddAuthorization();
     }
