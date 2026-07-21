@@ -28,7 +28,6 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
-            - name: COMMERCEFLOW_API_URL
-              value: "http://orders-webapi"
-            - name: NEXT_PUBLIC_KEYCLOAK_URL
-              value: "http://keycloak.commerceflow"
+          envFrom:
+            - secretRef:
+                name: commerceflow-secrets
