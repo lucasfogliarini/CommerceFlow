@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = process.env.COMMERCEFLOW_API_URL;
+const API_URL = process.env.ORDERS_API_URL;
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   return forward(request, (await params).id, await request.text());

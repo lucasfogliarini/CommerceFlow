@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const apiUrl = process.env.COMMERCEFLOW_API_URL ?? "http://localhost:5062";
+const API_URL = process.env.SHIPMENTS_API_URL ?? "http://localhost:2012";
 
 type RouteContext = { params: Promise<{ path?: string[] }> };
 
@@ -14,7 +14,7 @@ async function forward(request: NextRequest, context: RouteContext) {
     if (authorization) headers.Authorization = authorization;
     if (contentType) headers["Content-Type"] = contentType;
 
-    const response = await fetch(`${apiUrl}/shipments/${path.join("/")}`, {
+    const response = await fetch(`${API_URL}/shipments/${path.join("/")}`, {
       method: request.method,
       headers,
       body: request.method === "GET" ? undefined : await request.text(),

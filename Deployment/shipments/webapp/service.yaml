@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipments-webapp
+  namespace: commerceflow
+spec:
+  selector:
+    app: shipments-webapp
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000

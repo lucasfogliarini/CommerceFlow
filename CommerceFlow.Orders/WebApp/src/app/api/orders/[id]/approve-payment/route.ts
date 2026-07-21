@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
+const API_URL = process.env.ORDERS_API_URL;
 
 export async function PUT(
   request: NextRequest,
@@ -15,7 +15,7 @@ export async function PUT(
         headers["Authorization"] = authHeader;
     }
 
-    const res = await fetch(`${COMMERCEFLOW_API_URL}/orders/${id}/approve-payment`, {
+    const res = await fetch(`${API_URL}/orders/${id}/approve-payment`, {
       method: "PUT",
       headers,
       body: JSON.stringify(body),

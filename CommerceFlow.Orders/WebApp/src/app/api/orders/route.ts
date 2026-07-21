@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
+const API_URL = process.env.ORDERS_API_URL;
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const authHeader = request.headers.get("Authorization");
     if (authHeader) headers.Authorization = authHeader;
 
-    const res = await fetch(`${COMMERCEFLOW_API_URL}/customers/me/orders`, { headers });
+      const res = await fetch(`${API_URL}/customers/me/orders`, { headers });
     const contentType = res.headers.get("Content-Type") ?? "application/json";
     return new NextResponse(await res.text(), {
       status: res.status,
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
           headers["Authorization"] = authHeader;
       }
 
-      const res = await fetch(`${COMMERCEFLOW_API_URL}/orders`, {
+      const res = await fetch(`${API_URL}/orders`, {
       method: "POST",
       headers,
       body: JSON.stringify(body),

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COMMERCEFLOW_API_URL = process.env.COMMERCEFLOW_API_URL;
+const ORDERS_API_URL = process.env.ORDERS_API_URL;
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
         headers["Authorization"] = authHeader;
     }
 
-    const res = await fetch(`${COMMERCEFLOW_API_URL}/customers/me`, {
+    const res = await fetch(`${ORDERS_API_URL}/customers/me`, {
       method: "GET",
       headers,
     });

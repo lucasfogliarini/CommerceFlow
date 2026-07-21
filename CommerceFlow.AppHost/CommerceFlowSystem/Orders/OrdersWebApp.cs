@@ -13,7 +13,7 @@ public class OrdersWebApp : Service
 #pragma warning disable ASPIREJAVASCRIPT001
         var webAppResourceBuilder = system.Builder
                                            .AddNextJsApp("OrdersWebApp", "../CommerceFlow.Orders/WebApp")
-                                           .WithEnvironment("COMMERCEFLOW_API_URL", ordersApiUrl)
+                                           .WithEnvironment("ORDERS_API_URL", ordersApiUrl)
                                            .WithEnvironment("NEXT_PUBLIC_KEYCLOAK_URL", keycloakUrl)
                                            .WithHttpEndpoint(system.GetNextPort());
         #pragma warning restore ASPIREJAVASCRIPT001

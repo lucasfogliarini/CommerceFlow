@@ -23,8 +23,10 @@ call :apply_app "rabbitmq"
 echo.
 call :apply_app "orders/eventworkers"
 call :apply_app "orders/webapi"
+call :apply_app "orders/webapp"
 call :apply_app "shipments/eventworkers"
 call :apply_app "shipments/webapi"
+REM call :apply_app "shipments/webapp"
 
 echo.
 echo ===== Services =====
