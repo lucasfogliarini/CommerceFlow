@@ -90,11 +90,6 @@ public static class DependencyInjection
              options.Audience = jwtConfiguration.Audience;
              options.RequireHttpsMetadata = false;
              options.SaveToken = true;
-
-             options.BackchannelHttpHandler = new HttpClientHandler
-             {
-                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-             };
          });
         builder.Services.AddAuthorization();
     }
