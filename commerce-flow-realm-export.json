@@ -15,6 +15,8 @@
       "redirectUris": [
         "http://localhost:2009/*",
         "http://localhost:2012/*",
+        "https://commerceflow.com/*",
+        "https://route.pulse/*",
         "https://oauth.pstmn.io/v1/callback"
       ],
       "webOrigins": [

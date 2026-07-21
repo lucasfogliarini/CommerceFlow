@@ -42,6 +42,10 @@ spec:
               value: commerceflow!123
             - name: KC_DB_SCHEMA
               value: public
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+            - name: KC_HOSTNAME
+              value: keycloak.commerceflow
 
           resources:
             requests:

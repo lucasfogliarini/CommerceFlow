@@ -4,9 +4,13 @@ metadata:
   name: orders-webapi
   namespace: commerceflow
   annotations:
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - orders.commerceflow
+      secretName: commerceflow-ingress-tls
   rules:
     - host: orders.commerceflow
       http:

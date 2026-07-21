@@ -28,6 +28,8 @@ spec:
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
+            - name: CorsConfiguration__AllowedOrigins__0
+              value: "https://route.pulse"
           envFrom:
             - secretRef:
                 name: commerceflow-secrets

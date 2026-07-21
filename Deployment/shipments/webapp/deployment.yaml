@@ -29,6 +29,6 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: SHIPMENTS_API_URL
-              value: "http://shipments.commerceflow"
+              value: "http://shipments-webapi"
             - name: KEYCLOAK_URL
-              value: "http://keycloak.commerceflow"
+              value: "https://keycloak.commerceflow"

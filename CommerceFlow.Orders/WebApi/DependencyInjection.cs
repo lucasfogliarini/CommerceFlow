@@ -6,6 +6,7 @@ using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 using Wolverine;
 
@@ -94,6 +95,14 @@ public static class DependencyInjection
              options.Audience = jwtConfiguration.Audience;
              options.RequireHttpsMetadata = false;
              options.SaveToken = true;
+
+             if (builder.Environment.IsDevelopment())
+             {
+                 options.BackchannelHttpHandler = new HttpClientHandler
+                 {
+                     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                 };
+             }
          });
         builder.Services.AddAuthorization();
     }

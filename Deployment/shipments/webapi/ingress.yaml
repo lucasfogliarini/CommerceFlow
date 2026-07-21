@@ -4,9 +4,13 @@ metadata:
   name: shipments-webapi
   namespace: commerceflow
   annotations:
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - shipments.commerceflow
+      secretName: commerceflow-ingress-tls
   rules:
     - host: shipments.commerceflow
       http:
@@ -18,8 +22,3 @@ spec:
                 name: shipments-webapi
                 port:
                   number: 80
-  # Descomente a seção abaixo se desejar adicionar TLS/HTTPS
-  # tls:
-  #  - hosts:
-  #       - commerceflow.local
-  #     secretName: webapi-tls

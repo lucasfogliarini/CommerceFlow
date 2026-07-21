@@ -6,6 +6,7 @@ echo ===== Aplicando infraestrutura do commerceflow =====
 echo 1. Aplicando namespace e secrets...
 kubectl apply -f "namespace.yaml"
 kubectl apply -f "commerceflow-secrets.yaml"
+kubectl apply -f "commerceflow-ingress-tls-secret.yaml"
 kubectl create configmap keycloak-realm --namespace commerceflow --from-file=commerceflow-realm.json="..\commerce-flow-realm-export.json" --dry-run=client -o yaml | kubectl apply -f -
 
 echo.

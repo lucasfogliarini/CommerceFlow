@@ -4,9 +4,13 @@ metadata:
   name: keycloak
   namespace: commerceflow
   annotations:
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - keycloak.commerceflow
+      secretName: commerceflow-ingress-tls
   rules:
     - host: keycloak.commerceflow
       http:
