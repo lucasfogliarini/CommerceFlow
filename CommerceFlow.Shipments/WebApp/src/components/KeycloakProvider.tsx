@@ -40,8 +40,7 @@ export function KeycloakProvider({ children }: { children: React.ReactNode }) {
           clientId: "commerceflow",
         });
         const isAuthenticated = await client.init({
-          onLoad: "check-sso",
-          checkLoginIframe: false,
+          onLoad: "check-sso"
         });
 
         if (active) {
