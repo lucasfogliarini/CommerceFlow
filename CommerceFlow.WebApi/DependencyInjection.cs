@@ -1,9 +1,5 @@
 ﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
-using CommerceFlow.Application.Shipments;
-using CommerceFlow.Infrastructure.RabbitMQ;
-using CommerceFlow.Orders;
-using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;

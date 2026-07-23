@@ -3,7 +3,6 @@ using Aspire.C4;
 var systemBuilder = SoftwareSystemContextBuilder.CreateBuilder<CommerceFlowSystemBuilder>();
 
 systemBuilder.AddService<PostgresServer>();
-systemBuilder.AddService<RabbitMQServer>();
 systemBuilder.AddService<KeycloakServer>();
 systemBuilder.AddService<WebApi>();
 systemBuilder.AddService<OrdersWebApp>();

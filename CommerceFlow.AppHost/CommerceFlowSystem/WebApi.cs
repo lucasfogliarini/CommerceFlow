@@ -1,7 +1,6 @@
 using Aspire.C4;
 
 [WithReference<PostgresDatabaseResource>]
-[WithReference<RabbitMQServerResource>]
 public class WebApi : Service
 {
     public override string Name => nameof(WebApi);

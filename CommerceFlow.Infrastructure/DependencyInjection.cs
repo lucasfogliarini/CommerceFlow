@@ -3,7 +3,6 @@ using CommerceFlow.Application;
 using CommerceFlow.Application.Shipments;
 using CommerceFlow.Customers;
 using CommerceFlow.Infrastructure;
-using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Infrastructure.Repositories;
 using CommerceFlow.Infrastructure.Wolverine;
 using CommerceFlow.Orders;
@@ -15,17 +14,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using RabbitMQ.Client;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Wolverine;
-using Wolverine.RabbitMQ;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -45,48 +41,12 @@ public static class DependencyInjection
 
         builder.UseWolverine(opts =>
         {
-            opts.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
-
-            opts.Subscribe<OrdersNotification>();
-            opts.Subscribe<ShipmentsNotification>();
-
-            opts.Subscribe<OrderCreated>();
-            opts.Subscribe<OrderCancelled>();
-            opts.Subscribe<OrderWaitingForPayment>();
-            opts.Subscribe<ApprovePayment>();
-            opts.Subscribe<RejectPayment>();
-            opts.Subscribe<PaymentApproved>();
-            opts.Subscribe<PaymentRejected>();
-            opts.Subscribe<PaymentExpired>();
-            opts.Subscribe<OrderReadyForShipment>();
-
-            opts.Subscribe<ShipmentCreated>();
-            opts.Subscribe<CarrierAssigned>();
-            opts.Subscribe<CompletePacking>();
-            opts.Subscribe<PackingCompleted>();
-            opts.Subscribe<ShipmentDispatched>();
-            opts.Subscribe<RegisterTrackingEvent>();
-            opts.Subscribe<DeliverShipment>();
-            opts.Subscribe<ShipmentDelivered>();
-
             configure?.Invoke(opts);
 
             opts.UseRuntimeCompilation();
             opts.CodeGeneration.AlwaysUseServiceLocationFor<CommerceFlowDbContext>();
         });
         builder.Services.AddScoped<IMessageDispatcher, WolverineMessageBus>();
-        builder.Services
-            .AddSingleton(sp =>
-            {
-                var factory = new ConnectionFactory
-                {
-                    Uri = new Uri(rabbitMqEndpoint),
-                };
-                var connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
-                return connection;
-            })
-            .AddHealthChecks()
-            .AddRabbitMQ();
     }
     public static void MapHealthChecks(this WebApplication app)
     {
