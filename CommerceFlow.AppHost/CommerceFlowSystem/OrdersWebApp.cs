@@ -1,19 +1,19 @@
 using Aspire.C4;
 
-[WaitFor(nameof(OrdersWebApi), nameof(KeycloakServer))]
+[WaitFor(nameof(WebApi), nameof(KeycloakServer))]
 public class OrdersWebApp : Service
 {
     public override string Name => nameof(OrdersWebApp);
 
     public override void Configure(SoftwareSystemContextBuilder system)
     {
-        var ordersApiUrl = "http://localhost:2008";
-        var keycloakUrl = "http://localhost:2006";
+        var apiUrl = system.GetEndpoint<WebApi>();
+        var keycloakUrl = system.GetEndpoint<KeycloakServer>();
 
 #pragma warning disable ASPIREJAVASCRIPT001
         var webAppResourceBuilder = system.Builder
-                                           .AddNextJsApp("OrdersWebApp", "../CommerceFlow.Orders/WebApp")
-                                           .WithEnvironment("ORDERS_API_URL", ordersApiUrl)
+                                           .AddNextJsApp("OrdersWebApp", "../CommerceFlow.Orders.WebApp")
+                                           .WithEnvironment("ORDERS_API_URL", apiUrl)
                                            .WithEnvironment("KEYCLOAK_URL", keycloakUrl)
                                            .WithHttpEndpoint(system.GetNextPort());
         #pragma warning restore ASPIREJAVASCRIPT001

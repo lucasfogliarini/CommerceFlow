@@ -1,12 +1,13 @@
 ﻿using CommerceFlow.Application;
 using CommerceFlow.Application.Notifications;
+using CommerceFlow.Application.Shipments;
 using CommerceFlow.Infrastructure.RabbitMQ;
 using CommerceFlow.Orders;
+using CommerceFlow.Shipments;
 using CommerceFlow.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Net.Http;
 using System.Text.Json.Serialization;
 using Wolverine;
 
@@ -30,10 +31,6 @@ public static class DependencyInjection
         builder.AddCors();
         builder.ConfigureMessageBus(opts =>
         {
-            opts.Subscribe<OrdersNotification>();
-            opts.ConfigurePublisher<OrderCreated>();
-            opts.ConfigurePublisher<ApprovePayment>();
-
             opts.Discovery.IncludeAssembly(typeof(CreateOrderHandler).Assembly);
         });
         builder.Services.ConfigureHttpJsonOptions(options =>

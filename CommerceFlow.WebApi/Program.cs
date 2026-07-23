@@ -6,4 +6,6 @@ var app = builder.Build();
 
 app.UseApplication();
 
+await app.MigrateAndSeedAsync();
+
 app.Run();

@@ -1,20 +1,4 @@
 <Solution>
-  <Folder Name="/Orders/">
-    <Project Path="CommerceFlow.Orders/EventWorkers/CommerceFlow.Orders.EventWorkers.csproj" />
-    <Project Path="CommerceFlow.Orders/WebApi/CommerceFlow.Orders.WebApi.csproj" />
-    <Project Path="CommerceFlow.Orders/WebApp/CommerceFlow.Orders.WebApp.esproj">
-      <Build />
-      <Deploy />
-    </Project>
-  </Folder>
-  <Folder Name="/Shipments/">
-    <Project Path="CommerceFlow.Shipments/EventWorkers/CommerceFlow.Shipments.EventWorkers.csproj" />
-    <Project Path="CommerceFlow.Shipments/WebApi/CommerceFlow.Shipments.WebApi.csproj" />
-    <Project Path="CommerceFlow.Shipments/WebApp/CommerceFlow.Shipments.WebApp.esproj">
-      <Build />
-      <Deploy />
-    </Project>
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="commerce-flow-realm-export.json" />
     <File Path="README.md" />
@@ -22,6 +6,15 @@
   <Project Path="CommerceFlow.AppHost/CommerceFlow.AppHost.csproj" />
   <Project Path="CommerceFlow.Application/CommerceFlow.Application.csproj" />
   <Project Path="CommerceFlow.Infrastructure/CommerceFlow.Infrastructure.csproj" />
+  <Project Path="CommerceFlow.Orders.WebApp/CommerceFlow.Orders.WebApp.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="CommerceFlow.Shipments.WebApp/CommerceFlow.Shipments.WebApp.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="CommerceFlow.Tests/CommerceFlow.Tests.csproj" />
+  <Project Path="CommerceFlow.WebApi/CommerceFlow.WebApi.csproj" />
   <Project Path="CommerceFlow/CommerceFlow.csproj" />
 </Solution>

@@ -1,5 +1,6 @@
 ﻿using CommerceFlow;
 using CommerceFlow.Application;
+using CommerceFlow.Application.Shipments;
 using CommerceFlow.Customers;
 using CommerceFlow.Infrastructure;
 using CommerceFlow.Infrastructure.RabbitMQ;
@@ -34,6 +35,7 @@ public static class DependencyInjection
     {
         builder.AddDbContext();        
         builder.Services.AddRepositories();
+        builder.Services.AddTransient<ICarrierSelector, FakeCarrierSelector>();
         builder.AddOpenTelemetryExporter();
         builder.AddRateLimiter();
     }
@@ -45,8 +47,27 @@ public static class DependencyInjection
         {
             opts.UseRabbitMq(rabbitMqEndpoint).AutoProvision();
 
-            opts.ConfigurePublisher<OrdersNotification>();
-            opts.ConfigurePublisher<ShipmentsNotification>();
+            opts.Subscribe<OrdersNotification>();
+            opts.Subscribe<ShipmentsNotification>();
+
+            opts.Subscribe<OrderCreated>();
+            opts.Subscribe<OrderCancelled>();
+            opts.Subscribe<OrderWaitingForPayment>();
+            opts.Subscribe<ApprovePayment>();
+            opts.Subscribe<RejectPayment>();
+            opts.Subscribe<PaymentApproved>();
+            opts.Subscribe<PaymentRejected>();
+            opts.Subscribe<PaymentExpired>();
+            opts.Subscribe<OrderReadyForShipment>();
+
+            opts.Subscribe<ShipmentCreated>();
+            opts.Subscribe<CarrierAssigned>();
+            opts.Subscribe<CompletePacking>();
+            opts.Subscribe<PackingCompleted>();
+            opts.Subscribe<ShipmentDispatched>();
+            opts.Subscribe<RegisterTrackingEvent>();
+            opts.Subscribe<DeliverShipment>();
+            opts.Subscribe<ShipmentDelivered>();
 
             configure?.Invoke(opts);
 
