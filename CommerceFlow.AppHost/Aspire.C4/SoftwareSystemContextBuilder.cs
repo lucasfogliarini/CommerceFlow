@@ -103,6 +103,13 @@ public abstract class SoftwareSystemContextBuilder(IDistributedApplicationBuilde
         SystemResourceBuilder.WithChildRelationship(resourceBuilder);
         ResourceBuilders.Add(resourceBuilder);
     }
+    public EndpointReference? GetEndpoint<TService>() where TService : Service
+    {
+        var resourceBuilder = ResourceBuilders.FirstOrDefault(e => e.Resource.Name == typeof(TService).Name) as IResourceBuilder<IResourceWithEndpoints>;
+        ArgumentNullException.ThrowIfNull(resourceBuilder, $"Resource builder for service '{typeof(TService).Name}' not found or does not implement IResourceWithEndpoints.");
+        return resourceBuilder?.GetEndpoint("http");
+    }
+
     public IResourceBuilder<TResource>? GetResourceBuilder<TResource>(string name) where TResource : IResource
     {
         return ResourceBuilders.FirstOrDefault(e => e.Resource.Name == name) as IResourceBuilder<TResource>;
